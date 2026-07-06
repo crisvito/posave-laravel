@@ -11,6 +11,8 @@ use App\Http\Controllers\Advance\Owner\Inventory\TransferController;
 use App\Http\Controllers\Advance\Owner\MessageController;
 use App\Http\Controllers\Advance\Owner\ReportController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Settings\ProfileController;
+use App\Http\Controllers\Settings\BranchController;
 
 Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function () {
 

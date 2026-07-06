@@ -7,7 +7,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class FaqCategory extends Model
 {
-    protected $fillable = ['name', 'slug', 'sort_order'];
+    protected $fillable = [
+        'name_id',
+        'name_en',
+        'slug',
+        'sort_order',
+    ];
 
     public function faqs(): HasMany
     {

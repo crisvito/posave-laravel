@@ -10,8 +10,14 @@ import "swiper/css/pagination";
 
 const features = [
     {
-        title: 'Lite & Advanced Mode',
-        desc: 'Dapat memenuhi kebutuhan pemula dan kebutuhan profesional',
+        title: {
+            id: 'Mode Lite & Advanced',
+            en: 'Lite & Advanced Mode',
+        },
+        desc: {
+            id: 'Dapat memenuhi kebutuhan pemula dan kebutuhan profesional',
+            en: 'Designed to meet the needs of both beginners and professionals.',
+        },
         image: 'fitur1.png',
         icon: (
             <svg viewBox="0 0 24 24" width={52} height={52} fill="none" stroke="#C9E1F0" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round">
@@ -22,8 +28,14 @@ const features = [
         ),
     },
     {
-        title: 'Asisten Personal A.I.',
-        desc: 'Dilengkapi dengan A.I. yang bisa membantu dalam operasional toko',
+        title: {
+            id: 'Asisten Personal A.I.',
+            en: 'Personal A.I. Assistant',
+        },
+        desc: {
+            id: 'Dilengkapi dengan A.I. yang dapat membantu operasional toko.',
+            en: 'Equipped with AI to help manage daily store operations.',
+        },
         image: 'fitur2.png',
         icon: (
             <svg viewBox="0 0 24 24" width={52} height={52} fill="none" stroke="#C9E1F0" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round">
@@ -37,8 +49,14 @@ const features = [
         ),
     },
     {
-        title: 'Laporan Real-Time',
-        desc: 'Laporan dapat dilihat secara real-time sesuai dengan data di lapangan',
+        title: {
+            id: 'Laporan Real-Time',
+            en: 'Real-Time Reports',
+        },
+        desc: {
+            id: 'Laporan dapat dilihat secara real-time sesuai kondisi di lapangan.',
+            en: 'View reports in real time based on actual business activities.',
+        },
         image: 'fitur3.png',
         icon: (
             <svg viewBox="0 0 24 24" width={52} height={52} fill="none" stroke="#C9E1F0" strokeWidth={1.4} strokeLinecap="round" strokeLinejoin="round">
@@ -52,17 +70,19 @@ const features = [
 
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
-    const { testimonials } = usePage().props as any;
+    const { testimonials, translations, locale } = usePage().props as any;
     const prevRef = useRef<HTMLButtonElement | null>(null);
     const nextRef = useRef<HTMLButtonElement | null>(null);
     const dotsRef = useRef<HTMLDivElement | null>(null);
     const swiperRef = useRef<any>(null);
+    const t = translations['company-profile/welcome'];
+    const isEn = locale === 'en';
 
     return (
         <AppLayout>
             <Head title="Landing Page" />
 
-            <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 px-4 sm:px-6 lg:px-20 mt-8">
+            <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 px-4 sm:px-6 lg:px-18 mt-8">
                 <div
                     className="rounded-[32px] overflow-hidden w-full max-w-[1600px] mx-auto"
                     style={{
@@ -91,20 +111,20 @@ export default function Welcome() {
                         <div className="relative z-10 flex items-center h-full px-16">
                             <div className="max-w-lg">
                                 <h1 className="text-[70px] leading-[1.1] font-medium text-black tracking-tight">
-                                    Satu Untuk <br />
+                                    {t.hero_title_1} <br />
                                     <span className="italic font-semibold whitespace-nowrap tracking-[0.025em] text-[80px]">
-                                        Semua Masalah
+                                        {t.hero_title_2}
                                     </span>
                                 </h1>
 
                                 <p className="mt-4 text-[13px] max-w-lg leading-snug whitespace-nowrap overflow-hidden overflow-ellipsis">
-                                    Kami hadir untuk senantiasa menemani perjalanan
+                                    {t.hero_desc_1}
                                     <br />
-                                    bisnis anda
+                                    {t.hero_desc_2}
                                 </p>
 
                                 <button className="mt-6 px-7 py-3.5 rounded-full bg-[#1a2744] text-white text-sm font-medium hover:bg-[#243460] transition-colors duration-200">
-                                    Jadwalkan Demo
+                                    {t.hero_cta}
                                 </button>
                             </div>
                         </div>
@@ -114,10 +134,10 @@ export default function Welcome() {
             {/* FITUR UTAMA SECTION */}
             <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 mt-10 bg-[var(--primary-900)] px-4 sm:px-6 lg:px-20 py-12">
                 <h2 className="text-center text-[30px] md:text-[34px] font-black text-white mb-3 tracking-tight">
-                    Fitur Utama Posave
+                    {t.features_heading}
                 </h2>
                 <p className="text-center text-[17px] md:text-[19px] font-medium text-white mb-8 mx-auto leading-tight whitespace-nowrap overflow-hidden overflow-ellipsis max-w-full">
-                    Prioritas kami adalah membantu Anda menjalankan bisnis dengan cepat, rapi, dan berkelanjutan.
+                    {t.features_subheading}
                 </p>
 
                 <div className="relative pt-14 max-w-4xl mx-auto">
@@ -134,6 +154,7 @@ export default function Welcome() {
                                 {index > 0 && (
                                     <div className="absolute left-0 top-10 bottom-6 w-px bg-white" />
                                 )}
+
                                 <div
                                     className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 flex h-[150px] w-[150px] items-center justify-center rounded-full shadow-[0_8px_20px_rgba(0,0,0,0.18)]"
                                     style={{
@@ -145,19 +166,21 @@ export default function Welcome() {
                                     {feature.image ? (
                                         <img
                                             src={`assets/landing-page/${feature.image}`}
-                                            alt={feature.title}
+                                            alt={isEn ? feature.title.en : feature.title.id}
                                             className="h-[90px] w-[90px] object-cover rounded-2xl"
                                         />
                                     ) : (
                                         feature.icon
                                     )}
                                 </div>
+
                                 <div className="w-full pt-2">
                                     <p className="text-[20px] md:text-[20px] font-semibold text-white mb-1">
-                                        {feature.title}
+                                        {isEn ? feature.title.en : feature.title.id}
                                     </p>
+
                                     <p className="text-[15px] md:text-[16px] text-white leading-relaxed">
-                                        {feature.desc}
+                                        {isEn ? feature.desc.en : feature.desc.id}
                                     </p>
                                 </div>
                             </div>
@@ -181,7 +204,7 @@ export default function Welcome() {
                                     />
 
                                     <span className="text-[13px] uppercase tracking-[0.1em] text-[#475569]">
-                                        Sistem Manajemen Usaha
+                                        {t.slogan}
                                     </span>
                                 </div>
 
@@ -191,21 +214,21 @@ export default function Welcome() {
                                         WebkitTextStroke: '1px #0f1c36',
                                     }}
                                 >
-                                    Atur Usaha <br />
+                                    {t.about_title_1} <br />
                                     <span className="font-semibold">
-                                        Ga Pake Ribet
+                                        {t.about_title_2}
                                     </span>
                                 </h2>
 
                                 <p className="max-w-xl text-[16px] leading-9 text-[#000000] mb-10">
-                                    Posave memiliki misi untuk memudahkan Anda dalam mengatur usaha dengan perangkat yang Anda miliki tanpa perlu training.
+                                    {t.about_desc}
                                 </p>
 
                                 <button
                                     onClick={() => window.history.back()}
                                     className="inline-flex items-center gap-2 text-[16px] font-semibold text-[#0f1c36] bg-transparent border-none p-0 cursor-pointer hover:opacity-70 transition-opacity"
                                 >
-                                    Pelajari Selengkapnya
+                                    {t.about_cta}
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                         <path d="M6 3l5 5-5 5" stroke="#0f1c36" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
@@ -260,7 +283,7 @@ export default function Welcome() {
                             {/* Title aligned to the right content area */}
                             <div className="mb-3 lg:pl-12 ml-15">
                                 <h2 className="text-[52px] font-bold text-[#0f1c36] leading-none tracking-tight">
-                                    Kenapa Pilih
+                                    {t.why_heading}
                                 </h2>
                                 <div className="flex items-center gap-4 mt-0 ml-21.5">
                                     <img 
@@ -278,7 +301,7 @@ export default function Welcome() {
                                 style={{ boxShadow: '0 40px 80px -15px rgba(0, 0, 0, 0.5)' }}
                             >
                                 <p className="text-[17px] leading-relaxed mb-10 text-gray-200">
-                                    <span className="font-bold text-white text-lg">Posave</span> dirancang khusus untuk UMKM Indonesia — dari warung kelontong sampai toko fashion. Tidak perlu pelatihan, tidak perlu hardware mahal. Cukup smartphone yang kamu pegang sekarang.
+                                    <span className="font-bold text-white text-lg">Posave</span> {t.why_description}
                                 </p>
 
                                 <div className="space-y-10">
@@ -319,11 +342,11 @@ export default function Welcome() {
 
                                         <div>
                                             <h4 className="font-bold text-[20px] mb-1">
-                                                Asisten Personal AI
+                                                {t.feature_ai_title}
                                             </h4>
 
                                             <p className="text-[15px] text-gray-300 leading-snug">
-                                                Posave langsung catat transaksi, kurangi stok, dan simpan ke database tanpa ribet
+                                                {t.feature_ai_desc}
                                             </p>
                                         </div>
                                     </div>
@@ -353,11 +376,11 @@ export default function Welcome() {
 
                                         <div>
                                             <h4 className="font-bold text-[20px] mb-1">
-                                                Lite Mode Simpel
+                                                {t.feature_lite_title}
                                             </h4>
 
                                             <p className="text-[15px] text-gray-300 leading-snug">
-                                                Mode khusus untuk UMKM yang baru pertama pakai aplikasi kasir, tampilan minimal dan mudah dipahami.
+                                                {t.feature_lite_desc}
                                             </p>
                                         </div>
                                     </div>
@@ -384,11 +407,11 @@ export default function Welcome() {
 
                                         <div>
                                             <h4 className="font-bold text-[20px] mb-1">
-                                                Multi-cabang, Satu Kendali
+                                                {t.feature_branch_title}
                                             </h4>
 
                                             <p className="text-[15px] text-gray-300 leading-snug">
-                                                Owner lihat semua cabang dari satu dashboard. Kepala toko hanya akses cabangnya sendiri. Kasir fokus ke transaksi. Semua punya peran yang jelas.
+                                                {t.feature_branch_desc}
                                             </p>
                                         </div>
                                     </div>
@@ -403,7 +426,7 @@ export default function Welcome() {
             {/* SECTION TESTIMONI */}
             <div className="relative left-1/2 right-1/2 -mx-[50vw] w-[100vw] max-w-[100vw] bg-white py-10 overflow-x-hidden">
 
-                <div className="px-20 overflow-hidden">
+                <div className="px-18 overflow-hidden">
 
                     <div className="border border-[#9dc3dc] rounded-[42px] px-4 py-6 bg-white overflow-hidden">
 
@@ -414,7 +437,7 @@ export default function Welcome() {
 
                                 {/* TEXT */}
                                 <h2 className="text-[20px] sm:text-[28px] md:text-[36px] lg:text-[44px] font-medium tracking-[-0.05em] leading-tight text-black">
-                                    Menurut Mereka,
+                                    {t.testi_title_1}
                                 </h2>
 
                             {/* LOGO */}
@@ -439,7 +462,7 @@ export default function Welcome() {
 
                             {/* TEXT */}
                             <h2 className="text-[20px] sm:text-[28px] md:text-[36px] lg:text-[44px] font-medium tracking-[-0.05em] leading-tight text-black">
-                                Bagaimana?
+                                {t.testi_title_2}
                             </h2>
 
                         </div>
@@ -572,11 +595,11 @@ export default function Welcome() {
                     {/* Heading */}
                     <div className="text-center mb-12">
                         <h2 className="text-white text-[42px] font-black tracking-tight leading-none">
-                            Our Partners
+                            {t.partners_title}
                         </h2>
 
                         <p className="text-white/85 text-[22px] mt-4 font-medium">
-                            We proudly present our partners, #UMKMJaya
+                            {t.partners_subtitle}
                         </p>
                     </div>
 
@@ -615,7 +638,7 @@ export default function Welcome() {
             </section>
 
             {/* CTA Section */}
-            <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 px-4 sm:px-6 lg:px-25 mt-10 mb-15">
+            <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2 px-4 sm:px-6 lg:px-18 mt-10 mb-15">
                 <div
                     className="rounded-[32px] overflow-hidden w-full max-w-[1600px] mx-auto"
                     style={{
@@ -666,7 +689,7 @@ export default function Welcome() {
                                         mx-auto
                                     "
                                 >
-                                    Selalu Menjadi Jawaban Terbaik Anda
+                                    {t.cta_bottom_title}
                                 </h1>
 
                                 {/* BUTTON */}
@@ -686,7 +709,7 @@ export default function Welcome() {
                                         shadow-lg
                                     "
                                 >
-                                    Coba Sekarang
+                                    {t.cta_bottom_btn}
                                 </button>
 
                             </div>

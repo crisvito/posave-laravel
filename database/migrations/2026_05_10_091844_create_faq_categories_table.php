@@ -11,7 +11,8 @@ return new class extends Migration
         // Tabel kategori FAQ
         Schema::create('faq_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name');           // contoh: "Umum", "Akun"
+            $table->string('name_id');           // contoh: "Umum", "Akun"
+            $table->string('name_en');           // contoh: "General", "Account"
             $table->string('slug')->unique(); // contoh: "umum", "akun"
             $table->integer('sort_order')->default(0);
             $table->timestamps();

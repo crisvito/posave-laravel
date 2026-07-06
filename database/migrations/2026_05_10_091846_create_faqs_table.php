@@ -15,8 +15,10 @@ return new class extends Migration
             $table->foreignId('faq_category_id')
                 ->constrained()
                 ->cascadeOnDelete();
-            $table->string('question');
-            $table->text('answer');
+            $table->string('question_id');
+            $table->string('question_en');
+            $table->text('answer_id');
+            $table->text('answer_en');
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

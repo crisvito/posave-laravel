@@ -9,8 +9,10 @@ class Faq extends Model
 {
     protected $fillable = [
         'faq_category_id',
-        'question',
-        'answer',
+        'question_id',
+        'question_en',
+        'answer_id',
+        'answer_en',
         'sort_order',
         'is_active',
     ];

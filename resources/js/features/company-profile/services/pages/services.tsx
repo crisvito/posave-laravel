@@ -1,12 +1,16 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { AppLayout } from "@/layouts";
 import { FeatureCard } from "../components/featureCard";
 import { AnimatedLink } from '../components/animatedLink';
 
 export default function Services() {
+    const { translations, locale } = usePage().props as any;
+
+    const t = translations['company-profile/services'];
+    const isEn = locale === 'en';
     return (
         <AppLayout>
-            <Head title="Layanan - POSAVE" />
+            <Head title={t.page_title} />
             
             <div className="py-4 md:py-8">
                 
@@ -22,11 +26,11 @@ export default function Services() {
                     <div className="relative z-10 flex flex-col items-center text-center px-6">
                         
                         <h1 className="text-3xl md:text-[63px] font-semibold text-[var(--white)] drop-shadow-[2px_6px_10px_rgba(0,0,0,0.7)] tracking-wide mt-10 md:mt-12 lg:mt-25 leading-tight">
-                            Kelola Toko Jadi Lebih Mudah
+                            {t.hero_title}
                         </h1>
                         
                         <p className="text-base md:text-[26px] text-[var(--second-accent)] mt-3 mb-10 md:mb-12 lg:mb-20 drop-shadow-[1px_3px_5px_rgba(0,0,0,0.7)]">
-                            Satu Sistem untuk Semua Kebutuhan Toko
+                            {t.hero_subtitle}
                         </p>
                         
                         <AnimatedLink 
@@ -34,30 +38,30 @@ export default function Services() {
                             className="bg-[var(--primary-900)] text-lg md:text-[22px] text-[var(--text-light)] font-medium px-8 md:px-10 py-2.5 md:py-2 rounded-full shadow-lg"
                             hoverBgClass="bg-[var(--secondary-900)]"
                         >
-                            Coba Sekarang
+                            {t.try_now}
                         </AnimatedLink>
                     </div>
                 </div>
 
                 <div className="mt-16 md:mt-24 mb-16 md:mb-20 px-6 md:px-20 lg:px-28">
                     <h2 className="text-center text-3xl md:text-[48px] font-semibold text-[var(--black)] mb-8 md:mb-12">
-                        Cara Baru Mengelola Toko
+                        {t.section_title}
                     </h2>
                     
                     <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-10 md:gap-0">
                         <div className="md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
                             <h3 className="text-2xl md:text-[28px] font-medium text-[var(--black)] mb-3 md:mb-4">
-                                Semua Urusan Toko, Bisa Lewat Chat
+                                {t.chat_title}
                             </h3>
                             <p className="text-[var(--black)] mb-8 leading-relaxed text-base md:text-[20px]">
-                                Catat transaksi, cek stok, dan lihat laporan hanya dengan chat sederhana
+                                {t.chat_description}
                             </p>
                             <AnimatedLink 
                                 href="#" 
                                 className="bg-[#243447] text-[var(--text-light)] px-8 py-3 md:py-2.5 rounded-full text-base md:text-[20px] font-regular shadow-sm"
                                 hoverBgClass="bg-[#1a2634]"
                             >
-                                Lihat Cara Kerja
+                                {t.see_how_it_works}
                             </AnimatedLink>
                         </div>
                         
@@ -75,24 +79,24 @@ export default function Services() {
                     
                     <div className="mb-16 md:mb-20">
                         <h2 className="text-center text-3xl md:text-[48px] font-semibold text-[var(--black)] mb-8 md:mb-10">
-                            Fitur Utama POSAVE
+                            {t.main_features}
                         </h2>
                         <FeatureCard /> 
                     </div>
 
                     <div className="mb-16 md:mb-20">
                         <h2 className="text-center text-3xl md:text-[48px] font-semibold text-[var(--black)] mb-8 md:mb-10">
-                            Cara Kerja POSAVE
+                            {t.how_it_works}
                         </h2>
                         <div className="flex flex-wrap justify-center gap-4 md:gap-7">
                             <span className="bg-[var(--primary-900)] text-[var(--text-light)] px-6 md:px-8 py-3 md:py-4 rounded-full text-base md:text-[24px] font-semibold text-center w-full sm:w-auto">
-                                1. Tambahkan Produk
+                                {t.step_1}
                             </span>
                             <span className="bg-[var(--primary-900)] text-[var(--text-light)] px-6 md:px-8 py-3 md:py-4 rounded-full text-base md:text-[24px] font-semibold text-center w-full sm:w-auto">
-                                2. Catat Transaksi/Chat
+                                {t.step_2}
                             </span>
                             <span className="bg-[var(--primary-900)] text-[var(--text-light)] px-6 md:px-8 py-3 md:py-4 rounded-full text-base md:text-[24px] font-semibold text-center w-full sm:w-auto">
-                                3. Lihat Laporan
+                                {t.step_3}
                             </span>
                         </div>
                     </div>
@@ -102,11 +106,11 @@ export default function Services() {
                         <div className="md:w-[55%] lg:w-[60%] flex flex-col items-center md:items-start w-full">
                             
                             <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-[44px] font-semibold text-gray-900 mb-3 md:mb-6 leading-snug">
-                                Siap Mengembangkan<br className="hidden lg:block"/> Bisnis Anda?
+                                {t.cta_title}
                             </h2>
                             
                             <p className="text-[15px] sm:text-base md:text-lg lg:text-[20px] text-gray-800 mb-6 md:mb-8 px-2 md:px-0">
-                                Ambil langkah pertama anda bersama POSAVE
+                                {t.cta_description}
                             </p>
                             
                             <AnimatedLink 
@@ -114,7 +118,7 @@ export default function Services() {
                                 className="bg-[#243447] text-[var(--text-light)] px-6 lg:px-8 py-3 lg:py-3.5 rounded-full text-base sm:text-lg lg:text-[24px] font-medium inline-block shadow-md"
                                 hoverBgClass="bg-[#1a2634]"
                             >
-                                Mulai Sekarang
+                                {t.start_now}
                             </AnimatedLink>
                         </div>
                         

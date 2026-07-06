@@ -39,7 +39,7 @@ class BlogController extends Controller
      */
     public function show(string $id)
     {
-        return Inertia::render('blog/detail', [
+        return Inertia::render('company-profile/blog/detail', [
             'articleId' => $id
         ]);
     }
