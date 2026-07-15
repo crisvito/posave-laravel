@@ -16,7 +16,7 @@ import { InventoryPurchaseOrderActionsMenu, InventoryPurchaseOrderCreateModal } 
 import { useConfirmAction, useDropdownMenu, useFilters } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
-import { MoreVertical, Plus, Printer } from 'lucide-react';
+import { MoreVertical, Package, Plus, Printer, Store } from 'lucide-react';
 import { useState } from 'react';
 
 interface Supplier {
@@ -62,9 +62,9 @@ interface InventoryPurchaseOrderListProps {
 }
 
 const statusLabel: Record<string, { text: string; className: string }> = {
-    waiting_fulfilment: { text: 'Menunggu', className: 'bg-yellow-100 text-yellow-600' },
-    success: { text: 'Selesai', className: 'bg-green-100 text-green-600' },
-    cancelled: { text: 'Dibatalkan', className: 'bg-red-100 text-red-600' },
+    waiting_fulfilment: { text: 'Menunggu', className: 'bg-[var(--warning-background)] text-[var(--warning)]' },
+    success: { text: 'Selesai', className: 'bg-[var(--success-background)] text-[var(--success)]' },
+    cancelled: { text: 'Dibatalkan', className: 'bg-[var(--danger-background)] text-[var(--danger)]' },
 };
 
 const STATUS_OPTIONS = [
@@ -105,13 +105,19 @@ export default function InventoryPurchaseOrderList({
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--page-bg)] p-4 sm:p-6">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
                     <div className="flex flex-wrap items-center gap-3">
-                        {!is_branch_manager && (
+                        {!is_branch_manager ? (
                             <FilterDropdown
                                 value={filters.branch_id}
                                 options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
                                 allLabel="Semua Cabang"
                                 onChange={(v) => applyFilters({ branch_id: v })}
+                                icon={<Store className="h-4 w-4" />}
                             />
+                        ) : (
+                            <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)]">
+                                <Store className="h-4 w-4" />
+                                {branches[0]?.name ?? 'Cabang Anda'}
+                            </div>
                         )}
 
                         <DateNavigator date={currentDate} onChange={(date) => applyFilters({ date })} variant="default" size="sm" />
@@ -125,7 +131,7 @@ export default function InventoryPurchaseOrderList({
                             <Plus className="mr-2 h-4 w-4" />
                             Buat PO
                         </Button>
-                        <Button variant="outline" className="bg-[var(--neutral-white)]">
+                        <Button variant="outline" className="bg-[var(--card)]">
                             <Printer className="mr-2 h-4 w-4" />
                             Cetak
                         </Button>
@@ -143,7 +149,7 @@ export default function InventoryPurchaseOrderList({
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm">
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
                     <div className="overflow-x-auto">
                         <Table className="min-w-[760px]">
                             <TableHeader className="bg-[var(--surface-header)]">
@@ -160,7 +166,13 @@ export default function InventoryPurchaseOrderList({
 
                             <TableBody>
                                 {purchaseOrders.data.length === 0 ? (
-                                    <TableEmptyState colSpan={7} message="Belum ada PO, buat PO terlebih dahulu" />
+                                    <TableEmptyState
+                                        colSpan={7}
+                                        icon={Package}
+                                        message="Belum ada Pembelian"
+                                        description="Klik tombol Untuk Buat Pembelian"
+                                        action={{ label: '+ Buat Pembelian', onClick: () => setShowCreateModal(true) }}
+                                    />
                                 ) : (
                                     purchaseOrders.data.map((po) => (
                                         <TableRow key={po.id}>

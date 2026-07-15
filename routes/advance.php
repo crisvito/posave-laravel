@@ -14,10 +14,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
 
-  // Base route TANPA role restriction — jadi gateway pintar
-  // Route::get('/', [DashboardController::class, 'index'])->name('index');
-
-  // Sub-route tetap diproteksi seperti biasa
   Route::middleware('role:owner,branch_manager')->group(function () {
     Route::prefix('inventory')->name('inventory.')->group(function () {
       Route::resource('items', ItemController::class);
@@ -32,11 +28,17 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     });
 
     Route::resource('reports', ReportController::class);
+    Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
+    Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
+    Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
+    Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+  });
 
-    Route::middleware('role:owner')->group(function () {
-      Route::resource('employees', EmployeeController::class);
-      Route::resource('employees-access', EmployeeAccessController::class);
-    });
+  Route::middleware('role:owner')->group(function () {
+    Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
+    Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+
+    Route::resource('employees-access', EmployeeAccessController::class);
   });
 });
 

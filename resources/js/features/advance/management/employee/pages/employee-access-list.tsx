@@ -49,12 +49,13 @@ export default function EmployeeAccessList({ accesses, filters }: EmployeeAccess
 
     return (
         <DashboardSidebarLayout title="Akses Karyawan" description="Kelola daftar Akses karyawan anda">
-            <Head title="Akses Karyawan" />
-            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
+            <Head title="Akses Kategori" />
+            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
                     <SearchInput value={search} onChange={setSearch} onSubmit={handleSearch} placeholder="Cari kategori..." />
 
                     <div className="flex flex-wrap items-center gap-3">
+                        {/* Tombol Buat Kategori konsisten dengan contoh */}
                         <Button
                             onClick={() => setShowCreateModal(true)}
                             className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]"
@@ -65,7 +66,7 @@ export default function EmployeeAccessList({ accesses, filters }: EmployeeAccess
                     </div>
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm">
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm dark:bg-[var(--card)]">
                     <div className="overflow-x-auto">
                         <Table className="min-w-[520px]">
                             <TableHeader className="bg-[var(--surface-header)]">
@@ -88,13 +89,22 @@ export default function EmployeeAccessList({ accesses, filters }: EmployeeAccess
                                     />
                                 ) : (
                                     accesses.data.map((access) => (
-                                        <TableRow key={access.id}>
+                                        <TableRow key={access.id} className="dark:border-[var(--border-strong)]">
                                             <TableCell>
-                                                <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-600">
+                                                {/* Warna mengikuti pola yang Anda inginkan */}
+                                                <span
+                                                    className="rounded-full px-3 py-1 text-xs font-medium"
+                                                    style={{
+                                                        backgroundColor: 'var(--second-accent)',
+                                                        color: 'var(--subheading)',
+                                                    }}
+                                                >
                                                     {access.name}
                                                 </span>
                                             </TableCell>
-                                            <TableCell className="text-[var(--grey-text)]">{access.employees_count} karyawan</TableCell>
+                                            <TableCell className="text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                                {access.employees_count} karyawan
+                                            </TableCell>
                                             <TableCell className="relative">
                                                 <Button
                                                     ref={(el) => {
@@ -103,6 +113,7 @@ export default function EmployeeAccessList({ accesses, filters }: EmployeeAccess
                                                     variant="ghost"
                                                     size="icon"
                                                     onClick={() => toggleMenu(access.id)}
+                                                    className="dark:text-white dark:hover:bg-[var(--border-strong)]"
                                                 >
                                                     <MoreVertical className="h-4 w-4" />
                                                 </Button>

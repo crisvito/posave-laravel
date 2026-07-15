@@ -25,6 +25,7 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
     const [direction, setDirection] = React.useState<'send' | 'receive'>('send');
 
     const { data, setData, post, processing, errors, reset } = useForm({
+        branch_id: isBranchManager && myBranchId ? String(myBranchId) : '',
         sender_branch_id: isBranchManager && direction === 'send' ? String(myBranchId) : '',
         receiver_branch_id: isBranchManager && direction === 'receive' ? String(myBranchId) : '',
         date: new Date().toISOString().slice(0, 10),
@@ -62,14 +63,15 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
         });
     };
 
-    const selectClass =
-        'w-full appearance-none rounded-md border border-input bg-transparent pl-3 pr-10 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
+    const inputClass =
+        'w-full appearance-none rounded-md border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)] dark:text-white';
+    const lockedBranchName = branches.find((b) => b.id === myBranchId)?.name ?? '';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-lg rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl">
+            <div className="w-full max-w-lg rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                 <div className="mb-5 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[var(--subheading)]">Buat Kiriman Baru</h3>
+                    <h3 className="text-lg font-bold text-[var(--subheading)] dark:text-white">Buat Kiriman Baru</h3>
                     <button
                         type="button"
                         onClick={() => {
@@ -78,7 +80,7 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                         }}
                         aria-label="Tutup"
                     >
-                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
+                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)] dark:hover:text-white" />
                     </button>
                 </div>
 
@@ -91,7 +93,7 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                     onClick={() => handleDirectionChange('send')}
                                     className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition ${
                                         direction === 'send'
-                                            ? 'border-[var(--surface-header)] bg-[var(--second-accent)]'
+                                            ? 'border-[var(--surface-header)] bg-[var(--second-accent)] dark:bg-[var(--second-accent)] dark:text-white'
                                             : 'border-[var(--border-strong)] text-[var(--grey-text)]'
                                     }`}
                                 >
@@ -102,7 +104,7 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                     onClick={() => handleDirectionChange('receive')}
                                     className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition ${
                                         direction === 'receive'
-                                            ? 'border-[var(--surface-header)] bg-[var(--second-accent)]'
+                                            ? 'border-[var(--surface-header)] bg-[var(--second-accent)] dark:bg-[var(--second-accent)] dark:text-white'
                                             : 'border-[var(--border-strong)] text-[var(--grey-text)]'
                                     }`}
                                 >
@@ -110,21 +112,18 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                 </button>
                             </div>
 
-                            <div className="flex items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2.5 text-sm">
-                                <span className="font-semibold text-[var(--subheading)]">
-                                    {branches.find((b) => b.id === myBranchId)?.name ?? 'Cabang saya'}
-                                </span>
+                            <div className="flex items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2.5 text-sm dark:text-white">
+                                <span className="font-semibold text-[var(--subheading)] dark:text-white">{lockedBranchName || 'Cabang saya'}</span>
                                 <ArrowRight className="h-4 w-4 text-[var(--grey-text)]" />
                                 <div className="relative flex-1">
                                     <select
-                                        aria-label="Pilih cabang tujuan/asal"
                                         value={direction === 'send' ? data.receiver_branch_id : data.sender_branch_id}
                                         onChange={(e) =>
                                             direction === 'send'
                                                 ? setData('receiver_branch_id', e.target.value)
                                                 : setData('sender_branch_id', e.target.value)
                                         }
-                                        className="border-input focus-visible:ring-ring w-full appearance-none rounded-md border bg-white px-2 py-1.5 text-sm focus-visible:ring-1 focus-visible:outline-none"
+                                        className={`${inputClass} bg-white dark:bg-[var(--card)]`}
                                     >
                                         <option value="" disabled>
                                             Pilih cabang
@@ -137,123 +136,103 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                                 </option>
                                             ))}
                                     </select>
+                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
                                 </div>
                             </div>
-                            {(errors.sender_branch_id || errors.receiver_branch_id) && (
-                                <span className="text-sm text-red-500">{errors.sender_branch_id ?? errors.receiver_branch_id}</span>
-                            )}
                         </>
                     ) : (
                         <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Cabang Pengirim</label>
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Cabang Pengirim</label>
                                 <div className="relative">
                                     <select
-                                        aria-label="Cabang pengirim"
                                         value={data.sender_branch_id}
                                         onChange={(e) => setData('sender_branch_id', e.target.value)}
-                                        className={selectClass}
+                                        className={`${inputClass} appearance-none`}
                                     >
-                                        <option value="" disabled>
+                                        <option value="" disabled className="dark:bg-[var(--card)]">
                                             Pilih cabang
                                         </option>
                                         {branches.map((b) => (
-                                            <option key={b.id} value={b.id}>
+                                            <option key={b.id} value={b.id} className="dark:bg-[var(--card)]">
                                                 {b.name}
                                             </option>
                                         ))}
                                     </select>
                                     <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
                                 </div>
-                                {errors.sender_branch_id && <span className="text-sm text-red-500">{errors.sender_branch_id}</span>}
                             </div>
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Cabang Penerima</label>
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Cabang Penerima</label>
                                 <div className="relative">
                                     <select
-                                        aria-label="Cabang penerima"
                                         value={data.receiver_branch_id}
                                         onChange={(e) => setData('receiver_branch_id', e.target.value)}
-                                        className={selectClass}
+                                        className={`${inputClass} appearance-none`}
                                     >
-                                        <option value="" disabled>
+                                        <option value="" disabled className="dark:bg-[var(--card)]">
                                             Pilih cabang
                                         </option>
                                         {branches
                                             .filter((b) => String(b.id) !== data.sender_branch_id)
                                             .map((b) => (
-                                                <option key={b.id} value={b.id}>
+                                                <option key={b.id} value={b.id} className="dark:bg-[var(--card)]">
                                                     {b.name}
                                                 </option>
                                             ))}
                                     </select>
                                     <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
                                 </div>
-                                {errors.receiver_branch_id && <span className="text-sm text-red-500">{errors.receiver_branch_id}</span>}
                             </div>
                         </div>
                     )}
 
                     <div>
-                        <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Tanggal</label>
-                        <input
-                            aria-label="Tanggal kiriman"
-                            type="date"
-                            value={data.date}
-                            onChange={(e) => setData('date', e.target.value)}
-                            className="border-input focus-visible:ring-ring w-full rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:ring-1 focus-visible:outline-none"
-                        />
-                        {errors.date && <span className="text-sm text-red-500">{errors.date}</span>}
+                        <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Tanggal</label>
+                        <input type="date" value={data.date} onChange={(e) => setData('date', e.target.value)} className={inputClass} />
                     </div>
 
                     <div>
                         <div className="mb-2 flex items-center justify-between">
-                            <label className="text-sm font-medium text-[var(--subheading)]">Barang</label>
+                            <label className="text-sm font-medium text-[var(--subheading)] dark:text-white">Barang</label>
                             <button
                                 type="button"
                                 onClick={addItem}
-                                className="flex items-center gap-1 text-sm font-medium text-orange-500 hover:text-orange-600"
+                                className="flex items-center gap-1 text-sm font-medium text-[var(--bright-accent)] hover:underline"
                             >
                                 <Plus className="h-4 w-4" /> Tambah Barang
                             </button>
                         </div>
-
                         <div className="flex flex-col gap-3">
                             {data.items.map((item, index) => (
                                 <div key={index} className="flex items-center gap-2">
-                                    <div className="relative flex-1">
-                                        <select
-                                            aria-label="Pilih barang"
-                                            value={item.inventory_item_id}
-                                            onChange={(e) => updateItem(index, 'inventory_item_id', e.target.value)}
-                                            className={selectClass}
-                                        >
-                                            <option value="" disabled>
-                                                Pilih barang
+                                    <select
+                                        value={item.inventory_item_id}
+                                        onChange={(e) => updateItem(index, 'inventory_item_id', e.target.value)}
+                                        className={`${inputClass} appearance-none`}
+                                    >
+                                        <option value="" disabled className="dark:bg-[var(--card)]">
+                                            Pilih barang
+                                        </option>
+                                        {inventoryItems.map((i) => (
+                                            <option key={i.id} value={i.id} className="dark:bg-[var(--card)]">
+                                                {i.name} ({i.sku})
                                             </option>
-                                            {inventoryItems.map((i) => (
-                                                <option key={i.id} value={i.id}>
-                                                    {i.name} ({i.sku})
-                                                </option>
-                                            ))}
-                                        </select>
-                                        <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                                    </div>
+                                        ))}
+                                    </select>
                                     <input
-                                        aria-label="Jumlah"
                                         type="number"
                                         min={1}
                                         value={item.quantity}
                                         onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
-                                        className="border-input focus-visible:ring-ring w-20 rounded-md border bg-transparent px-3 py-2 text-sm focus-visible:ring-1 focus-visible:outline-none"
+                                        className={`${inputClass} w-20`}
                                         placeholder="Qty"
                                     />
                                     {data.items.length > 1 && (
                                         <button
                                             type="button"
-                                            aria-label="Hapus barang ini"
                                             onClick={() => removeItem(index)}
-                                            className="rounded-md p-1 hover:bg-red-50"
+                                            className="rounded-md p-1 hover:bg-red-50 dark:hover:bg-red-900/30"
                                         >
                                             <Trash2 className="h-5 w-5 text-red-500" />
                                         </button>
@@ -261,7 +240,6 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                 </div>
                             ))}
                         </div>
-                        {errors.items && <span className="text-sm text-red-500">{errors.items}</span>}
                     </div>
 
                     <div className="mt-2 flex justify-end gap-2">
@@ -272,10 +250,15 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                 reset();
                                 onClose();
                             }}
+                            className="dark:text-white"
                         >
                             Batal
                         </Button>
-                        <Button type="submit" disabled={processing}>
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="bg-[var(--surface-header)] text-white hover:bg-[var(--surface-header-hover)] dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                        >
                             {processing ? 'Mengirim...' : 'Kirim Permintaan'}
                         </Button>
                     </div>

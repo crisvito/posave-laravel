@@ -64,7 +64,7 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                     </div>
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm">
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
                     <div className="overflow-x-auto">
                         <Table className="min-w-[420px]">
                             <TableHeader className="bg-[var(--surface-header)]">
@@ -89,7 +89,13 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                                     categories.data.map((category) => (
                                         <TableRow key={category.id}>
                                             <TableCell>
-                                                <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-600">
+                                                <span
+                                                    className="rounded-full px-3 py-1 text-xs font-medium"
+                                                    style={{
+                                                        backgroundColor: `${category.color ?? '#94a3b8'}1a`,
+                                                        color: category.color ?? '#64748b',
+                                                    }}
+                                                >
                                                     {category.name}
                                                 </span>
                                             </TableCell>

@@ -1,4 +1,5 @@
-import { Button, Input } from '@/components/ui';
+import { Button, CATEGORY_COLOR_SWATCHES, CategoryColorPicker } from '@/components';
+import { Input } from '@/components/ui';
 import { useForm } from '@inertiajs/react';
 import { Tag, Trash2, X } from 'lucide-react';
 
@@ -8,15 +9,13 @@ interface InventoryCategoryFormModalProps {
     onDelete?: () => void;
 }
 
-const COLOR_SWATCHES = ['#3d8ab8', '#16a34a', '#e75f1a', '#9f6fd5', '#dc2626', '#0891b2', '#ca8a04', '#db2777'];
-
 export function InventoryCategoryFormModal({ category, onClose, onDelete }: InventoryCategoryFormModalProps) {
     const isEdit = !!category;
 
     const { data, setData, post, processing, errors, reset } = useForm({
         _method: isEdit ? 'PUT' : 'POST',
         name: category?.name ?? '',
-        color: category?.color ?? COLOR_SWATCHES[0],
+        color: category?.color ?? CATEGORY_COLOR_SWATCHES[0],
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -58,23 +57,8 @@ export function InventoryCategoryFormModal({ category, onClose, onDelete }: Inve
                         {errors.name && <p className="mt-1 text-sm text-[var(--danger)]">{errors.name}</p>}
                     </div>
 
-                    <div>
-                        <label className="mb-2 block text-sm font-semibold text-[var(--subheading)]">Pilih Warna</label>
-                        <div className="flex flex-wrap gap-3">
-                            {COLOR_SWATCHES.map((color) => (
-                                <button
-                                    key={color}
-                                    type="button"
-                                    aria-label={`Pilih warna ${color}`}
-                                    onClick={() => setData('color', color)}
-                                    className={`h-11 w-11 rounded-full transition ${
-                                        data.color === color ? 'ring-4 ring-offset-2' : 'hover:scale-105'
-                                    }`}
-                                    style={{ backgroundColor: color, ['--tw-ring-color' as any]: color }}
-                                />
-                            ))}
-                        </div>
-                    </div>
+                    <CategoryColorPicker value={data.color} onChange={(color) => setData('color', color ?? CATEGORY_COLOR_SWATCHES[0])} />
+                    {errors.color && <p className="mt-1 text-sm text-[var(--danger)]">{errors.color}</p>}
 
                     <div className="mt-2 flex flex-col gap-2">
                         <Button

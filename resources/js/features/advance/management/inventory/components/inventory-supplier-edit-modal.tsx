@@ -63,21 +63,24 @@ export function InventorySupplierEditModal({ supplier, categories, onClose }: In
         onClose();
     };
 
+    const inputClass =
+        'w-full rounded-lg border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)] dark:text-white';
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-lg rounded-2xl bg-[var(--neutral-white)] shadow-xl">
+            <div className="w-full max-w-lg rounded-2xl bg-[var(--neutral-white)] shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                 <div className="flex items-start justify-between p-6 pb-4">
                     <div className="flex items-center gap-4">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-                            <Store className="h-7 w-7 text-gray-500" />
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 dark:bg-[var(--second-accent)]">
+                            <Store className="h-7 w-7 text-gray-500 dark:text-[var(--muted-foreground)]" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold text-[var(--subheading)]">Ubah Pemasok</h3>
-                            <p className="text-sm text-[var(--grey-text)]">Perbarui data pemasok</p>
+                            <h3 className="text-xl font-bold text-[var(--subheading)] dark:text-white">Ubah Pemasok</h3>
+                            <p className="text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">Perbarui data pemasok</p>
                         </div>
                     </div>
                     <button onClick={handleClose} className="mt-1" aria-label="Tutup">
-                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
+                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)] dark:hover:text-white" />
                     </button>
                 </div>
 
@@ -87,27 +90,22 @@ export function InventorySupplierEditModal({ supplier, categories, onClose }: In
                     <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto p-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Nama Pemasok</label>
-                                <input
-                                    aria-label="Nama pemasok"
-                                    type="text"
-                                    value={data.name}
-                                    onChange={(e) => setData('name', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
-                                />
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Nama Pemasok</label>
+                                <input type="text" value={data.name} onChange={(e) => setData('name', e.target.value)} className={inputClass} />
                                 {errors.name && <span className="text-xs text-red-500">{errors.name}</span>}
                             </div>
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Kategori</label>
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Kategori</label>
                                 <select
-                                    aria-label="Pilih kategori"
                                     value={data.category_id}
                                     onChange={(e) => setData('category_id', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                                    className={`${inputClass} appearance-none`}
                                 >
-                                    <option value="">Tanpa kategori</option>
+                                    <option value="" className="dark:bg-[var(--card)]">
+                                        Tanpa kategori
+                                    </option>
                                     {categories.map((cat) => (
-                                        <option key={cat.id} value={cat.id}>
+                                        <option key={cat.id} value={cat.id} className="dark:bg-[var(--card)]">
                                             {cat.name}
                                         </option>
                                     ))}
@@ -117,81 +115,67 @@ export function InventorySupplierEditModal({ supplier, categories, onClose }: In
                         </div>
 
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Alamat</label>
+                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Alamat</label>
                             <textarea
-                                aria-label="Alamat pemasok"
                                 value={data.address}
                                 onChange={(e) => setData('address', e.target.value)}
                                 rows={2}
-                                className="border-input focus-visible:ring-ring w-full resize-none rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                                className={`${inputClass} resize-none`}
                             />
                             {errors.address && <span className="text-xs text-red-500">{errors.address}</span>}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Nomor Telepon</label>
-                                <input
-                                    aria-label="Nomor telepon pemasok"
-                                    type="text"
-                                    value={data.phone}
-                                    onChange={(e) => setData('phone', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
-                                />
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Nomor Telepon</label>
+                                <input type="text" value={data.phone} onChange={(e) => setData('phone', e.target.value)} className={inputClass} />
                                 {errors.phone && <span className="text-xs text-red-500">{errors.phone}</span>}
                             </div>
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Email</label>
-                                <input
-                                    aria-label="Email pemasok"
-                                    type="email"
-                                    value={data.email}
-                                    onChange={(e) => setData('email', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
-                                />
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Email</label>
+                                <input type="email" value={data.email} onChange={(e) => setData('email', e.target.value)} className={inputClass} />
                                 {errors.email && <span className="text-xs text-red-500">{errors.email}</span>}
                             </div>
                         </div>
 
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
+                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">
                                 Logo <span className="font-normal text-[var(--grey-text)]">(Opsional)</span>
                             </label>
                             <div
                                 onClick={() => fileInputRef.current?.click()}
-                                className="flex cursor-pointer items-center gap-4 rounded-lg border border-dashed border-[var(--border-strong)] p-4 transition-colors hover:bg-[var(--surface-badge)]"
+                                className="flex cursor-pointer items-center gap-4 rounded-lg border border-dashed border-[var(--border-strong)] p-4 transition-colors hover:bg-[var(--surface-badge)] dark:hover:bg-[var(--second-accent)]"
                             >
                                 {preview ? (
-                                    <img src={preview} alt="Pratinjau logo" className="h-12 w-12 rounded-full object-cover" />
+                                    <img src={preview} alt="preview" className="h-12 w-12 rounded-full object-cover" />
                                 ) : (
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 dark:bg-[var(--border-strong)]">
                                         <UploadCloud className="h-6 w-6 text-gray-400" />
                                     </div>
                                 )}
                                 <div>
-                                    <p className="text-sm font-medium text-[var(--subheading)]">
+                                    <p className="text-sm font-medium text-[var(--subheading)] dark:text-white">
                                         {preview ? 'Ganti logo' : 'Klik untuk upload logo'}
                                     </p>
-                                    <p className="text-xs text-[var(--grey-text)]">PNG, JPG atau WEBP. Maksimal 2MB</p>
+                                    <p className="text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                        PNG, JPG atau WEBP. Maksimal 2MB
+                                    </p>
                                 </div>
                             </div>
-                            <input
-                                aria-label="Unggah logo"
-                                ref={fileInputRef}
-                                type="file"
-                                accept="image/*"
-                                onChange={handleLogo}
-                                className="hidden"
-                            />
+                            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleLogo} className="hidden" aria-label="file-input" />
                             {errors.logo && <span className="text-xs text-red-500">{errors.logo}</span>}
                         </div>
                     </div>
 
                     <div className="flex justify-end gap-2 border-t border-[var(--border-strong)] px-6 py-4">
-                        <Button type="button" variant="outline" onClick={handleClose}>
+                        <Button type="button" variant="outline" onClick={handleClose} className="dark:text-white">
                             Batal
                         </Button>
-                        <Button type="submit" disabled={processing}>
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="bg-[var(--surface-header)] text-white hover:bg-[var(--surface-header-hover)] dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                        >
                             {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
                         </Button>
                     </div>

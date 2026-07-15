@@ -8,7 +8,7 @@ import {
     type ProductRow,
 } from '@/features/advance/management/report/components';
 import { deltaPct } from '@/features/advance/management/report/lib/calculations';
-import { cur, pct, type Cell, type CompanyInfo, type ExportColumn, type ReportExport } from '@/features/advance/management/report/lib/export';
+import { cur, pct, type Cell, type CompanyInfo, type ReportExport } from '@/features/advance/management/report/lib/export';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
@@ -44,18 +44,6 @@ const TABS: { key: TabKey; label: string }[] = [
     { key: 'laba', label: 'Laba Kotor' },
     { key: 'produk', label: 'Penjualan Barang' },
     { key: 'kategori', label: 'Kategori Penjualan' },
-];
-
-const STATEMENT_COLUMNS: ExportColumn[] = [
-    { header: 'Keterangan', align: 'left', width: 34 },
-    { header: 'Periode Ini', align: 'right' },
-    { header: 'Periode Lalu', align: 'right' },
-    { header: 'Perubahan %', align: 'right' },
-];
-
-const STATEMENT_COLUMNS_SINGLE: ExportColumn[] = [
-    { header: 'Keterangan', align: 'left', width: 34 },
-    { header: 'Nilai', align: 'right' },
 ];
 
 export default function Report({ filters, outlets, statement, productSales, categorySales }: Props) {
@@ -94,7 +82,17 @@ export default function Report({ filters, outlets, statement, productSales, cate
         title,
         subtitle,
         company: COMPANY,
-        columns: compare ? STATEMENT_COLUMNS : STATEMENT_COLUMNS_SINGLE,
+        columns: compare
+            ? [
+                  { header: 'Keterangan', align: 'left', width: 34 },
+                  { header: 'Periode Ini', align: 'right' },
+                  { header: 'Periode Lalu', align: 'right' },
+                  { header: 'Perubahan %', align: 'right' },
+              ]
+            : [
+                  { header: 'Keterangan', align: 'left', width: 34 },
+                  { header: 'Nilai', align: 'right' },
+              ],
         filenameBase: `${filenameBase}-${periodSuffix}`,
         boldRows: lines.flatMap((l, i) => (l.bold ? [i] : [])),
         rows: lines.map((l): Cell[] =>
@@ -108,12 +106,12 @@ export default function Report({ filters, outlets, statement, productSales, cate
         <DashboardSidebarLayout title="Laporan" description="Lihat dan kelola ringkasan dari penjualan anda">
             <Head title="Laporan" />
 
-            <div className="flex min-h-screen flex-col gap-6 bg-[var(--page-bg)] p-4 sm:p-6">
+            <div className="flex min-h-screen flex-col gap-6 bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <SalesFilterBar routeName="dashboard.reports.index" outlets={outlets} filters={filters} showPrint={false} />
 
                 <div className="-mt-2 flex flex-wrap items-center justify-between gap-3">
-                    <p className="text-xs text-[var(--grey-text)]">
-                        Periode <span className="font-medium text-[var(--subheading)]">{filters.label}</span>
+                    <p className="text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                        Periode <span className="font-medium text-[var(--subheading)] dark:text-white">{filters.label}</span>
                         {compare ? ' · dibandingkan periode sebelumnya.' : ' · laporan periode ini.'}
                     </p>
                     <button
@@ -121,12 +119,12 @@ export default function Report({ filters, outlets, statement, productSales, cate
                         role="switch"
                         aria-checked={compare}
                         onClick={() => setCompare((v) => !v)}
-                        className="flex cursor-pointer items-center gap-2.5 text-xs font-medium text-[var(--grey-text)] select-none"
+                        className="flex cursor-pointer items-center gap-2.5 text-xs font-medium text-[var(--grey-text)] select-none dark:text-[var(--muted-foreground)]"
                     >
                         Bandingkan periode sebelumnya
                         <span
                             className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
-                                compare ? 'bg-[var(--surface-header)]' : 'bg-[var(--border)]'
+                                compare ? 'bg-[var(--surface-header)]' : 'bg-[var(--border)] dark:bg-[var(--border-strong)]'
                             }`}
                         >
                             <span
@@ -144,8 +142,8 @@ export default function Report({ filters, outlets, statement, productSales, cate
                                 onClick={() => setTab(t.key)}
                                 className={`rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
                                     tab === t.key
-                                        ? 'bg-[var(--surface-header)] text-[var(--text-light)]'
-                                        : 'bg-[var(--neutral-white)] text-[var(--grey-text)] hover:bg-[var(--second-accent)]'
+                                        ? 'bg-[var(--surface-header)] text-white'
+                                        : 'bg-[var(--neutral-white)] text-[var(--grey-text)] hover:bg-[var(--second-accent)] dark:bg-[var(--card)] dark:text-[var(--muted-foreground)] dark:hover:bg-[var(--border-strong)]'
                                 }`}
                             >
                                 {t.label}

@@ -45,9 +45,7 @@ class TransferController extends Controller
 
         $incomingPendingCount = Transfer::pendingApprovalFor($user)->count();
 
-        $branches = $user->isBranchManager()
-            ? Branch::where('id', $user->branch_id)->get(['id', 'name'])
-            : Branch::where('company_id', $user->company_id)->get(['id', 'name']);
+        $branches = Branch::where('company_id', $user->company_id)->get(['id', 'name']);
 
         return Inertia::render('advance/management/inventory/inventory-transfer', [
             'transfers' => $transfers,

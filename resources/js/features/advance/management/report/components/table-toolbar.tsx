@@ -27,10 +27,10 @@ export function TableToolbar({ query, setQuery, sort, setSort, onExport }: Table
             </div>
             <div className="flex items-center gap-3">
                 <Select value={sort} onValueChange={(v) => setSort(v as SortKey)}>
-                    <SelectTrigger className="h-10 min-w-[170px] border-[var(--border)] bg-[var(--neutral-white)] text-[var(--subheading)]">
+                    <SelectTrigger className="h-10 min-w-[170px] border-[var(--border)] bg-[var(--neutral-white)] text-[var(--subheading)] dark:border-[var(--border-strong)] dark:bg-[var(--card)] dark:text-white">
                         <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="dark:border-[var(--border-strong)] dark:bg-[var(--card)] dark:text-white">
                         {SORT_OPTIONS.map((o) => (
                             <SelectItem key={o.value} value={o.value}>
                                 {o.label}

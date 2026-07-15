@@ -1,8 +1,8 @@
 import { Button } from '@/components';
 import { useForm } from '@inertiajs/react';
-import { Package, UploadCloud, X } from 'lucide-react';
+import { ChevronDown, Package, UploadCloud, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
-import type { InventoryCategory } from './inventory-item-actions-menu';
+import { InventoryCategory } from './inventory-category-actions-menu';
 
 interface InventoryItemCreateModalProps {
     categories: InventoryCategory[];
@@ -57,21 +57,26 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
         onClose();
     };
 
+    const inputClass =
+        'w-full rounded-lg border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)] dark:text-white';
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-lg rounded-2xl bg-[var(--neutral-white)] shadow-xl">
+            <div className="w-full max-w-lg rounded-2xl bg-[var(--neutral-white)] shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                 <div className="flex items-start justify-between p-6 pb-4">
                     <div className="flex items-center gap-4">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-                            <Package className="h-7 w-7 text-gray-500" />
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 dark:bg-[var(--second-accent)]">
+                            <Package className="h-7 w-7 text-gray-500 dark:text-[var(--muted-foreground)]" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold text-[var(--subheading)]">Buat Barang</h3>
-                            <p className="text-sm text-[var(--grey-text)]">Tambah barang baru ke inventori anda</p>
+                            <h3 className="text-xl font-bold text-[var(--subheading)] dark:text-white">Buat Barang</h3>
+                            <p className="text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                Tambah barang baru ke inventori anda
+                            </p>
                         </div>
                     </div>
                     <button aria-label="Tutup modal buat barang" onClick={handleClose} className="mt-1">
-                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
+                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)] dark:hover:text-white" />
                     </button>
                 </div>
 
@@ -80,140 +85,148 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
                 <form onSubmit={handleSubmit}>
                     <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto p-6">
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Nama Barang</label>
+                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Nama Barang</label>
                             <input
                                 aria-label="Nama barang"
                                 type="text"
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
                                 placeholder="Masukkan nama barang"
-                                className="border-input focus-visible:ring-ring w-full rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                                className={inputClass}
                             />
                             {errors.name && <span className="text-xs text-red-500">{errors.name}</span>}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Kategori</label>
-                                <select
-                                    aria-label="Pilih kategori barang"
-                                    value={data.category_id}
-                                    onChange={(e) => setData('category_id', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
-                                >
-                                    <option value="" disabled>
-                                        Pilih Kategori
-                                    </option>
-                                    {categories.map((cat) => (
-                                        <option key={cat.id} value={cat.id}>
-                                            {cat.name}
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Kategori</label>
+                                <div className="relative">
+                                    <select
+                                        aria-label="Pilih kategori barang"
+                                        value={data.category_id}
+                                        onChange={(e) => setData('category_id', e.target.value)}
+                                        className={`${inputClass} appearance-none`}
+                                    >
+                                        <option value="" disabled className="dark:bg-[var(--card)]">
+                                            Pilih Kategori
                                         </option>
-                                    ))}
-                                </select>
+                                        {categories.map((cat) => (
+                                            <option key={cat.id} value={cat.id} className="dark:bg-[var(--card)]">
+                                                {cat.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                </div>
                                 {errors.category_id && <span className="text-xs text-red-500">{errors.category_id}</span>}
                             </div>
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Cabang</label>
-                                <select
-                                    aria-label="Pilih cabang untuk stok awal"
-                                    value={data.branch_id}
-                                    onChange={(e) => setData('branch_id', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
-                                >
-                                    <option value="" disabled>
-                                        Pilih Cabang
-                                    </option>
-                                    {branches.map((b) => (
-                                        <option key={b.id} value={b.id}>
-                                            {b.name}
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Cabang</label>
+                                <div className="relative">
+                                    <select
+                                        aria-label="Pilih cabang untuk stok awal"
+                                        value={data.branch_id}
+                                        onChange={(e) => setData('branch_id', e.target.value)}
+                                        className={`${inputClass} appearance-none`}
+                                    >
+                                        <option value="" disabled className="dark:bg-[var(--card)]">
+                                            Pilih Cabang
                                         </option>
-                                    ))}
-                                </select>
+                                        {branches.map((b) => (
+                                            <option key={b.id} value={b.id} className="dark:bg-[var(--card)]">
+                                                {b.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                </div>
                                 {errors.branch_id && <span className="text-xs text-red-500">{errors.branch_id}</span>}
-                                <p className="mt-1 text-xs text-[var(--grey-text)]">Stok awal tercatat untuk cabang ini</p>
+                                <p className="mt-1 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                    Stok awal tercatat untuk cabang ini
+                                </p>
                             </div>
                         </div>
 
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Harga</label>
+                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Harga</label>
                             <input
                                 aria-label="Harga barang"
                                 type="number"
                                 min="0"
                                 value={data.price}
                                 onChange={(e) => setData('price', e.target.value)}
-                                placeholder="0"
-                                className="border-input focus-visible:ring-ring w-full rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                                className={inputClass}
                             />
                             {errors.price && <span className="text-xs text-red-500">{errors.price}</span>}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Stok Awal</label>
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Stok Awal</label>
                                 <input
                                     aria-label="Stok awal barang"
                                     type="number"
                                     min="0"
                                     value={data.current_stock}
                                     onChange={(e) => setData('current_stock', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                                    className={inputClass}
                                 />
                                 {errors.current_stock && <span className="text-xs text-red-500">{errors.current_stock}</span>}
                             </div>
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Stok Minimum</label>
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Stok Minimum</label>
                                 <input
                                     aria-label="Stok minimum barang"
                                     type="number"
                                     min="0"
                                     value={data.min_stock}
                                     onChange={(e) => setData('min_stock', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full rounded-lg border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                                    className={inputClass}
                                 />
-                                <p className="mt-1 text-xs text-[var(--grey-text)]">Jumlah minimum sebelum stok dianggap rendah</p>
+                                <p className="mt-1 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                    Jumlah minimum sebelum stok dianggap rendah
+                                </p>
                             </div>
                         </div>
 
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
+                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">
                                 Gambar <span className="font-normal text-[var(--grey-text)]">(Opsional)</span>
                             </label>
                             <div
                                 onClick={() => fileInputRef.current?.click()}
-                                className="flex cursor-pointer items-center gap-4 rounded-lg border border-dashed border-[var(--border-strong)] p-4 transition-colors hover:bg-[var(--surface-badge)]"
+                                className="flex cursor-pointer items-center gap-4 rounded-lg border border-dashed border-[var(--border-strong)] p-4 transition-colors hover:bg-[var(--surface-badge)] dark:hover:bg-[var(--second-accent)]"
                             >
                                 {preview ? (
                                     <img src={preview} alt="Pratinjau gambar barang" className="h-12 w-12 rounded-lg object-cover" />
                                 ) : (
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 dark:bg-[var(--border-strong)]">
                                         <UploadCloud className="h-6 w-6 text-gray-400" />
                                     </div>
                                 )}
                                 <div>
-                                    <p className="text-sm font-medium text-[var(--subheading)]">
+                                    <p className="text-sm font-medium text-[var(--subheading)] dark:text-white">
                                         {preview ? 'Ganti gambar' : 'Klik untuk upload gambar'}
                                     </p>
-                                    <p className="text-xs text-[var(--grey-text)]">PNG, JPG atau WEBP. Maksimal 2MB</p>
+                                    <p className="text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                        PNG, JPG atau WEBP. Maksimal 2MB
+                                    </p>
                                 </div>
                             </div>
-                            <input
-                                aria-label="Unggah gambar barang"
-                                ref={fileInputRef}
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImage}
-                                className="hidden"
-                            />
+                            <input type="file" ref={fileInputRef} accept="image/*" onChange={handleImage} className="hidden" />
                             {errors.image && <span className="text-xs text-red-500">{errors.image}</span>}
                         </div>
                     </div>
 
                     <div className="flex justify-end gap-2 border-t border-[var(--border-strong)] px-6 py-4">
-                        <Button aria-label="Batal buat barang" type="button" variant="outline" onClick={handleClose}>
+                        <Button type="button" variant="outline" onClick={handleClose} className="dark:text-white">
                             Batal
                         </Button>
-                        <Button aria-label="Simpan barang baru" type="submit" disabled={processing}>
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="bg-[var(--surface-header)] text-white hover:bg-[var(--surface-header-hover)] dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                        >
                             {processing ? 'Menyimpan...' : 'Simpan Barang'}
                         </Button>
                     </div>

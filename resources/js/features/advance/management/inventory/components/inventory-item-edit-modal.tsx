@@ -61,69 +61,66 @@ export function InventoryItemEditModal({ item, categories, branches, selectedBra
 
     const selectedBranchName = branches.find((b) => b.id === selectedBranchId)?.name;
 
+    const inputClass =
+        'w-full rounded-lg border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)] dark:text-white';
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-2xl bg-[var(--neutral-white)] p-5 shadow-xl">
-                <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[var(--subheading)]">Ubah Barang</h3>
+            <div className="w-full max-w-md rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                <div className="mb-5 flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-[var(--subheading)] dark:text-white">Ubah Barang</h3>
                     <button aria-label="Tutup modal ubah barang" onClick={handleClose}>
-                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
+                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)] dark:hover:text-white" />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+                <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-[var(--subheading)]">
+                        <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">
                             Gambar <span className="text-[var(--grey-text)]">(opsional)</span>
                         </label>
                         {preview && <img src={preview} alt="Pratinjau gambar barang" className="mb-2 h-16 w-16 rounded-lg object-cover" />}
-                        <input
-                            aria-label="Unggah gambar barang"
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImage}
-                            className="border-input w-full rounded-md border bg-transparent px-3 py-1.5 text-sm"
-                        />
+                        <input aria-label="Unggah gambar barang" type="file" accept="image/*" onChange={handleImage} className={inputClass} />
                         {errors.image && <span className="text-sm text-red-500">{errors.image}</span>}
                     </div>
 
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-[var(--subheading)]">Nama Barang</label>
+                        <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">Nama Barang</label>
                         <input
                             aria-label="Nama barang"
                             type="text"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            className="border-input focus-visible:ring-ring w-full rounded-md border bg-transparent px-3 py-1.5 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                            className={inputClass}
                         />
                         {errors.name && <span className="text-sm text-red-500">{errors.name}</span>}
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="mb-1 block text-sm font-medium text-[var(--subheading)]">SKU</label>
+                            <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">SKU</label>
                             <input
                                 aria-label="SKU barang"
                                 type="text"
                                 value={data.sku}
                                 onChange={(e) => setData('sku', e.target.value)}
-                                className="border-input focus-visible:ring-ring w-full rounded-md border bg-transparent px-3 py-1.5 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                                className={inputClass}
                             />
                             {errors.sku && <span className="text-xs text-red-500">{errors.sku}</span>}
                         </div>
                         <div>
-                            <label className="mb-1 block text-sm font-medium text-[var(--subheading)]">Kategori</label>
+                            <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">Kategori</label>
                             <select
                                 aria-label="Pilih kategori barang"
                                 value={data.category_id}
                                 onChange={(e) => setData('category_id', e.target.value)}
-                                className="border-input focus-visible:ring-ring w-full rounded-md border bg-transparent px-3 py-1.5 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                                className={`${inputClass} appearance-none`}
                             >
-                                <option value="" disabled>
+                                <option value="" disabled className="dark:bg-[var(--card)]">
                                     Pilih Kategori
                                 </option>
                                 {categories.map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
+                                    <option key={cat.id} value={cat.id} className="dark:bg-[var(--card)]">
                                         {cat.name}
                                     </option>
                                 ))}
@@ -135,7 +132,7 @@ export function InventoryItemEditModal({ item, categories, branches, selectedBra
                     {selectedBranchId ? (
                         <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-[var(--subheading)]">
+                                <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">
                                     Stok Saat Ini — {selectedBranchName}
                                 </label>
                                 <input
@@ -144,44 +141,48 @@ export function InventoryItemEditModal({ item, categories, branches, selectedBra
                                     min="0"
                                     value={data.current_stock}
                                     onChange={(e) => setData('current_stock', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full rounded-md border bg-transparent px-3 py-1.5 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                                    className={inputClass}
                                 />
                             </div>
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-[var(--subheading)]">Stok Minimum</label>
+                                <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">Stok Minimum</label>
                                 <input
                                     aria-label="Stok minimum barang"
                                     type="number"
                                     min="0"
                                     value={data.min_stock}
                                     onChange={(e) => setData('min_stock', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full rounded-md border bg-transparent px-3 py-1.5 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                                    className={inputClass}
                                 />
                             </div>
                         </div>
                     ) : (
-                        <p className="rounded-lg bg-[var(--second-accent)] px-3 py-2 text-xs text-[var(--grey-text)]">
+                        <p className="rounded-lg bg-[var(--second-accent)] px-3 py-2 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
                             Pilih salah satu cabang di filter (bukan &quot;Semua Cabang&quot;) untuk bisa mengatur stok barang ini.
                         </p>
                     )}
 
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-[var(--subheading)]">Harga</label>
+                        <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">Harga</label>
                         <input
                             aria-label="Harga barang"
                             type="number"
                             min="0"
                             value={data.price}
                             onChange={(e) => setData('price', e.target.value)}
-                            className="border-input focus-visible:ring-ring w-full rounded-md border bg-transparent px-3 py-1.5 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none"
+                            className={inputClass}
                         />
                     </div>
 
                     <div className="mt-3 flex justify-end gap-2">
-                        <Button aria-label="Batal ubah barang" type="button" variant="outline" onClick={handleClose}>
+                        <Button type="button" variant="outline" onClick={handleClose} className="dark:text-white">
                             Batal
                         </Button>
-                        <Button aria-label="Simpan perubahan barang" type="submit" disabled={processing}>
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="bg-[var(--surface-header)] text-white hover:bg-[var(--surface-header-hover)] dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                        >
                             {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
                         </Button>
                     </div>

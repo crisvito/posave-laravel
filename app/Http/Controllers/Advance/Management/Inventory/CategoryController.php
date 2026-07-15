@@ -12,6 +12,8 @@ use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
+    private const COLOR_PALETTE = ['#3d8ab8', '#16a34a', '#e75f1a', '#9f6fd5', '#dc2626', '#0891b2', '#ca8a04', '#db2777'];
+
     public function index(Request $request)
     {
         /** @var User $user */
@@ -50,9 +52,11 @@ class CategoryController extends Controller
                 'max:255',
                 Rule::unique('inventory_categories', 'name')->where(fn($q) => $q->where('company_id', $user->company_id)),
             ],
+            'color' => ['nullable', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
         ]);
 
         $validated['company_id'] = $user->company_id;
+        $validated['color'] = $validated['color'] ?? $this->resolveAutoColor($user->company_id);
 
         Category::create($validated);
 
@@ -86,6 +90,7 @@ class CategoryController extends Controller
                     ->where(fn($q) => $q->where('company_id', $user->company_id))
                     ->ignore($category->id),
             ],
+            'color' => ['required', 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
         ]);
 
         $category->update($validated);
@@ -102,5 +107,12 @@ class CategoryController extends Controller
         Category::where('company_id', $user->company_id)->findOrFail($id)->delete();
 
         return redirect()->route('dashboard.inventory.categories.index')->with('success', 'Kategori berhasil dihapus!');
+    }
+
+    private function resolveAutoColor(int $companyId): string
+    {
+        $index = Category::where('company_id', $companyId)->count() % count(self::COLOR_PALETTE);
+
+        return self::COLOR_PALETTE[$index];
     }
 }

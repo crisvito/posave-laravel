@@ -6,8 +6,15 @@ export function StatusBadge({ status }: { status: string }) {
         void: { label: 'Batal', color: 'var(--danger)', bg: 'var(--danger-background)' },
     };
     const s = map[status] ?? map.completed;
+
     return (
-        <span className="rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ backgroundColor: s.bg, color: s.color }}>
+        <span
+            className="rounded-full px-2 py-0.5 text-[10px] font-medium transition-colors"
+            style={{
+                backgroundColor: s.bg,
+                color: s.color,
+            }}
+        >
             {s.label}
         </span>
     );

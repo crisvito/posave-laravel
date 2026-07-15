@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Advance\Management\Employee;
 
 use App\Http\Controllers\Controller;
 use App\Mail\EmployeeInvitation;
-use App\Models\Advance\Management\Messaging\Conversation;
 use App\Models\Advance\Management\Employee\Employee;
 use App\Models\Advance\Management\Employee\EmployeeAccess;
+use App\Models\Advance\Messaging\Conversation;
 use App\Models\Auth\Branch;
 use App\Models\User;
 use App\Models\Auth\UserProfile;
@@ -27,7 +27,6 @@ class EmployeeController extends Controller
         $employeesQuery = Employee::where('company_id', $user->company_id)->with(['branch', 'user']);
 
         if ($user->isBranchManager()) {
-            // Branch manager cuma lihat karyawan di cabangnya — gak perlu dropdown filter cabang.
             $employeesQuery->where('branch_id', $user->branch_id);
         } else {
             $employeesQuery->when($request->branch && $request->branch !== 'all', function ($query) use ($request) {
@@ -35,16 +34,28 @@ class EmployeeController extends Controller
             });
         }
 
-        $employees = $employeesQuery->paginate(5)->withQueryString();
+        $employees = $employeesQuery->paginate($request->integer('per_page') ?: 5)->withQueryString();
+        $employees->getCollection()->transform(function (Employee $employee) {
+            return [
+                'id' => $employee->id,
+                'name' => $employee->name,
+                'role' => $employee->role,
+                'branch_id' => $employee->branch_id,
+                'branch' => $employee->branch ? ['id' => $employee->branch->id, 'name' => $employee->branch->name] : null,
+                'active_date' => $employee->active_date?->format('Y-m-d'),
+                'slot_status' => $employee->slot_status,
+                'user' => $employee->user ? ['id' => $employee->user->id, 'email' => $employee->user->email] : null,
+            ];
+        });
 
         $branches = $user->isBranchManager()
-            ? collect()   // gak perlu dropdown, cabangnya udah pasti 1
+            ? Branch::where('id', $user->branch_id)->get(['id', 'name'])
             : Branch::where('company_id', $user->company_id)->get(['id', 'name']);
 
         return Inertia::render('advance/management/employee/employee-list', [
             'employees' => $employees,
             'branches' => $branches,
-            'filters' => $request->only('branch'),
+            'filters' => $request->only('branch', 'per_page'),
             'is_branch_manager' => $user->isBranchManager(),
         ]);
     }
@@ -54,7 +65,6 @@ class EmployeeController extends Controller
         /** @var User $user */
         $user = Auth::user();
         abort_if($user->isBranchManager(), 403);
-        // Branch manager cuma boleh undang cashier — gak boleh undang branch_manager lain/owner.
         $roles = $user->isBranchManager() ? collect(['cashier']) : EmployeeAccess::pluck('name');
 
         $branches = $user->isBranchManager()
@@ -84,8 +94,6 @@ class EmployeeController extends Controller
         ]);
 
         if ($user->isBranchManager()) {
-            // Proteksi di server, bukan cuma di UI — walau frontend dimanipulasi,
-            // branch_manager gak akan pernah bisa invite ke cabang lain / role lain.
             abort_if((int) $request->branch_id !== $user->branch_id, 403);
             abort_if($request->role !== 'cashier', 403);
         }
@@ -135,7 +143,6 @@ class EmployeeController extends Controller
         $employeeQuery = Employee::where('id', $id)->where('company_id', $user->company_id);
 
         if ($user->isBranchManager()) {
-            // Cuma boleh edit cashier di cabangnya sendiri — bukan branch_manager lain, bukan dirinya sendiri.
             $employeeQuery->where('branch_id', $user->branch_id)->where('role', 'cashier');
         }
 
@@ -175,7 +182,6 @@ class EmployeeController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        abort_if($user->isBranchManager(), 403);
 
         $employeeQuery = Employee::where('id', $id)->where('company_id', $user->company_id);
 

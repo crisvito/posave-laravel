@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Advance\Cashier;
 
 use App\Http\Controllers\Controller;
-use App\Models\Advance\Owner\Inventory\BranchStock;
-use App\Models\Advance\Owner\Inventory\Category;
-use App\Models\Advance\Owner\Inventory\Item;
+use App\Models\Advance\Management\Inventory\BranchStock;
+use App\Models\Advance\Management\Inventory\Category;
+use App\Models\Advance\Management\Inventory\Item;
 use App\Models\Advance\Transaction\Transaction;
 use App\Models\Advance\Transaction\TransactionItem;
 use App\Models\User;

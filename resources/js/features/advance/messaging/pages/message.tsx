@@ -187,7 +187,7 @@ export default function MessagingIndex({
         <DashboardSidebarLayout title="Pesan" description="Buat pesan terhadap rekan-rekan anda">
             <Head title="Pesan" />
 
-            <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[var(--page-bg)]">
+            <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[var(--page-bg)] dark:bg-[var(--background)]">
                 <div className={`h-full w-full flex-col lg:flex lg:w-72 lg:flex-shrink-0 ${mobileView === 'list' ? 'flex' : 'hidden'}`}>
                     <ConversationList
                         conversations={conversations}
@@ -226,7 +226,7 @@ export default function MessagingIndex({
             </div>
 
             <Sheet open={infoSheetOpen} onOpenChange={setInfoSheetOpen}>
-                <SheetContent side="right" className="w-[85vw] p-0 sm:max-w-[360px]">
+                <SheetContent side="right" className="w-[85vw] border-[var(--border-strong)] bg-[var(--card)] p-0 sm:max-w-[360px]">
                     <InfoPanel
                         broadcasts={broadcasts}
                         notes={notes}

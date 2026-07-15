@@ -16,7 +16,7 @@ import { InventoryTransferCreateModal, TransferRejectModal } from '@/features/ad
 import { useConfirmAction, useFilters } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
-import { AlertCircle, Check, Plus, Printer, X as XIcon } from 'lucide-react';
+import { AlertCircle, Check, Package, Plus, Printer, X as XIcon } from 'lucide-react';
 import { useState } from 'react';
 
 interface BranchOption {
@@ -59,9 +59,9 @@ interface InventoryTransferListProps {
 }
 
 const statusLabel: Record<string, { text: string; className: string }> = {
-    waiting: { text: 'Menunggu', className: 'bg-yellow-100 text-yellow-600' },
-    success: { text: 'Diterima', className: 'bg-green-100 text-green-600' },
-    rejected: { text: 'Ditolak', className: 'bg-red-100 text-red-600' },
+    waiting: { text: 'Menunggu', className: 'bg-[var(--warning-background)] text-[var(--warning)]' },
+    success: { text: 'Diterima', className: 'bg-[var(--success-background)] text-[var(--success)]' },
+    rejected: { text: 'Ditolak', className: 'bg-[var(--danger-background)] text-[var(--danger)]' },
 };
 
 const STATUS_OPTIONS = [
@@ -114,17 +114,16 @@ export default function InventoryTransferList({
         <DashboardSidebarLayout title="Kiriman" description="Kelola pengiriman barang antar cabang anda">
             <Head title="Kiriman" />
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--page-bg)] p-4 sm:p-6">
-                {/* Notifikasi: ada kiriman masuk yang perlu keputusan saya */}
                 {incoming_pending_count > 0 && !showingIncomingTab && (
                     <button
                         onClick={() => applyFilters({ view: 'incoming', status: undefined })}
-                        className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-3 text-left transition hover:bg-amber-100"
+                        className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-3 text-left transition hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-900/30 dark:hover:bg-amber-900/50"
                     >
-                        <span className="flex items-center gap-2 text-sm font-semibold text-amber-800">
+                        <span className="flex items-center gap-2 text-sm font-semibold text-amber-800 dark:text-amber-400">
                             <AlertCircle className="h-5 w-5 shrink-0" />
                             {incoming_pending_count} kiriman menunggu konfirmasi kamu
                         </span>
-                        <span className="text-xs font-medium whitespace-nowrap text-amber-700 underline">Lihat</span>
+                        <span className="text-xs font-medium whitespace-nowrap text-amber-700 underline dark:text-amber-300">Lihat</span>
                     </button>
                 )}
 
@@ -151,7 +150,7 @@ export default function InventoryTransferList({
                             <Plus className="mr-2 h-4 w-4" />
                             Buat Kiriman
                         </Button>
-                        <Button variant="outline" className="bg-[var(--neutral-white)]">
+                        <Button variant="outline" className="bg-[var(--card)]">
                             <Printer className="mr-2 h-4 w-4" />
                             Cetak
                         </Button>
@@ -169,7 +168,7 @@ export default function InventoryTransferList({
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm">
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
                     <div className="overflow-x-auto">
                         <Table className="min-w-[860px]">
                             <TableHeader className="bg-[var(--surface-header)]">
@@ -186,7 +185,13 @@ export default function InventoryTransferList({
 
                             <TableBody>
                                 {transfers.data.length === 0 ? (
-                                    <TableEmptyState colSpan={7} message="Belum ada kiriman" />
+                                    <TableEmptyState
+                                        colSpan={7}
+                                        icon={Package}
+                                        message="Belum ada kiriman"
+                                        description="Klik tombol Untuk Buat Kiriman"
+                                        action={{ label: '+ Buat Kiriman', onClick: () => setShowCreateModal(true) }}
+                                    />
                                 ) : (
                                     transfers.data.map((transfer) => {
                                         const iAmApproverWaiting = transfer.approver_branch_id === my_branch_id && transfer.status === 'waiting';
@@ -195,7 +200,7 @@ export default function InventoryTransferList({
                                             transfer.status === 'waiting';
 
                                         return (
-                                            <TableRow key={transfer.id} className={iAmApproverWaiting ? 'bg-amber-50/50' : ''}>
+                                            <TableRow key={transfer.id} className={iAmApproverWaiting ? 'bg-amber-50/50 dark:bg-amber-900/20' : ''}>
                                                 <TableCell>
                                                     <div className="text-xs whitespace-nowrap text-[var(--grey-text)]">
                                                         {new Date(transfer.date).toLocaleDateString('id-ID', {
@@ -231,14 +236,14 @@ export default function InventoryTransferList({
                                                                 <button
                                                                     aria-label={`Terima kiriman ${transfer.transfer_number}`}
                                                                     onClick={() => handleAccept(transfer)}
-                                                                    className="flex shrink-0 items-center gap-1 rounded-lg bg-green-600 px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:bg-green-700"
+                                                                    className="flex shrink-0 items-center gap-1 rounded-lg bg-green-600 px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600"
                                                                 >
                                                                     <Check className="h-3.5 w-3.5" /> Terima
                                                                 </button>
                                                                 <button
                                                                     aria-label={`Tolak kiriman ${transfer.transfer_number}`}
                                                                     onClick={() => setRejectTarget(transfer)}
-                                                                    className="flex shrink-0 items-center gap-1 rounded-lg bg-red-100 px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-red-600 hover:bg-red-200"
+                                                                    className="flex shrink-0 items-center gap-1 rounded-lg bg-red-100 px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-red-600 hover:bg-red-200 dark:bg-red-900/40 dark:text-red-400 dark:hover:bg-red-900/60"
                                                                 >
                                                                     <XIcon className="h-3.5 w-3.5" /> Tolak
                                                                 </button>

@@ -45,18 +45,18 @@ export function ProductTable({ rows, subtitle, periodSuffix, company }: ProductT
     };
 
     return (
-        <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
             <TableToolbar query={query} setQuery={setQuery} sort={sort} setSort={setSort} onExport={(f) => runExport(f, report)} />
             <div className="overflow-x-auto">
                 <Table className="min-w-[680px]">
-                    <TableHeader className="bg-[var(--surface-header)]">
-                        <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                            <TableHead className="text-[var(--text-light)]">Nama Produk</TableHead>
-                            <TableHead className="text-[var(--text-light)]">Kategori</TableHead>
-                            <TableHead className="text-right text-[var(--text-light)]">Terjual</TableHead>
-                            <TableHead className="text-right text-[var(--text-light)]">Penjualan</TableHead>
-                            <TableHead className="text-right text-[var(--text-light)]">HPP</TableHead>
-                            <TableHead className="text-right text-[var(--text-light)]">Margin</TableHead>
+                    <TableHeader className="bg-[var(--surface-header)] dark:bg-[var(--border-strong)]">
+                        <TableRow className="border-none hover:bg-[var(--surface-header)] dark:hover:bg-[var(--border-strong)]">
+                            <TableHead className="text-[var(--text-light)] dark:text-white">Nama Produk</TableHead>
+                            <TableHead className="text-[var(--text-light)] dark:text-white">Kategori</TableHead>
+                            <TableHead className="text-right text-[var(--text-light)] dark:text-white">Terjual</TableHead>
+                            <TableHead className="text-right text-[var(--text-light)] dark:text-white">Penjualan</TableHead>
+                            <TableHead className="text-right text-[var(--text-light)] dark:text-white">HPP</TableHead>
+                            <TableHead className="text-right text-[var(--text-light)] dark:text-white">Margin</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -64,15 +64,23 @@ export function ProductTable({ rows, subtitle, periodSuffix, company }: ProductT
                             <TableEmptyState colSpan={6} message="Belum ada produk terjual" />
                         ) : (
                             data.map((row) => (
-                                <TableRow key={row.name}>
-                                    <TableCell className="font-medium text-[var(--subheading)]">{row.name}</TableCell>
-                                    <TableCell className="text-[var(--grey-text)]">{row.category}</TableCell>
-                                    <TableCell className="text-right text-[var(--grey-text)]">{formatNumber(row.qty)}</TableCell>
-                                    <TableCell className="text-right font-semibold text-[var(--subheading)]">{formatRupiah(row.omzet)}</TableCell>
-                                    <TableCell className="text-right text-[var(--grey-text)]">{formatRupiah(row.hpp)}</TableCell>
+                                <TableRow key={row.name} className="dark:border-[var(--border-strong)]">
+                                    <TableCell className="font-medium text-[var(--subheading)] dark:text-white">{row.name}</TableCell>
+                                    <TableCell className="text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">{row.category}</TableCell>
+                                    <TableCell className="text-right text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                        {formatNumber(row.qty)}
+                                    </TableCell>
+                                    <TableCell className="text-right font-semibold text-[var(--subheading)] dark:text-white">
+                                        {formatRupiah(row.omzet)}
+                                    </TableCell>
+                                    <TableCell className="text-right text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                        {formatRupiah(row.hpp)}
+                                    </TableCell>
                                     <TableCell className="text-right">
                                         <span className="font-semibold text-[var(--success)]">{formatRupiah(row.margin)}</span>
-                                        <span className="ml-1 text-xs text-[var(--grey-text)]">({formatPct(row.marginPct)})</span>
+                                        <span className="ml-1 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                            ({formatPct(row.marginPct)})
+                                        </span>
                                     </TableCell>
                                 </TableRow>
                             ))

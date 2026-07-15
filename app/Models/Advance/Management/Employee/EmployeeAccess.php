@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class EmployeeAccess extends Model
 {
     //
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'company_id'];
 
     public function employees()
     {

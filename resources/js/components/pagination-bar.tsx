@@ -30,7 +30,7 @@ export function PaginationBar({ from, to, total, itemLabel, links, perPage, onPe
                 <Pagination links={links} />
             </div>
 
-            <div className="flex justify-center sm:justify-end">
+            <div className="flex items-center justify-center sm:justify-end">
                 <PerPageSelect value={perPage} onChange={onPerPageChange} options={perPageOptions} />
             </div>
         </div>

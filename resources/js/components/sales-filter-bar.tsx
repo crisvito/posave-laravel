@@ -65,13 +65,13 @@ export function SalesFilterBar({ routeName, outlets, filters, extraParams = {}, 
                         value={filters.outlet_id ? String(filters.outlet_id) : 'all'}
                         onValueChange={(v) => visit({ outlet_id: v === 'all' ? null : Number(v) })}
                     >
-                        <SelectTrigger className="h-10 w-full gap-2 rounded-lg border-transparent bg-[var(--second-accent)] font-medium text-[var(--subheading)] shadow-sm sm:w-[200px]">
+                        <SelectTrigger className="h-10 w-full gap-2 rounded-lg border-transparent bg-[var(--second-accent)] font-medium text-[var(--subheading)] shadow-sm sm:w-[200px] dark:border-[var(--border-strong)] dark:bg-[var(--card)] dark:text-white">
                             <span className="!flex min-w-0 items-center gap-2">
-                                <Store className="h-4 w-4 shrink-0 text-[var(--grey-text)]" />
+                                <Store className="h-4 w-4 shrink-0 text-[var(--grey-text)] dark:text-[var(--muted-foreground)]" />
                                 <SelectValue placeholder="Semua Outlet" />
                             </span>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                             <SelectItem value="all">Semua Outlet</SelectItem>
                             {outlets.map((o) => (
                                 <SelectItem key={o.id} value={String(o.id)}>
@@ -82,23 +82,23 @@ export function SalesFilterBar({ routeName, outlets, filters, extraParams = {}, 
                     </Select>
                 ) : (
                     outlets.length === 1 && (
-                        <div className="flex h-10 w-full items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 font-medium text-[var(--subheading)] shadow-sm sm:w-fit">
-                            <Store className="h-4 w-4 shrink-0 text-[var(--grey-text)]" />
+                        <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)] dark:border-[var(--border-strong)] dark:bg-[var(--card)] dark:text-white">
+                            <Store className="h-4 w-4 shrink-0 text-[var(--grey-text)] dark:text-[var(--muted-foreground)]" />
                             {outlets[0].name}
                         </div>
                     )
                 )}
 
                 {/* Preset rentang tanggal */}
-                <div className="flex h-10 w-full items-center rounded-md border border-[var(--border)] bg-[var(--neutral-white)] p-1 shadow-sm sm:w-auto">
+                <div className="flex h-10 w-full items-center rounded-md border border-[var(--border)] bg-[var(--neutral-white)] p-1 shadow-sm sm:w-auto dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                     {RANGE_PRESETS.map((preset) => (
                         <button
                             key={preset.value}
                             onClick={() => visit({ range: preset.value })}
                             className={`h-full flex-1 rounded px-2 text-sm font-medium whitespace-nowrap transition-colors sm:flex-none sm:px-3 ${
                                 filters.range === preset.value
-                                    ? 'bg-[var(--surface-header)] text-[var(--text-light)]'
-                                    : 'text-[var(--grey-text)] hover:bg-[var(--second-accent)]'
+                                    ? 'bg-[var(--surface-header)] text-white'
+                                    : 'text-[var(--grey-text)] hover:bg-[var(--second-accent)] dark:text-[var(--muted-foreground)] dark:hover:bg-[var(--border-strong)]'
                             }`}
                         >
                             {preset.label}
@@ -108,7 +108,7 @@ export function SalesFilterBar({ routeName, outlets, filters, extraParams = {}, 
 
                 {/* Input tanggal custom */}
                 {filters.range === 'custom' && (
-                    <div className="flex h-10 w-full items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--neutral-white)] px-3 shadow-sm sm:w-auto">
+                    <div className="flex h-10 w-full items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--neutral-white)] px-3 shadow-sm sm:w-auto dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                         <input
                             aria-label="input-date"
                             type="date"
@@ -116,9 +116,9 @@ export function SalesFilterBar({ routeName, outlets, filters, extraParams = {}, 
                             max={to}
                             onChange={(e) => setFrom(e.target.value)}
                             onBlur={() => visit({ range: 'custom', from })}
-                            className="min-w-0 flex-1 bg-transparent text-sm text-[var(--subheading)] outline-none sm:flex-none"
+                            className="min-w-0 flex-1 bg-transparent text-sm text-[var(--subheading)] outline-none sm:flex-none dark:text-white"
                         />
-                        <span className="text-[var(--grey-text)]">–</span>
+                        <span className="text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">–</span>
                         <input
                             aria-label="input-date"
                             type="date"
@@ -126,7 +126,7 @@ export function SalesFilterBar({ routeName, outlets, filters, extraParams = {}, 
                             min={from}
                             onChange={(e) => setTo(e.target.value)}
                             onBlur={() => visit({ range: 'custom', to })}
-                            className="min-w-0 flex-1 bg-transparent text-sm text-[var(--subheading)] outline-none sm:flex-none"
+                            className="min-w-0 flex-1 bg-transparent text-sm text-[var(--subheading)] outline-none sm:flex-none dark:text-white"
                         />
                     </div>
                 )}

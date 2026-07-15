@@ -57,14 +57,6 @@
     --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
     *,
     ::after,
@@ -82,10 +74,6 @@
 }
 
 :root {
-    /* --success: #2E61E8; */
-    /* --success-background: rgba(46, 97, 232, 0.1); */
-
-    /* ─── Raw palette (konstanta, tidak berubah antar mode) ─── */
     --black: #000000;
     --white: #f4f4f4;
     --neutral-white: #ffffff;
@@ -108,27 +96,26 @@
     --accent-600: #659dc2;
     --accent-500: #3c79a4;
 
-    /* ─── Semantic tokens — light mode ─── */
-    --grey-text: var(--primary-600); /* #394f67 */
-    --grey-text-muted: var(--primary-500); /* #415a75 */
+    --grey-text: var(--primary-600);
+    --grey-text-muted: var(--primary-500);
     --sidebar: var(--primary-900);
     --header: var(--primary-900);
-    --subheading: var(--primary-800); /* #2a3a4c */
-    --second-accent: #f1f5f9; /* slate-100 */
-    --page-bg: rgba(248, 250, 252, 0.5); /* slate-50/50 — match bg-slate-50/50 asli */
-    --surface-badge: #e2e8f0; /* slate-200 */
-    --surface-header: var(--primary-900); /* #22303f — header tabel & btn utama */
-    --surface-header-hover: var(--primary-800); /* #2a3a4c */
-    --text-light: #ffffff; /* putih murni untuk teks di atas bg gelap */
+    --subheading: var(--primary-800);
+    --second-accent: #f1f5f9;
+    --page-bg: rgba(248, 250, 252, 0.5);
+    --surface-badge: #e2e8f0;
+    --surface-header: var(--primary-900);
+    --surface-header-hover: var(--primary-800);
+    --text-light: #ffffff;
 
-    --success: #16a34a; /* green-600 */
-    --success-background: #dcfce7; /* green-100 */
+    --success: #16a34a;
+    --success-background: #dcfce7;
 
     --warning: #e75f1a;
     --warning-background: #fef5ee;
 
-    --danger: #ef4444; /* red-500 */
-    --danger-background: #fee2e2; /* red-100 */
+    --danger: #ef4444;
+    --danger-background: #fee2e2;
 
     --category-color-1: #9f6fd5;
     --category-bg-color-1: #fef4e1;
@@ -136,15 +123,12 @@
     --category-color-2: #fa9f16;
     --category-bg-color-3: #f2ebfa;
 
-    /* Pemasukan icon — blue */
-    --income-icon-bg: #dbeafe; /* blue-100 */
-    --income-icon-text: #2563eb; /* blue-600 */
+    --income-icon-bg: #dbeafe;
+    --income-icon-text: #2563eb;
 
-    /* Testimonial swiper dots */
     --dot-base: var(--primary-900);
     --dot-active: var(--accent-700);
 
-    /* ─── shadcn/ui tokens — light mode ─── */
     --background: hsl(0, 0%, 100%);
     --foreground: hsl(0, 0%, 3.9%);
     --card: hsl(0, 0%, 100%);
@@ -161,8 +145,8 @@
     --accent-foreground: hsl(0, 0%, 9%);
     --destructive: hsl(0, 84.2%, 60.2%);
     --destructive-foreground: hsl(0, 0%, 98%);
-    --border: hsl(0, 0%, 89.8%); /* slate-200 ~#e2e8f0 */
-    --border-strong: #cbd5e1; /* slate-300 */
+    --border: hsl(0, 0%, 89.8%);
+    --border-strong: #cbd5e1;
     --input: hsl(0, 0%, 89.8%);
     --ring: hsl(0, 0%, 3.9%);
     --chart-1: hsl(12, 76%, 61%);
@@ -182,73 +166,70 @@
 }
 
 .dark {
-    /* ─── Semantic tokens — dark mode override ─── */
-    --grey-text: var(--accent-800); /* #a9cee6 — cukup terang di dark */
-    --grey-text-muted: var(--accent-900); /* #c9e1f0 — lebih muted */
-    --subheading: var(--accent-900); /* #c9e1f0 — teks utama di dark */
-    --second-accent: var(--primary-800); /* #2a3a4c — bg subtle di dark */
-    --page-bg: rgba(34, 48, 63, 0.5); /* primary-900/50 */
-    --surface-badge: var(--primary-700); /* #31455a */
-    --surface-header: var(--primary-900); /* #22303f */
-    --surface-header-hover: var(--primary-800); /* #2a3a4c */
-    --text-light: #ffffff;
+    --grey-text: #f8fafc;
+    --grey-text-muted: #94a3b8;
+    --subheading: #ffffff;
+    --second-accent: #1e293b;
+    --page-bg: #0b0f19;
+    --surface-badge: #1e293b;
+    --surface-header: #111827;
+    --surface-header-hover: #1f2937;
+    --text-light: #f8fafc;
 
     --success: #4ade80;
-    --success-background: #052e16;
+    --success-background: rgba(74, 222, 128, 0.1);
 
     --warning: #fb923c;
-    --warning-background: #431407;
+    --warning-background: rgba(251, 146, 60, 0.1);
 
     --danger: #f87171;
-    --danger-background: #450a0a;
+    --danger-background: rgba(248, 113, 113, 0.1);
 
     --category-color-1: #c084fc;
-    --category-bg-color-1: #2d1a4a;
+    --category-bg-color-1: #2e1a47;
 
     --category-color-2: #fbbf24;
-    --category-bg-color-3: #1e1030;
+    --category-bg-color-3: #2e230a;
 
-    --income-icon-bg: #1e3a5f;
+    --income-icon-bg: #1e3a8a;
     --income-icon-text: #60a5fa;
 
-    /* Testimonial swiper dots */
-    --dot-base: var(--accent-800);
-    --dot-active: var(--secondary-500);
+    --dot-base: #334155;
+    --dot-active: #38bdf8;
 
-    /* ─── shadcn/ui tokens — dark mode ─── */
-    --background: hsl(0, 0%, 3.9%);
-    --foreground: hsl(0, 0%, 98%);
-    --card: hsl(0, 0%, 3.9%);
-    --card-foreground: hsl(0, 0%, 98%);
-    --popover: hsl(0, 0%, 3.9%);
-    --popover-foreground: hsl(0, 0%, 98%);
-    --primary: hsl(0, 0%, 98%);
-    --primary-foreground: hsl(0, 0%, 9%);
-    --secondary: hsl(0, 0%, 14.9%);
-    --secondary-foreground: hsl(0, 0%, 98%);
-    --muted: hsl(0, 0%, 6.9%);
-    --muted-foreground: hsl(0, 0%, 63.9%);
-    --accent: hsl(0, 0%, 14.9%);
-    --accent-foreground: hsl(0, 0%, 98%);
-    --destructive: hsl(0, 84%, 60%);
-    --destructive-foreground: hsl(0, 0%, 98%);
-    --border: hsl(0, 0%, 14.9%);
-    --border-strong: hsl(0, 0%, 20%);
-    --input: hsl(0, 0%, 14.9%);
-    --ring: hsl(0, 0%, 83.1%);
-    --chart-1: hsl(220, 70%, 50%);
-    --chart-2: hsl(160, 60%, 45%);
-    --chart-3: hsl(30, 80%, 55%);
-    --chart-4: hsl(280, 65%, 60%);
-    --chart-5: hsl(340, 75%, 55%);
-    --sidebar-background: hsl(0, 0%, 7%);
-    --sidebar-foreground: hsl(0, 0%, 80%);
-    --sidebar-primary: hsl(360, 100%, 100%);
-    --sidebar-primary-foreground: hsl(0, 0%, 100%);
-    --sidebar-accent: hsl(0, 0%, 15.9%);
-    --sidebar-accent-foreground: hsl(240, 4.8%, 95.9%);
-    --sidebar-border: hsl(0, 0%, 15.9%);
-    --sidebar-ring: hsl(217.2, 91.2%, 59.8%);
+    --background: #0b131f;
+    --foreground: #f8fafc;
+    --card: #141f2e;
+    --card-foreground: #f8fafc;
+    --popover: #141f2e;
+    --popover-foreground: #f8fafc;
+    --primary: #38bdf8;
+    --primary-foreground: #0b131f;
+    --secondary: #1e293b;
+    --secondary-foreground: #f8fafc;
+    --muted: #1e293b;
+    --muted-foreground: #64748b;
+    --accent: #1e293b;
+    --accent-foreground: #f8fafc;
+    --destructive: #ef4444;
+    --destructive-foreground: #ffffff;
+    --border: #1e293b;
+    --border-strong: #334155;
+    --input: #1e293b;
+    --ring: #38bdf8;
+    --chart-1: #38bdf8;
+    --chart-2: #4ade80;
+    --chart-3: #fb923c;
+    --chart-4: #c084fc;
+    --chart-5: #f472b6;
+    --sidebar-background: #070d16;
+    --sidebar-foreground: #94a3b8;
+    --sidebar-primary: #38bdf8;
+    --sidebar-primary-foreground: #0b131f;
+    --sidebar-accent: #141f2e;
+    --sidebar-accent-foreground: #f8fafc;
+    --sidebar-border: #141f2e;
+    --sidebar-ring: #38bdf8;
 }
 
 .testimonial-swiper {

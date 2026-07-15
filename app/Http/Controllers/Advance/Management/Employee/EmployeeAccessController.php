@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Advance\Management\Employee;
 use App\Http\Controllers\Controller;
 use App\Models\Advance\Management\Employee\Employee;
 use App\Models\Advance\Management\Employee\EmployeeAccess;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class EmployeeAccessController extends Controller
@@ -15,17 +17,21 @@ class EmployeeAccessController extends Controller
      */
     public function index(Request $request)
     {
-        //
-        $accesses = EmployeeAccess::withCount('employees')
+
+        /** @var User $user */
+        $user = Auth::user();
+
+        $accesses = EmployeeAccess::where('company_id', $user->company_id)
+            ->withCount('employees')
             ->when($request->search, function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->search . '%');
             })
-            ->paginate(5)
+            ->paginate($request->integer('per_page') ?: 5)
             ->withQueryString();
 
         return Inertia::render('advance/management/employee/employee-access-list', [
             'accesses' => $accesses,
-            'filters' => $request->only('search'),
+            'filters' => $request->only('search', 'per_page'),
         ]);
     }
 

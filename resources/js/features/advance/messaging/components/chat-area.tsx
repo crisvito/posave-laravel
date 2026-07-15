@@ -50,11 +50,11 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
 
     if (!conversation) {
         return (
-            <div className={`flex-col items-center justify-center bg-[var(--page-bg)] ${className}`}>
+            <div className={`flex flex-col items-center justify-center bg-[var(--page-bg)] dark:bg-[var(--background)] ${className}`}>
                 <div className="flex flex-1 flex-col items-center justify-center">
                     <p className="mb-3 text-4xl">💬</p>
-                    <p className="text-sm font-medium text-[var(--subheading)]">Pilih percakapan</p>
-                    <p className="mt-1 px-6 text-center text-xs text-[var(--grey-text-muted)]">
+                    <p className="text-sm font-medium text-[var(--subheading)] dark:text-white">Pilih percakapan</p>
+                    <p className="mt-1 px-6 text-center text-xs text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">
                         Pilih percakapan di sebelah kiri atau mulai chat baru dari tab Kontak
                     </p>
                 </div>
@@ -73,26 +73,26 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
         .toUpperCase();
 
     return (
-        <div className={`flex-col overflow-hidden ${className}`}>
-            <div className="flex items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5">
+        <div className={`flex flex-col overflow-hidden bg-[var(--page-bg)] dark:bg-[var(--background)] ${className}`}>
+            <div className="flex items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                 {onBack && (
                     <button
                         type="button"
                         aria-label="Kembali ke daftar percakapan"
                         onClick={onBack}
-                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--grey-text)] hover:bg-[var(--second-accent)] lg:hidden"
+                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--grey-text)] hover:bg-[var(--second-accent)] lg:hidden dark:text-white dark:hover:bg-[var(--border-strong)]"
                     >
                         <ArrowLeft className="h-4 w-4" />
                     </button>
                 )}
 
-                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--surface-header)] text-xs font-medium text-[var(--text-light)]">
+                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--surface-header)] text-xs font-medium text-white">
                     {conversation.type === 'group' ? '👥' : initials}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-[var(--subheading)]">{conversationName}</p>
-                    <p className="truncate text-xs text-[var(--grey-text-muted)]">
+                    <p className="truncate text-sm font-medium text-[var(--subheading)] dark:text-white">{conversationName}</p>
+                    <p className="truncate text-xs text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">
                         {conversation.type === 'group' ? `${conversation.members.length} anggota` : 'Pesan pribadi'}
                     </p>
                 </div>
@@ -102,21 +102,23 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                         type="button"
                         aria-label="Buka info percakapan"
                         onClick={onOpenInfo}
-                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--grey-text)] hover:bg-[var(--second-accent)] lg:hidden"
+                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--grey-text)] hover:bg-[var(--second-accent)] lg:hidden dark:text-white dark:hover:bg-[var(--border-strong)]"
                     >
                         <Info className="h-4 w-4" />
                     </button>
                 )}
             </div>
 
-            <div className="flex-1 overflow-y-auto bg-[var(--page-bg)] p-4">
+            <div className="flex-1 overflow-y-auto p-4">
                 {isLoading ? (
                     <div className="flex h-full items-center justify-center">
-                        <p className="text-sm text-[var(--grey-text-muted)]">Memuat pesan...</p>
+                        <p className="text-sm text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">Memuat pesan...</p>
                     </div>
                 ) : messages.length === 0 ? (
                     <div className="flex h-full items-center justify-center">
-                        <p className="text-sm text-[var(--grey-text-muted)]">Belum ada pesan. Mulai percakapan!</p>
+                        <p className="text-sm text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">
+                            Belum ada pesan. Mulai percakapan!
+                        </p>
                     </div>
                 ) : (
                     <div className="flex flex-col gap-3">
@@ -129,11 +131,11 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
             </div>
 
             {files.length > 0 && (
-                <div className="flex flex-wrap gap-2 border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-2">
+                <div className="flex flex-wrap gap-2 border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-2 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                     {files.map((file, i) => (
                         <div
                             key={i}
-                            className="flex items-center gap-1.5 rounded-lg border border-[var(--border-strong)] bg-[var(--second-accent)] px-2 py-1 text-xs text-[var(--grey-text)]"
+                            className="flex items-center gap-1.5 rounded-lg border border-[var(--border-strong)] bg-[var(--second-accent)] px-2 py-1 text-xs text-[var(--grey-text)] dark:border-transparent dark:bg-[var(--border-strong)] dark:text-white"
                         >
                             <span className="max-w-[120px] truncate">{file.name}</span>
                             <button
@@ -148,12 +150,12 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                 </div>
             )}
 
-            <div className="border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-3 py-3 sm:px-4">
+            <div className="border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-3 py-3 sm:px-4 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                 <div className="flex items-end gap-2">
                     <button
                         aria-label="Lampirkan file"
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--border-strong)] text-[var(--grey-text)] transition-all hover:bg-[var(--second-accent)]"
+                        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--border-strong)] text-[var(--grey-text)] transition-all hover:bg-[var(--second-accent)] dark:border-[var(--border-strong)] dark:text-white dark:hover:bg-[var(--border-strong)]"
                     >
                         <Paperclip className="h-4 w-4" />
                     </button>
@@ -166,7 +168,7 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                         onKeyDown={handleKeyDown}
                         placeholder="Ketik pesan..."
                         rows={1}
-                        className="flex-1 resize-none rounded-lg border border-[var(--border-strong)] bg-[var(--page-bg)] px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-[var(--border-strong)]"
+                        className="flex-1 resize-none rounded-lg border border-[var(--border-strong)] bg-[var(--page-bg)] px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-[var(--border-strong)] dark:border-[var(--border-strong)] dark:bg-[#111827] dark:text-white"
                         style={{ maxHeight: '120px' }}
                         onInput={(e) => {
                             const el = e.currentTarget;
@@ -179,7 +181,7 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                         aria-label="Kirim pesan"
                         onClick={handleSend}
                         disabled={!body.trim() && files.length === 0}
-                        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[var(--surface-header)] text-[var(--text-light)] transition-all hover:bg-[var(--surface-header-hover)] disabled:opacity-40"
+                        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[var(--surface-header)] text-white transition-all hover:bg-[var(--surface-header-hover)] disabled:opacity-40 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                     >
                         <Send className="h-4 w-4" />
                     </button>

@@ -107,7 +107,7 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                                 <Plus className="mr-2 h-4 w-4 shrink-0" />
                                 <span className="whitespace-nowrap">Buat Perubahan</span>
                             </Button>
-                            <Button variant="outline" className="bg-[var(--neutral-white)]">
+                            <Button variant="outline" className="bg-[var(--card)]">
                                 <Printer className="mr-2 h-4 w-4 shrink-0" />
                                 <span className="whitespace-nowrap">Cetak</span>
                             </Button>
@@ -128,9 +128,9 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-4">
-                    <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-3 shadow-sm sm:gap-4 sm:p-5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 sm:h-12 sm:w-12">
-                            <ArrowUpDown className="h-5 w-5 text-slate-600 sm:h-6 sm:w-6" />
+                    <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-3 shadow-sm sm:gap-4 sm:p-5">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 sm:h-12 sm:w-12 dark:bg-[var(--second-accent)]">
+                            <ArrowUpDown className="h-5 w-5 text-slate-600 sm:h-6 sm:w-6 dark:text-[var(--muted-foreground)]" />
                         </div>
                         <div className="min-w-0">
                             <p className="text-lg font-bold text-[var(--subheading)] sm:text-2xl">{stats.total_changes}</p>
@@ -138,9 +138,9 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                             <p className="hidden text-[10px] leading-tight text-[var(--grey-text)] sm:block sm:text-xs">Total Transaksi Perubahan</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-3 shadow-sm sm:gap-4 sm:p-5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-50 sm:h-12 sm:w-12">
-                            <Package className="h-5 w-5 text-green-600 sm:h-6 sm:w-6" />
+                    <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-3 shadow-sm sm:gap-4 sm:p-5">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-50 sm:h-12 sm:w-12 dark:bg-green-900/30">
+                            <Package className="h-5 w-5 text-green-600 sm:h-6 sm:w-6 dark:text-green-400" />
                         </div>
                         <div className="min-w-0">
                             <p className="text-lg font-bold text-[var(--subheading)] sm:text-2xl">{stats.items_changed}</p>
@@ -150,8 +150,8 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                             </p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-3 shadow-sm sm:gap-4 sm:p-5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-600 sm:h-12 sm:w-12 sm:text-sm">
+                    <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-3 shadow-sm sm:gap-4 sm:p-5">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-600 sm:h-12 sm:w-12 sm:text-sm dark:bg-blue-900/30 dark:text-blue-400">
                             Rp
                         </div>
                         <div className="min-w-0">
@@ -162,8 +162,8 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                             <p className="hidden text-[10px] leading-tight text-[var(--grey-text)] sm:block sm:text-xs">Dari penyesuaian stok</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-3 shadow-sm sm:gap-4 sm:p-5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50 text-xs font-bold text-red-500 sm:h-12 sm:w-12 sm:text-sm">
+                    <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-3 shadow-sm sm:gap-4 sm:p-5">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50 text-xs font-bold text-red-500 sm:h-12 sm:w-12 sm:text-sm dark:bg-red-900/30 dark:text-red-400">
                             Rp
                         </div>
                         <div className="min-w-0">
@@ -176,7 +176,7 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                     </div>
                 </div>
 
-                <div className="overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm">
+                <div className="overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
                     <div className="overflow-x-auto">
                         <Table className="min-w-[820px]">
                             <TableHeader className="bg-[var(--surface-header)]">
@@ -201,7 +201,7 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                                 ) : (
                                     Object.entries(groupedAdjustments).map(([dateLabel, rows]) => (
                                         <React.Fragment key={dateLabel}>
-                                            <TableRow className="bg-gray-50 hover:bg-gray-50">
+                                            <TableRow className="bg-slate-50 hover:bg-slate-50 dark:bg-[var(--second-accent)] dark:hover:bg-[var(--second-accent)]">
                                                 <TableCell colSpan={5}>
                                                     <div className="flex items-center gap-2 text-sm font-medium whitespace-nowrap text-[var(--subheading)]">
                                                         {dateLabel}
@@ -234,12 +234,12 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                                                         <p className="text-xs text-[var(--grey-text)]">{row.item.sku}</p>
                                                     </TableCell>
                                                     <TableCell
-                                                        className={`font-bold whitespace-nowrap ${row.qty_change > 0 ? 'text-green-600' : 'text-red-500'}`}
+                                                        className={`font-bold whitespace-nowrap ${row.qty_change > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}
                                                     >
                                                         {row.qty_change > 0 ? `+${row.qty_change}` : row.qty_change}
                                                     </TableCell>
                                                     <TableCell
-                                                        className={`font-bold whitespace-nowrap ${row.financial_change > 0 ? 'text-green-600' : 'text-red-500'}`}
+                                                        className={`font-bold whitespace-nowrap ${row.financial_change > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}
                                                     >
                                                         {row.financial_change > 0 ? '+' : '-'} Rp.{' '}
                                                         {Math.abs(Number(row.financial_change)).toLocaleString('id-ID')}

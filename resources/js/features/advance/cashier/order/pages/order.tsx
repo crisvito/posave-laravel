@@ -306,7 +306,7 @@ export default function OrderPage({ items, categories }: Props) {
         <CashierLayout>
             <Head title="Kasir - POSAVE" />
 
-            <div className="flex flex-1 flex-col overflow-y-auto bg-white p-4 sm:p-6">
+            <div className="bg-background flex flex-1 flex-col overflow-y-auto p-4 sm:p-6">
                 <div className="mb-6 flex items-center gap-3 sm:gap-4">
                     <SearchInput
                         value={search}
@@ -319,20 +319,20 @@ export default function OrderPage({ items, categories }: Props) {
                 </div>
 
                 {successInfo && (
-                    <div className="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+                    <div className="mb-4 rounded-lg border border-[var(--success)] bg-[var(--success-background)] px-4 py-3 text-sm text-[var(--success)]">
                         Pembayaran berhasil! Invoice <strong>{successInfo.invoice}</strong> · Total Rp. {successInfo.total.toLocaleString('id-ID')}
                     </div>
                 )}
 
                 <div className="mb-6">
                     <div className="mb-3 flex items-center justify-between">
-                        <h2 className="text-sm font-bold text-slate-800">Kategori</h2>
+                        <h2 className="text-sm font-bold text-[var(--subheading)]">Kategori</h2>
                         <div className="hidden gap-1 sm:flex">
                             <Button
                                 aria-label="Geser kategori ke kiri"
                                 variant="outline"
                                 size="icon"
-                                className="h-7 w-7 rounded-full border-slate-200"
+                                className="h-7 w-7 rounded-full border-[var(--border-strong)]"
                             >
                                 <ChevronLeft className="h-3 w-3" />
                             </Button>
@@ -340,7 +340,7 @@ export default function OrderPage({ items, categories }: Props) {
                                 aria-label="Geser kategori ke kanan"
                                 variant="outline"
                                 size="icon"
-                                className="h-7 w-7 rounded-full border-slate-200"
+                                className="h-7 w-7 rounded-full border-[var(--border-strong)]"
                             >
                                 <ChevronRight className="h-3 w-3" />
                             </Button>
@@ -350,13 +350,12 @@ export default function OrderPage({ items, categories }: Props) {
                         <button
                             aria-label="Tampilkan semua kategori"
                             onClick={() => setActiveCategory('all')}
-                            className={`flex min-w-[76px] shrink-0 cursor-pointer flex-col items-center gap-1.5 rounded-2xl border px-3 py-3 transition ${
+                            className={`flex min-w-[76px] shrink-0 cursor-pointer items-center justify-center rounded-full border px-4 py-2.5 transition ${
                                 activeCategory === 'all'
-                                    ? 'border-blue-500 bg-blue-500 text-white'
-                                    : 'border-slate-100 bg-slate-50 text-slate-600 hover:bg-slate-100'
+                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-[var(--text-light)]'
+                                    : 'border-[var(--border-strong)] bg-[var(--card)] text-[var(--subheading)] hover:bg-[var(--accent)]'
                             }`}
                         >
-                            <span className="text-xl leading-none">🗂️</span>
                             <span className="text-[11px] font-semibold">Semua</span>
                         </button>
                         {categories.map((cat) => (
@@ -364,13 +363,12 @@ export default function OrderPage({ items, categories }: Props) {
                                 aria-label={`Filter kategori ${cat.name}`}
                                 key={cat.id}
                                 onClick={() => setActiveCategory(cat.id)}
-                                className={`flex min-w-[76px] shrink-0 cursor-pointer flex-col items-center gap-1.5 rounded-2xl border px-3 py-3 transition ${
+                                className={`flex min-w-[76px] shrink-0 cursor-pointer items-center justify-center rounded-full border px-4 py-2.5 transition ${
                                     activeCategory === cat.id
-                                        ? 'border-blue-500 bg-blue-500 text-white'
-                                        : 'border-slate-100 bg-slate-50 text-slate-600 hover:bg-slate-100'
+                                        ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-[var(--text-light)]'
+                                        : 'border-[var(--border-strong)] bg-[var(--card)] text-[var(--subheading)] hover:bg-[var(--accent)]'
                                 }`}
                             >
-                                <span className="text-xl leading-none">📦</span>
                                 <span className="text-[11px] font-semibold">{cat.name}</span>
                             </button>
                         ))}
@@ -378,31 +376,31 @@ export default function OrderPage({ items, categories }: Props) {
                 </div>
 
                 <div>
-                    <h2 className="mb-3 text-sm font-bold text-slate-800">Menu</h2>
+                    <h2 className="mb-3 text-sm font-bold text-[var(--subheading)]">Menu</h2>
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-4">
                         {filteredItems.map((item) => {
                             const stockLeft = remainingStock(item);
                             const isOut = stockLeft <= 0;
                             return (
-                                <Card key={item.id} className="overflow-hidden border border-slate-200 hover:shadow-sm">
+                                <Card key={item.id} className="overflow-hidden border border-[var(--border-strong)] hover:shadow-sm">
                                     <CardContent className="flex flex-col items-center p-3">
-                                        <div className="mb-3 flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-slate-100">
+                                        <div className="mb-3 flex h-24 w-full items-center justify-center overflow-hidden rounded-xl bg-[var(--second-accent)]">
                                             {item.image ? (
                                                 <img src={`/storage/${item.image}`} alt={item.name} className="h-full w-full object-cover" />
                                             ) : (
                                                 <span className="text-4xl">📦</span>
                                             )}
                                         </div>
-                                        <p className="text-center text-xs leading-tight font-bold text-slate-700">{item.name}</p>
-                                        <p className="mb-1 text-center text-xs text-slate-500">Rp. {item.price.toLocaleString('id-ID')}</p>
-                                        <p className={`mb-3 text-[10px] ${isOut ? 'text-red-500' : 'text-slate-400'}`}>
+                                        <p className="text-center text-xs leading-tight font-bold text-[var(--subheading)]">{item.name}</p>
+                                        <p className="mb-1 text-center text-xs text-[var(--grey-text)]">Rp. {item.price.toLocaleString('id-ID')}</p>
+                                        <p className={`mb-3 text-[10px] ${isOut ? 'text-[var(--danger)]' : 'text-[var(--grey-text-muted)]'}`}>
                                             {isOut ? 'Stok habis' : `Sisa stok: ${stockLeft}`}
                                         </p>
                                         <Button
                                             aria-label={`Tambah ${item.name} ke pesanan`}
                                             size="sm"
                                             disabled={isOut}
-                                            className="w-full rounded-full bg-slate-700 text-xs font-medium text-white hover:bg-slate-800 disabled:opacity-40"
+                                            className="w-full rounded-full bg-[var(--surface-header)] text-xs font-medium text-white hover:bg-[var(--surface-header-hover)] disabled:opacity-40"
                                             onClick={() => handleAddToCart(item)}
                                         >
                                             Tambah

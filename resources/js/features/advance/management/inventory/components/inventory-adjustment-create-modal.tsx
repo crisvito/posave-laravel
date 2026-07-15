@@ -50,13 +50,13 @@ export function InventoryAdjustmentCreateModal({
     };
 
     const inputClass =
-        'w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring';
+        'w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-[var(--border-strong)] dark:text-white dark:focus-visible:ring-[var(--ring)]';
 
     const lockedBranchName = branches.find((b) => b.id === defaultBranchId)?.name ?? '';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl">
+            <div className="w-full max-w-md rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                 <div className="mb-5 flex items-center justify-between">
                     <h3 className="text-lg font-bold text-[var(--subheading)]">Buat Perubahan Stok</h3>
                     <button
@@ -67,7 +67,7 @@ export function InventoryAdjustmentCreateModal({
                         }}
                         aria-label="button-x"
                     >
-                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
+                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)] dark:hover:text-white" />
                     </button>
                 </div>
 
@@ -76,9 +76,9 @@ export function InventoryAdjustmentCreateModal({
                         <div>
                             <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Cabang</label>
                             {lockBranch ? (
-                                // Branch manager: cabang terkunci, gak bisa diganti — sesuai keputusan
-                                // "cuma boleh urus stok cabangnya sendiri".
-                                <div className={`${inputClass} flex items-center bg-[var(--second-accent)] text-[var(--subheading)]`}>
+                                <div
+                                    className={`${inputClass} flex items-center bg-[var(--second-accent)] text-[var(--subheading)] dark:bg-[var(--second-accent)]`}
+                                >
                                     {lockedBranchName || '-'}
                                 </div>
                             ) : (
@@ -87,18 +87,18 @@ export function InventoryAdjustmentCreateModal({
                                         aria-label="input-cabang"
                                         value={data.branch_id}
                                         onChange={(e) => setData('branch_id', e.target.value)}
-                                        className="border-input focus-visible:ring-ring w-full appearance-none rounded-md border bg-transparent py-2 pr-10 pl-3 text-sm focus-visible:ring-1 focus-visible:outline-none"
+                                        className="border-input focus-visible:ring-ring w-full appearance-none rounded-md border bg-transparent py-2 pr-10 pl-3 text-sm focus-visible:ring-1 focus-visible:outline-none dark:border-[var(--border-strong)] dark:text-white dark:focus-visible:ring-[var(--ring)]"
                                     >
-                                        <option value="" disabled>
+                                        <option value="" disabled className="dark:bg-[var(--card)]">
                                             Pilih cabang
                                         </option>
                                         {branches.map((b) => (
-                                            <option key={b.id} value={b.id}>
+                                            <option key={b.id} value={b.id} className="dark:bg-[var(--card)]">
                                                 {b.name}
                                             </option>
                                         ))}
                                     </select>
-                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-[var(--muted-foreground)]" />
                                 </div>
                             )}
                             {errors.branch_id && <span className="text-xs text-red-500">{errors.branch_id}</span>}
@@ -124,18 +124,18 @@ export function InventoryAdjustmentCreateModal({
                                 aria-label="input-barang"
                                 value={data.inventory_item_id}
                                 onChange={(e) => setData('inventory_item_id', e.target.value)}
-                                className="border-input focus-visible:ring-ring w-full appearance-none rounded-md border bg-transparent py-2 pr-10 pl-3 text-sm focus-visible:ring-1 focus-visible:outline-none"
+                                className="border-input focus-visible:ring-ring w-full appearance-none rounded-md border bg-transparent py-2 pr-10 pl-3 text-sm focus-visible:ring-1 focus-visible:outline-none dark:border-[var(--border-strong)] dark:text-white dark:focus-visible:ring-[var(--ring)]"
                             >
-                                <option value="" disabled>
+                                <option value="" disabled className="dark:bg-[var(--card)]">
                                     Pilih barang
                                 </option>
                                 {inventoryItems.map((i) => (
-                                    <option key={i.id} value={i.id}>
+                                    <option key={i.id} value={i.id} className="dark:bg-[var(--card)]">
                                         {i.name} ({i.sku})
                                     </option>
                                 ))}
                             </select>
-                            <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                            <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-[var(--muted-foreground)]" />
                         </div>
                         {errors.inventory_item_id && <span className="text-xs text-red-500">{errors.inventory_item_id}</span>}
                     </div>
@@ -148,12 +148,16 @@ export function InventoryAdjustmentCreateModal({
                                     aria-label="input-perubahan"
                                     value={data.type}
                                     onChange={(e) => setData('type', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full appearance-none rounded-md border bg-transparent py-2 pr-10 pl-3 text-sm focus-visible:ring-1 focus-visible:outline-none"
+                                    className="border-input focus-visible:ring-ring w-full appearance-none rounded-md border bg-transparent py-2 pr-10 pl-3 text-sm focus-visible:ring-1 focus-visible:outline-none dark:border-[var(--border-strong)] dark:text-white dark:focus-visible:ring-[var(--ring)]"
                                 >
-                                    <option value="in">Barang Masuk (+)</option>
-                                    <option value="out">Barang Keluar (-)</option>
+                                    <option value="in" className="dark:bg-[var(--card)]">
+                                        Barang Masuk (+)
+                                    </option>
+                                    <option value="out" className="dark:bg-[var(--card)]">
+                                        Barang Keluar (-)
+                                    </option>
                                 </select>
-                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-[var(--muted-foreground)]" />
                             </div>
                         </div>
                         <div>
@@ -172,7 +176,6 @@ export function InventoryAdjustmentCreateModal({
                     </div>
 
                     <div>
-                        {/* "Catatan" sekarang wajib diisi (backend: required) — ubah label + validasi UI */}
                         <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Catatan</label>
                         <input
                             type="text"
@@ -193,10 +196,15 @@ export function InventoryAdjustmentCreateModal({
                                 reset();
                                 onClose();
                             }}
+                            className="bg-transparent dark:text-white"
                         >
                             Batal
                         </Button>
-                        <Button type="submit" disabled={processing} className="bg-[var(--surface-header)] text-[var(--text-light)]">
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                            className="bg-[var(--surface-header)] text-[var(--text-light)] hover:bg-[var(--surface-header-hover)] dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                        >
                             {processing ? 'Menyimpan...' : 'Simpan'}
                         </Button>
                     </div>

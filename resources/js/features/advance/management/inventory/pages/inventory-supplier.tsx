@@ -3,14 +3,14 @@ import { InventorySupplierCreateModal, InventorySupplierEditModal } from '@/feat
 import { useConfirmAction, useFilters } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
-import { Building2, Plus } from 'lucide-react';
+import { Building2, Package, Plus } from 'lucide-react';
 import { useState } from 'react';
 
 interface Supplier {
     id: number;
     name: string;
     category_id: number | null;
-    category: { id: number; name: string } | null;
+    category: { id: number; name: string; color: string | null } | null;
     address: string | null;
     phone: string | null;
     email: string | null;
@@ -65,7 +65,7 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                     )}
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm">
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
                     <div className="overflow-x-auto">
                         <Table className="min-w-[560px]">
                             <TableHeader className="bg-[var(--surface-header)]">
@@ -80,12 +80,11 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                             <TableBody>
                                 {suppliers.data.length === 0 ? (
                                     <TableEmptyState
-                                        colSpan={canManageCatalog ? 4 : 3}
-                                        message={
-                                            filters.search
-                                                ? `Pemasok "${filters.search}" tidak ditemukan`
-                                                : 'Belum ada pemasok, tambah pemasok terlebih dahulu'
-                                        }
+                                        colSpan={7}
+                                        icon={Package}
+                                        message="Belum ada Pemasok"
+                                        description="Klik tombol Untuk Buat Pemasok"
+                                        action={{ label: '+ Buat Pemasok', onClick: () => setShowCreateModal(true) }}
                                     />
                                 ) : (
                                     suppliers.data.map((supplier) => (
@@ -99,8 +98,8 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                                             className="h-10 w-10 shrink-0 rounded-full object-cover"
                                                         />
                                                     ) : (
-                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100">
-                                                            <Building2 className="h-5 w-5 text-gray-400" />
+                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--second-accent)]">
+                                                            <Building2 className="h-5 w-5 text-[var(--grey-text)]" />
                                                         </div>
                                                     )}
                                                     <span className="truncate font-medium text-[var(--subheading)]">{supplier.name}</span>
@@ -108,7 +107,13 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                             </TableCell>
                                             <TableCell>
                                                 {supplier.category ? (
-                                                    <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium whitespace-nowrap text-orange-600">
+                                                    <span
+                                                        className="rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap"
+                                                        style={{
+                                                            backgroundColor: `${supplier.category.color ?? '#94a3b8'}1a`,
+                                                            color: supplier.category.color ?? '#64748b',
+                                                        }}
+                                                    >
                                                         {supplier.category.name}
                                                     </span>
                                                 ) : (
@@ -125,14 +130,14 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                                         <button
                                                             aria-label={`Ubah pemasok ${supplier.name}`}
                                                             onClick={() => setEditSupplier(supplier)}
-                                                            className="text-xs font-medium text-[var(--secondary-700)] hover:underline"
+                                                            className="text-xs font-medium text-[var(--secondary-600)] hover:underline"
                                                         >
                                                             Ubah
                                                         </button>
                                                         <button
                                                             aria-label={`Hapus pemasok ${supplier.name}`}
                                                             onClick={() => handleDelete(supplier)}
-                                                            className="text-xs font-medium text-red-500 hover:underline"
+                                                            className="text-xs font-medium text-[var(--danger)] hover:underline"
                                                         >
                                                             Hapus
                                                         </button>

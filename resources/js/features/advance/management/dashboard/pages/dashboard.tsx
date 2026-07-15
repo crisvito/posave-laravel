@@ -81,12 +81,12 @@ export default function Dashboard({
         <DashboardSidebarLayout title="Dashboard" description="Kelola semua kebutuhan anda disini">
             <Head title="Dashboard" />
 
-            <div className="flex min-h-screen flex-col gap-6 bg-[var(--page-bg)] p-4 sm:p-6">
+            <div className="flex min-h-screen flex-col gap-6 bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <SalesFilterBar routeName="dashboard.index" outlets={outlets} filters={filters} onPrint={goToReports} />
 
-                <p className="-mt-2 text-xs text-[var(--grey-text)]">
-                    Menampilkan data <span className="font-medium text-[var(--subheading)]">{filters.label}</span> · dibandingkan dengan periode
-                    sebelumnya.
+                <p className="-mt-2 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                    Menampilkan data <span className="font-medium text-[var(--subheading)] dark:text-white">{filters.label}</span> · dibandingkan
+                    dengan periode sebelumnya.
                 </p>
 
                 <PendingTransfersCard transfers={pendingTransfers} count={pendingTransfersCount} />
@@ -144,14 +144,14 @@ export default function Dashboard({
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-8">
+                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-8 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                             <div>
                                 <div className="flex items-center gap-2">
-                                    <h3 className="text-sm font-semibold text-[var(--subheading)]">Grafik Penjualan</h3>
+                                    <h3 className="text-sm font-semibold text-[var(--subheading)] dark:text-white">Grafik Penjualan</h3>
                                     <DeltaBadge value={kpis.totalSales.deltaPct} compact />
                                 </div>
-                                <p className="mt-1 text-2xl font-bold text-[var(--subheading)]">
+                                <p className="mt-1 text-2xl font-bold text-[var(--subheading)] dark:text-white">
                                     {metric === 'omzet'
                                         ? formatRupiah(kpis.totalSales.value)
                                         : `${formatNumber(kpis.totalTransactions.value)} transaksi`}
@@ -161,7 +161,7 @@ export default function Dashboard({
                                 <MetricToggle metric={metric} onChange={setMetric} />
                                 <Link
                                     href={route('dashboard.reports.index')}
-                                    className="flex items-center gap-1 text-xs font-medium text-[var(--secondary-700)] hover:underline"
+                                    className="flex items-center gap-1 text-xs font-medium text-[var(--secondary-700)] hover:underline dark:text-[var(--muted-foreground)] dark:hover:text-white"
                                 >
                                     Lihat Laporan
                                     <ArrowUpRight className="h-3.5 w-3.5" />
@@ -171,7 +171,7 @@ export default function Dashboard({
                         <Suspense fallback={<ChartSkeleton className="h-[260px]" />}>
                             <SalesTrendChart data={salesTrend} metric={metric} />
                         </Suspense>
-                        <div className="mt-2 flex items-center gap-4 text-[11px] text-[var(--grey-text)]">
+                        <div className="mt-2 flex items-center gap-4 text-[11px] text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
                             <span className="flex items-center gap-1.5">
                                 <span className="h-2 w-4 rounded-full bg-[#377ba3]" /> Periode ini
                             </span>
@@ -181,8 +181,8 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-4">
-                        <h3 className="mb-4 text-sm font-semibold text-[var(--subheading)]">Ringkasan Kategori</h3>
+                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-4 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                        <h3 className="mb-4 text-sm font-semibold text-[var(--subheading)] dark:text-white">Ringkasan Kategori</h3>
                         <Suspense fallback={<ChartSkeleton className="h-[240px]" />}>
                             <CategoryDonut data={categorySummary} />
                         </Suspense>
@@ -190,21 +190,21 @@ export default function Dashboard({
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-8">
+                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-8 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                         <div className="mb-4 flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-[var(--grey-text)]" />
-                            <h3 className="text-sm font-semibold text-[var(--subheading)]">Jam Ramai</h3>
-                            <span className="text-xs text-[var(--grey-text)]">— penjualan per jam</span>
+                            <Clock className="h-4 w-4 text-[var(--grey-text)] dark:text-[var(--muted-foreground)]" />
+                            <h3 className="text-sm font-semibold text-[var(--subheading)] dark:text-white">Jam Ramai</h3>
+                            <span className="text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">— penjualan per jam</span>
                         </div>
                         <Suspense fallback={<ChartSkeleton className="h-[220px]" />}>
                             <HourlySalesChart data={hourlySales} />
                         </Suspense>
                     </div>
 
-                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-4">
+                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-4 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                         <div className="mb-4 flex items-center gap-2">
-                            <CreditCard className="h-4 w-4 text-[var(--grey-text)]" />
-                            <h3 className="text-sm font-semibold text-[var(--subheading)]">Metode Pembayaran</h3>
+                            <CreditCard className="h-4 w-4 text-[var(--grey-text)] dark:text-[var(--muted-foreground)]" />
+                            <h3 className="text-sm font-semibold text-[var(--subheading)] dark:text-white">Metode Pembayaran</h3>
                         </div>
                         <PaymentBreakdown data={paymentBreakdown} />
                     </div>

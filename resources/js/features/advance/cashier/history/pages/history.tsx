@@ -13,7 +13,7 @@ import {
 } from '@/components';
 import { Separator } from '@/components/ui';
 import { CashierSidePanel } from '@/features/advance/cashier/components';
-import { STATUS_BADGE_STYLES, STATUS_LABEL, STATUS_STYLES, type Transaction } from '@/features/advance/cashier/history/type';
+import { STATUS_BADGE_STYLES, STATUS_LABEL, type Transaction } from '@/features/advance/cashier/history/type';
 import { useChatbot } from '@/features/chatbot';
 import { CashierLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
@@ -178,7 +178,7 @@ export default function HistoryPage({ transactions, filters }: Props) {
         <CashierLayout>
             <Head title="Riwayat Pesanan - POSAVE" />
 
-            <div className="flex flex-1 flex-col overflow-hidden bg-white">
+            <div className="bg-background flex flex-1 flex-col overflow-hidden">
                 <div className="flex flex-wrap items-center gap-3 p-4 sm:gap-4 sm:p-6">
                     <SidebarTrigger />
                     <div className="min-w-[180px] flex-1 sm:max-w-sm sm:flex-none">
@@ -198,7 +198,10 @@ export default function HistoryPage({ transactions, filters }: Props) {
 
                     <div className="ml-auto">
                         <Select value={filters.payment_method} onValueChange={handlePaymentFilter}>
-                            <SelectTrigger aria-label="Filter metode pembayaran" className="h-9 w-44 border-slate-200 bg-slate-50 text-sm">
+                            <SelectTrigger
+                                aria-label="Filter metode pembayaran"
+                                className="h-9 w-44 border-[var(--border-strong)] bg-[var(--card)] text-sm"
+                            >
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -214,22 +217,23 @@ export default function HistoryPage({ transactions, filters }: Props) {
 
                 <div className="flex-1 overflow-y-auto">
                     <div className="px-4 pt-4 pb-6 sm:px-6">
-                        <div className="mb-3 hidden grid-cols-[1.2fr_1fr_1fr_1fr_1fr] px-4 sm:grid">
+                        <div className="mb-3 hidden grid-cols-[1.2fr_1fr_1fr_1fr] border-b border-[var(--border-strong)] px-4 pb-2.5 sm:grid">
                             {[
                                 { label: 'ORDER', align: 'text-left' },
                                 { label: 'WAKTU', align: 'text-left' },
                                 { label: 'METODE BAYAR', align: 'text-center' },
                                 { label: 'TOTAL', align: 'text-center' },
-                                { label: 'STATUS', align: 'text-right' },
                             ].map(({ label, align }) => (
-                                <span key={label} className={`text-sm font-bold tracking-wide text-slate-700 ${align}`}>
+                                <span key={label} className={`text-sm font-bold tracking-wide text-[var(--subheading)] ${align}`}>
                                     {label}
                                 </span>
                             ))}
                         </div>
 
                         {transactions.length === 0 ? (
-                            <div className="flex h-64 items-center justify-center text-sm text-slate-400">Belum ada transaksi di tanggal ini</div>
+                            <div className="flex h-64 items-center justify-center text-sm text-[var(--grey-text-muted)]">
+                                Belum ada transaksi di tanggal ini
+                            </div>
                         ) : (
                             <div className="space-y-3">
                                 {transactions.map((tx) => (
@@ -239,46 +243,34 @@ export default function HistoryPage({ transactions, filters }: Props) {
                                         onClick={() => handleRowClick(tx.id)}
                                         className={`w-full rounded-xl border px-4 py-4 text-left transition ${
                                             selectedId === tx.id
-                                                ? 'border-blue-300 bg-blue-50'
-                                                : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                                                ? 'border-[var(--secondary-600)] bg-[var(--secondary-600)]/10'
+                                                : 'border-[var(--border-strong)] bg-[var(--card)] hover:bg-[var(--accent)]'
                                         }`}
                                     >
                                         <div className="flex items-start justify-between sm:hidden">
                                             <div>
-                                                <p className="text-sm font-semibold text-slate-700">{tx.invoice}</p>
-                                                <p className="text-xs text-slate-500">
+                                                <p className="text-sm font-semibold text-[var(--subheading)]">{tx.invoice}</p>
+                                                <p className="text-xs text-[var(--grey-text)]">
                                                     {tx.date} · {tx.time}
                                                 </p>
-                                                <p className="mt-0.5 text-xs text-slate-500">{tx.paymentMethod.toUpperCase()}</p>
+                                                <p className="mt-0.5 text-xs text-[var(--grey-text)]">{tx.paymentMethod.toUpperCase()}</p>
                                             </div>
                                             <div className="flex flex-col items-end gap-1.5">
-                                                <span className="text-sm font-semibold text-slate-700">Rp. {tx.total.toLocaleString('id-ID')}</span>
-                                                <Badge
-                                                    variant="outline"
-                                                    className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[tx.status]}`}
-                                                >
-                                                    {STATUS_LABEL[tx.status]}
-                                                </Badge>
+                                                <span className="text-sm font-semibold text-[var(--subheading)]">
+                                                    Rp. {tx.total.toLocaleString('id-ID')}
+                                                </span>
                                             </div>
                                         </div>
 
-                                        <div className="hidden grid-cols-[1.2fr_1fr_1fr_1fr_1fr] items-center sm:grid">
-                                            <span className="text-sm font-semibold text-slate-700">{tx.invoice}</span>
+                                        <div className="hidden grid-cols-[1.2fr_1fr_1fr_1fr] items-center sm:grid">
+                                            <span className="text-sm font-semibold text-[var(--subheading)]">{tx.invoice}</span>
                                             <div>
-                                                <p className="text-sm font-medium text-slate-700">{tx.time}</p>
-                                                <p className="text-xs text-slate-400">{tx.date}</p>
+                                                <p className="text-sm font-medium text-[var(--subheading)]">{tx.time}</p>
+                                                <p className="text-xs text-[var(--grey-text-muted)]">{tx.date}</p>
                                             </div>
-                                            <span className="text-center text-sm text-slate-600">{tx.paymentMethod.toUpperCase()}</span>
-                                            <span className="text-center text-sm font-semibold text-slate-700">
+                                            <span className="text-center text-sm text-[var(--grey-text)]">{tx.paymentMethod.toUpperCase()}</span>
+                                            <span className="text-center text-sm font-semibold text-[var(--subheading)]">
                                                 Rp. {tx.total.toLocaleString('id-ID')}
-                                            </span>
-                                            <span className="flex justify-end">
-                                                <Badge
-                                                    variant="outline"
-                                                    className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${STATUS_STYLES[tx.status]}`}
-                                                >
-                                                    {STATUS_LABEL[tx.status]}
-                                                </Badge>
                                             </span>
                                         </div>
                                     </button>

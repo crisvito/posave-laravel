@@ -23,7 +23,7 @@ import { useConfirmAction, useDropdownMenu, useFilters } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
-import { Minus, MoreVertical, Plus, Printer } from 'lucide-react';
+import { Minus, MoreVertical, Package, Plus, Printer, Store } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { resolveBranchId } from '../lib';
 
@@ -74,9 +74,9 @@ export default function InventoryItemList({ items, categories, branches, filters
     const activeBranchName = branches.find((b) => String(b.id) === filters.branch_id)?.name;
     const selectedBranchId = resolveBranchId({ isBranchManager: is_branch_manager, branches, filterBranchId: filters.branch_id });
     const getStockStatus = (item: InventoryItem) => {
-        if (item.current_stock === 0) return { label: 'Stok Habis', color: 'bg-red-100 text-red-600' };
-        if (item.current_stock <= item.min_stock) return { label: 'Stok Rendah', color: 'bg-orange-100 text-orange-500' };
-        return { label: 'Aman', color: 'bg-green-100 text-green-600' };
+        if (item.current_stock === 0) return { label: 'Stok Habis', color: 'bg-[var(--danger-background)] text-[var(--danger)]' };
+        if (item.current_stock <= item.min_stock) return { label: 'Stok Rendah', color: 'bg-[var(--warning-background)] text-[var(--warning)]' };
+        return { label: 'Aman', color: 'bg-[var(--success-background)] text-[var(--success)]' };
     };
 
     const handleStockAdjust = async (item: InventoryItem, delta: number) => {
@@ -101,8 +101,41 @@ export default function InventoryItemList({ items, categories, branches, filters
         <DashboardSidebarLayout title="Daftar Barang" description="kelola semua barang dan stok inventori anda">
             <Head title="Daftar Barang" />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
-                <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex flex-wrap items-center gap-3">
+                <div className="mb-5 flex flex-col items-start justify-between gap-5">
+                    <div className="flex w-full justify-between">
+                        <div className="flex gap-3">
+                            {!is_branch_manager ? (
+                                <FilterDropdown
+                                    value={filters.branch_id}
+                                    options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
+                                    allLabel="Semua Cabang"
+                                    onChange={(v) => applyFilters({ branch_id: v })}
+                                    icon={<Store className="h-4 w-4" />}
+                                />
+                            ) : (
+                                <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)]">
+                                    <Store className="h-4 w-4" />
+                                    {branches[0]?.name ?? 'Cabang Anda'}
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex items-center gap-3">
+                            {can_manage_catalog && (
+                                <Button
+                                    onClick={() => setShowCreateModal(true)}
+                                    className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]"
+                                >
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Buat Barang
+                                </Button>
+                            )}
+                            <Button variant="outline" className="bg-[var(--card)]">
+                                <Printer className="mr-2 h-4 w-4" />
+                                Cetak
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="flex w-full items-center justify-between">
                         <SearchInput value={search} onChange={setSearch} onSubmit={handleSearch} placeholder="Cari nama barang..." />
 
                         <FilterDropdown
@@ -111,36 +144,10 @@ export default function InventoryItemList({ items, categories, branches, filters
                             allLabel="Semua Kategori"
                             onChange={(v) => applyFilters({ category_id: v })}
                         />
-
-                        {/* Filter Cabang — cuma buat Owner, branch_manager udah pasti 1 cabang */}
-                        {!is_branch_manager && (
-                            <FilterDropdown
-                                value={filters.branch_id}
-                                options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
-                                allLabel="Semua Cabang"
-                                onChange={(v) => applyFilters({ branch_id: v })}
-                            />
-                        )}
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                        {can_manage_catalog && (
-                            <Button
-                                onClick={() => setShowCreateModal(true)}
-                                className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]"
-                            >
-                                <Plus className="mr-2 h-4 w-4" />
-                                Buat Barang
-                            </Button>
-                        )}
-                        <Button variant="outline" className="bg-[var(--neutral-white)]">
-                            <Printer className="mr-2 h-4 w-4" />
-                            Cetak
-                        </Button>
                     </div>
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm">
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
                     <div className="overflow-x-auto">
                         <Table className="min-w-[840px]">
                             <TableHeader className="bg-[var(--surface-header)]">
@@ -159,12 +166,11 @@ export default function InventoryItemList({ items, categories, branches, filters
                             <TableBody>
                                 {itemRows.length === 0 ? (
                                     <TableEmptyState
-                                        colSpan={6}
-                                        message={
-                                            filters.search || filters.category_id
-                                                ? 'Barang tidak ditemukan'
-                                                : 'Belum ada barang, tambah barang terlebih dahulu'
-                                        }
+                                        colSpan={7}
+                                        icon={Package}
+                                        message="Belum ada Barang"
+                                        description="Klik tombol Untuk Buat Barang"
+                                        action={{ label: '+ Buat Barang', onClick: () => setShowCreateModal(true) }}
                                     />
                                 ) : (
                                     itemRows.map((item) => {
@@ -183,7 +189,7 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                                 className="h-10 w-10 shrink-0 rounded-lg object-cover"
                                                             />
                                                         ) : (
-                                                            <div className="h-10 w-10 shrink-0 rounded-lg bg-gray-100" />
+                                                            <div className="h-10 w-10 shrink-0 rounded-lg bg-[var(--second-accent)]" />
                                                         )}
                                                         <div className="min-w-0">
                                                             <div className="truncate font-medium text-[var(--subheading)]">{item.name}</div>
@@ -192,7 +198,13 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>
-                                                    <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium whitespace-nowrap text-orange-600">
+                                                    <span
+                                                        className="rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap"
+                                                        style={{
+                                                            backgroundColor: `${item.category.color ?? '#94a3b8'}1a`,
+                                                            color: item.category.color ?? '#94a3b8',
+                                                        }}
+                                                    >
                                                         {item.category.name}
                                                     </span>
                                                 </TableCell>
@@ -252,7 +264,7 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                         <button
                                                             aria-label={`Lihat detail ${item.name}`}
                                                             onClick={() => handleShowDetail(item)}
-                                                            className="text-xs font-medium whitespace-nowrap text-[var(--secondary-700)] hover:underline"
+                                                            className="text-xs font-medium whitespace-nowrap text-[var(--secondary-600)] hover:underline"
                                                         >
                                                             Lihat
                                                         </button>

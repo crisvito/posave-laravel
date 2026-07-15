@@ -67,8 +67,8 @@ export function Pagination({ links }: PaginationProps) {
                     onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
                     className={`rounded-lg px-3 py-1.5 text-sm ${
                         link.active
-                            ? 'bg-[var(--surface-header)] font-medium text-white'
-                            : 'bg-[var(--neutral-white)] text-[var(--grey-text)] hover:bg-[var(--surface-badge)] disabled:cursor-not-allowed disabled:opacity-40'
+                            ? 'bg-[var(--surface-header)] font-medium text-white dark:bg-white dark:text-black'
+                            : 'bg-[var(--neutral-white)] text-[var(--grey-text)] hover:bg-[var(--surface-badge)] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-transparent dark:text-[var(--muted-foreground)] dark:hover:bg-[var(--second-accent)] dark:hover:text-white'
                     }`}
                     dangerouslySetInnerHTML={{ __html: link.label }}
                 />

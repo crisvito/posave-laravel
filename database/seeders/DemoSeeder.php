@@ -25,6 +25,9 @@ class DemoSeeder extends Seeder
     private const LITE_OWNER_EMAIL = 'owner.lite@posave.test';
     private const PASSWORD = 'password';
 
+    /** Palet sama kayak CategoryController::COLOR_PALETTE / frontend CATEGORY_COLOR_SWATCHES. */
+    private const CATEGORY_COLOR_PALETTE = ['#3d8ab8', '#16a34a', '#e75f1a', '#9f6fd5', '#dc2626', '#0891b2', '#ca8a04', '#db2777'];
+
     /** @var array<int, array{0: string, 1: string}> */
     private array $credentialRows = [];
 
@@ -257,8 +260,18 @@ class DemoSeeder extends Seeder
         }
 
         $items = [];
+        $colorIndex = 0;
+
         foreach ($catalog as $categoryName => $group) {
-            $category = Category::firstOrCreate(['company_id' => $companyId, 'name' => $categoryName]);
+            // Rotasi warna dari palet yang sama kayak auto-assign di CategoryController::store(),
+            // biar data demo gak keliatan abu-abu semua kayak sebelumnya.
+            $color = self::CATEGORY_COLOR_PALETTE[$colorIndex % count(self::CATEGORY_COLOR_PALETTE)];
+            $colorIndex++;
+
+            $category = Category::firstOrCreate(
+                ['company_id' => $companyId, 'name' => $categoryName],
+                ['color' => $color],
+            );
 
             foreach ($group['items'] as $i => [$name, $price, $cost]) {
                 $sku = strtoupper(Str::slug($categoryName, '')) . '-' . str_pad((string) ($i + 1), 3, '0', STR_PAD_LEFT);

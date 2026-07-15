@@ -17,10 +17,10 @@ export function NavUser() {
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
-                            className="group !text-[var(--white)] hover:!bg-[var(--second-accent)] hover:!text-[var(--primary-900)] data-[state=open]:!bg-[var(--second-accent)] data-[state=open]:!text-[var(--primary-900)] [&_svg]:!text-[var(--white)] hover:[&_svg]:!text-[var(--primary-900)]"
+                            className="group !text-[var(--white)] hover:!bg-[var(--primary-700)] data-[state=open]:!bg-[var(--accent-900)] data-[state=open]:!text-[var(--primary-900)] [&_svg]:!text-[var(--white)] data-[state=open]:[&_svg]:!text-[var(--primary-900)]"
                         >
                             <UserInfo user={auth.user} />
-                            <ChevronsUpDown className="ml-auto size-4 text-[var(--white)]" />
+                            <ChevronsUpDown className="ml-auto size-4 text-[var(--white)] group-data-[state=open]:text-[var(--primary-900)]" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent

@@ -9,12 +9,12 @@ const buttonVariants = cva(
     {
         variants: {
             variant: {
-                default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+                default: 'bg-primary text-primary-foreground hover:bg-primary/90 dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)] dark:text-white dark:hover:bg-[var(--second-accent)]',
                 destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-                outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-                secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-                ghost: 'hover:bg-accent hover:text-accent-foreground',
-                link: 'text-primary underline-offset-4 hover:underline',
+                outline: 'border border-[var(--border-strong)] bg-transparent text-[var(--subheading)] hover:bg-[var(--surface-badge)] dark:border-[var(--border-strong)] dark:text-white dark:hover:bg-[var(--second-accent)]',
+                secondary: 'border border-transparent bg-[var(--second-accent)] text-[var(--subheading)] shadow-sm hover:bg-[var(--surface-badge)] dark:border-[var(--border-strong)] dark:bg-[var(--card)] dark:text-white dark:hover:bg-[var(--second-accent)]',
+                ghost: 'text-[var(--subheading)] hover:bg-[var(--surface-badge)] dark:text-white dark:hover:bg-[var(--second-accent)]',
+                link: 'text-primary underline-offset-4 hover:underline dark:text-white',
             },
             size: {
                 default: 'h-10 px-4 py-2',
@@ -27,7 +27,7 @@ const buttonVariants = cva(
             variant: 'default',
             size: 'default',
         },
-    },
+    }
 );
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
