@@ -90,6 +90,7 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
                             value={filters.branch}
                             options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
                             allLabel="Semua Cabang"
+                            icon={<Store className="h-4 w-4" />}
                             onChange={(v) => applyFilters({ branch: v })}
                         />
                     ) : (
@@ -105,7 +106,6 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
                         </span>
                         {!is_branch_manager && (
                             <Link href={route('dashboard.employees.create')}>
-                                {/* Warna Tombol Gelap */}
                                 <Button className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]">
                                     <Plus className="mr-2 h-4 w-4" />
                                     Tambah Karyawan
@@ -146,7 +146,6 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
                                             key={employee.id}
                                             className={`${employee.role === 'branch_manager' ? 'bg-blue-50 dark:bg-blue-950/20' : ''} dark:border-[var(--border-strong)]`}
                                         >
-                                            {/* Teks Putih untuk semua cell */}
                                             <TableCell className="font-medium text-[var(--subheading)] dark:text-white">{employee.name}</TableCell>
                                             <TableCell className="text-[var(--subheading)] dark:text-white">{employee.user?.email ?? '-'}</TableCell>
                                             <TableCell>
@@ -213,7 +212,6 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
                     onPerPageChange={(v) => applyFilters({ per_page: v })}
                 />
             </div>
-            {/* ...sisanya tetap sama */}
             {activeMenuEmployee && (
                 <EmployeeActionsMenu
                     employee={activeMenuEmployee}

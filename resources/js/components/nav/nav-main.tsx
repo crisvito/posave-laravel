@@ -60,7 +60,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                             <SidebarMenuButton
                                                 tooltip={item.title}
                                                 isActive={hasActiveChild}
-                                                className="!text-[var(--white)] hover:!bg-[var(--primary-700)] data-[active=true]:!bg-[var(--accent-900)] data-[active=true]:!text-[var(--primary-900)] [&_svg]:!text-[var(--white)] data-[active=true]:[&_svg]:!text-[var(--primary-900)]"
+                                                className="!text-[var(--white)] hover:!bg-[var(--primary-700)] data-[active=true]:!bg-[var(--neutral-white)] data-[active=true]:!text-[var(--primary-900)] [&_svg]:!text-[var(--white)] data-[active=true]:[&_svg]:!text-[var(--primary-900)]"
                                             >
                                                 {item.icon && <item.icon />}
                                             </SidebarMenuButton>
@@ -98,7 +98,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                             <SidebarMenuButton
                                                 tooltip={item.title}
                                                 isActive={hasActiveChild}
-                                                className="!text-[var(--white)] hover:!bg-[var(--primary-700)] data-[active=true]:!bg-[var(--accent-900)] data-[active=true]:!text-[var(--primary-900)] [&_svg]:!text-[var(--white)] data-[active=true]:[&_svg]:!text-[var(--primary-900)]"
+                                                className="!text-[var(--white)] hover:!bg-[var(--primary-700)] data-[active=true]:!bg-[var(--neutral-white)] data-[active=true]:!text-[var(--primary-900)] [&_svg]:!text-[var(--white)] data-[active=true]:[&_svg]:!text-[var(--primary-900)]"
                                             >
                                                 {item.icon && <item.icon />}
 
@@ -119,7 +119,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                                             href={getHref(child)}
                                                             className={`rounded-md px-3 py-2 text-sm transition ${
                                                                 isChildActive
-                                                                    ? '!bg-[var(--accent-900)] font-medium !text-[var(--primary-900)]'
+                                                                    ? '!bg-[var(--neutral-white)] font-medium !text-[var(--primary-900)]'
                                                                     : '!text-[var(--white)] hover:!bg-[var(--primary-700)]'
                                                             }`}
                                                         >
@@ -144,7 +144,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                     asChild
                                     isActive={isActive}
                                     tooltip={item.title}
-                                    className="!text-[var(--white)] hover:!bg-[var(--primary-700)] data-[active=true]:!bg-[var(--accent-900)] data-[active=true]:!text-[var(--primary-900)] [&_svg]:!text-[var(--white)] data-[active=true]:[&_svg]:!text-[var(--primary-900)]"
+                                    className="!text-[var(--white)] hover:!bg-[var(--primary-700)] data-[active=true]:!bg-[var(--neutral-white)] data-[active=true]:!text-[var(--primary-900)] [&_svg]:!text-[var(--white)] data-[active=true]:[&_svg]:!text-[var(--primary-900)]"
                                 >
                                     <Link href={getHref(item)} className="flex w-full items-center gap-2 !text-[var(--white)]">
                                         {item.icon && <item.icon />}

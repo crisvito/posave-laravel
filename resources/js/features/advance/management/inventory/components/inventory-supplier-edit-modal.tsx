@@ -1,4 +1,4 @@
-import { Button } from '@/components';
+import { Button, Input, Label, Textarea } from '@/components';
 import { useForm } from '@inertiajs/react';
 import { Store, UploadCloud, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
@@ -90,12 +90,12 @@ export function InventorySupplierEditModal({ supplier, categories, onClose }: In
                     <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto p-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Nama Pemasok</label>
-                                <input type="text" value={data.name} onChange={(e) => setData('name', e.target.value)} className={inputClass} />
+                                <Label>Nama Pemasok</Label>
+                                <Input type="text" value={data.name} onChange={(e) => setData('name', e.target.value)} />
                                 {errors.name && <span className="text-xs text-red-500">{errors.name}</span>}
                             </div>
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Kategori</label>
+                                <Label>Kategori</Label>
                                 <select
                                     value={data.category_id}
                                     onChange={(e) => setData('category_id', e.target.value)}
@@ -115,8 +115,8 @@ export function InventorySupplierEditModal({ supplier, categories, onClose }: In
                         </div>
 
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Alamat</label>
-                            <textarea
+                            <Label>Alamat</Label>
+                            <Textarea
                                 value={data.address}
                                 onChange={(e) => setData('address', e.target.value)}
                                 rows={2}
@@ -127,21 +127,21 @@ export function InventorySupplierEditModal({ supplier, categories, onClose }: In
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Nomor Telepon</label>
-                                <input type="text" value={data.phone} onChange={(e) => setData('phone', e.target.value)} className={inputClass} />
+                                <Label>Nomor Telepon</Label>
+                                <Input type="text" value={data.phone} onChange={(e) => setData('phone', e.target.value)} />
                                 {errors.phone && <span className="text-xs text-red-500">{errors.phone}</span>}
                             </div>
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Email</label>
-                                <input type="email" value={data.email} onChange={(e) => setData('email', e.target.value)} className={inputClass} />
+                                <Label>Email</Label>
+                                <Input type="email" value={data.email} onChange={(e) => setData('email', e.target.value)} />
                                 {errors.email && <span className="text-xs text-red-500">{errors.email}</span>}
                             </div>
                         </div>
 
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">
+                            <Label>
                                 Logo <span className="font-normal text-[var(--grey-text)]">(Opsional)</span>
-                            </label>
+                            </Label>
                             <div
                                 onClick={() => fileInputRef.current?.click()}
                                 className="flex cursor-pointer items-center gap-4 rounded-lg border border-dashed border-[var(--border-strong)] p-4 transition-colors hover:bg-[var(--surface-badge)] dark:hover:bg-[var(--second-accent)]"

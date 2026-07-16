@@ -3,7 +3,7 @@
 namespace App\Models\Auth;
 
 use App\Models\Advance\Messaging\Broadcast;
-use App\Models\Advance\Owner\Settings\ReceiptSetting;
+use App\Models\Advance\Management\Settings\ReceiptSetting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

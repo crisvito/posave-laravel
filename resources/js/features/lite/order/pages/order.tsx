@@ -78,38 +78,42 @@ export default function OrderPage({ items, categories }: Props) {
     const cartPanel = (
         <div className="flex h-full flex-col">
             <div className="flex items-center justify-between p-4">
-                <h3 className="text-lg font-bold text-[var(--subheading)]">Keranjang</h3>
+                <h3 className="text-lg font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Keranjang</h3>
                 <button aria-label="Tutup keranjang" onClick={() => setCartOpen(false)} className="lg:hidden">
-                    <X className="h-5 w-5 text-[var(--grey-text)]" />
+                    <X className="h-5 w-5 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                 </button>
             </div>
             <div className="flex-1 overflow-y-auto px-4">
                 {cart.length === 0 ? (
-                    <p className="py-10 text-center text-sm text-[var(--grey-text)]">Belum ada barang dipilih</p>
+                    <p className="py-10 text-center text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">Belum ada barang dipilih</p>
                 ) : (
                     <div className="flex flex-col gap-3">
                         {cart.map((item) => (
                             <div
                                 key={item.itemId}
-                                className="flex items-center justify-between gap-2 rounded-xl border border-[var(--border-strong)] p-3"
+                                className="flex items-center justify-between gap-2 rounded-xl border border-[var(--border-strong)] p-3 dark:border-[var(--border-strong)]"
                             >
                                 <div className="min-w-0 flex-1">
-                                    <p className="truncate text-sm font-semibold text-[var(--subheading)]">{item.name}</p>
-                                    <p className="text-xs text-[var(--grey-text)]">Rp {item.price.toLocaleString('id-ID')}</p>
+                                    <p className="truncate text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                                        {item.name}
+                                    </p>
+                                    <p className="text-xs text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
+                                        Rp {item.price.toLocaleString('id-ID')}
+                                    </p>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <button
                                         aria-label={`Kurangi ${item.name}`}
                                         onClick={() => handleDecrease(item.itemId)}
-                                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-strong)]"
+                                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-strong)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
                                     >
                                         <Minus className="h-3.5 w-3.5" />
                                     </button>
-                                    <span className="w-5 text-center text-sm font-bold">{item.qty}</span>
+                                    <span className="w-5 text-center text-sm font-bold dark:text-[var(--neutral-white)]">{item.qty}</span>
                                     <button
                                         aria-label={`Tambah ${item.name}`}
                                         onClick={() => handleAddToCart({ id: item.itemId, price: item.price, name: item.name } as ItemOption)}
-                                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-strong)]"
+                                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-strong)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
                                     >
                                         <Plus className="h-3.5 w-3.5" />
                                     </button>
@@ -119,8 +123,8 @@ export default function OrderPage({ items, categories }: Props) {
                     </div>
                 )}
             </div>
-            <div className="border-t border-[var(--border-strong)] p-4">
-                <div className="mb-3 flex justify-between text-base font-bold text-[var(--subheading)]">
+            <div className="border-t border-[var(--border-strong)] p-4 dark:border-[var(--border-strong)]">
+                <div className="mb-3 flex justify-between text-base font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
                     <span>Total</span>
                     <span>Rp {subtotal.toLocaleString('id-ID')}</span>
                 </div>
@@ -128,7 +132,7 @@ export default function OrderPage({ items, categories }: Props) {
                     aria-label="Bayar sekarang"
                     disabled={cart.length === 0}
                     onClick={() => setShowPayment(true)}
-                    className="h-12 w-full rounded-xl bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)] disabled:opacity-50"
+                    className="h-12 w-full rounded-xl bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)] disabled:opacity-50 dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:opacity-90"
                 >
                     Bayar Sekarang
                 </Button>
@@ -139,51 +143,51 @@ export default function OrderPage({ items, categories }: Props) {
     return (
         <DashboardSidebarLayout title="Pesanan" description="Pilih barang, lalu catat pembayaran">
             <Head title="Pesanan" />
-            <div className="flex min-h-screen bg-[var(--page-bg)]">
+            <div className="flex min-h-screen bg-[var(--page-bg)] dark:bg-[var(--background)]">
                 <div className="flex-1 p-4 sm:p-6">
                     {successInfo && (
-                        <div className="mb-4 flex items-center justify-between rounded-2xl border-2 border-[var(--success)] bg-[var(--success-background)] px-4 py-3">
-                            <span className="text-sm font-semibold text-[var(--success)]">
+                        <div className="mb-4 flex items-center justify-between rounded-2xl border-2 border-[var(--success)] bg-[var(--success-background)] px-4 py-3 dark:border-green-500 dark:bg-green-900/30">
+                            <span className="text-sm font-semibold text-[var(--success)] dark:text-green-400">
                                 Pembayaran berhasil! {successInfo.invoice} · Rp {successInfo.total.toLocaleString('id-ID')}
                             </span>
                             <button aria-label="Tutup notifikasi" onClick={() => setSuccessInfo(null)}>
-                                <X className="h-4 w-4 text-[var(--success)]" />
+                                <X className="h-4 w-4 text-[var(--success)] dark:text-green-400" />
                             </button>
                         </div>
                     )}
 
                     <div className="relative mb-4">
-                        <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)]" />
+                        <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                         <Input
                             aria-label="Cari barang"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Cari barang..."
-                            className="h-12 rounded-2xl border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base"
+                            className="h-12 rounded-md border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                         />
                     </div>
 
                     <div className="mb-6 flex gap-2 overflow-x-auto pb-1">
-                        <button
+                        <Button
                             aria-label="Lihat semua kategori"
                             onClick={() => setActiveCategory('all')}
-                            className={`shrink-0 rounded-full border-2 px-4 py-2 text-sm font-semibold transition ${
+                            className={`shrink-0 rounded-full border-2 px-4 py-2 text-sm font-semibold transition dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
                                 activeCategory === 'all'
-                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white'
-                                    : 'border-[var(--border-strong)] text-[var(--grey-text)]'
+                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white dark:border-[var(--neutral-white)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                    : 'border-[var(--border-strong)] text-[var(--grey-text)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]'
                             }`}
                         >
                             Semua
-                        </button>
+                        </Button>
                         {categories.map((cat) => (
-                            <button
+                            <Button
                                 aria-label={`Filter kategori ${cat.name}`}
                                 key={cat.id}
                                 onClick={() => setActiveCategory(cat.id)}
-                                className={`flex shrink-0 items-center gap-2 rounded-full border-2 px-3 py-1.5 text-sm font-semibold transition ${
+                                className={`flex shrink-0 items-center gap-2 rounded-full border-2 px-3 py-1.5 text-sm font-semibold transition dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
                                     activeCategory === cat.id
-                                        ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white'
-                                        : 'border-[var(--border-strong)] text-[var(--grey-text)]'
+                                        ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white dark:border-[var(--neutral-white)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                        : 'border-[var(--border-strong)] text-[var(--grey-text)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]'
                                 }`}
                             >
                                 <span
@@ -193,7 +197,7 @@ export default function OrderPage({ items, categories }: Props) {
                                     {cat.name.charAt(0).toUpperCase()}
                                 </span>
                                 {cat.name}
-                            </button>
+                            </Button>
                         ))}
                     </div>
 
@@ -204,9 +208,9 @@ export default function OrderPage({ items, categories }: Props) {
                             return (
                                 <div
                                     key={item.id}
-                                    className="flex flex-col rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-3 shadow-sm"
+                                    className="flex flex-col rounded-md border border-[var(--border-strong)] bg-[var(--neutral-white)] p-3 shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]"
                                 >
-                                    <div className="mb-2 flex h-20 w-full items-center justify-center overflow-hidden rounded-xl bg-[var(--second-accent)]">
+                                    <div className="mb-2 flex h-20 w-full items-center justify-center overflow-hidden rounded-xl bg-[var(--second-accent)] dark:bg-[var(--border-strong)]">
                                         {item.image ? (
                                             <img src={`/storage/${item.image}`} alt={item.name} className="h-full w-full object-cover" />
                                         ) : (
@@ -218,16 +222,22 @@ export default function OrderPage({ items, categories }: Props) {
                                             </span>
                                         )}
                                     </div>
-                                    <p className="truncate text-sm font-bold text-[var(--subheading)]">{item.name}</p>
-                                    <p className="mb-1 text-sm text-[var(--grey-text)]">Rp {item.price.toLocaleString('id-ID')}</p>
-                                    <p className={`mb-2 text-xs ${isOut ? 'text-[var(--danger)]' : 'text-[var(--grey-text)]'}`}>
+                                    <p className="truncate text-sm font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                                        {item.name}
+                                    </p>
+                                    <p className="mb-1 text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
+                                        Rp {item.price.toLocaleString('id-ID')}
+                                    </p>
+                                    <p
+                                        className={`mb-2 text-xs ${isOut ? 'text-[var(--danger)] dark:text-red-400' : 'text-[var(--grey-text)] dark:text-[var(--neutral-white)]'}`}
+                                    >
                                         {isOut ? 'Stok habis' : `Sisa: ${stockLeft}`}
                                     </p>
                                     <Button
                                         aria-label={`Tambah ${item.name} ke keranjang`}
                                         disabled={isOut}
                                         onClick={() => handleAddToCart(item)}
-                                        className="h-9 w-full rounded-xl bg-[var(--surface-header)] text-sm font-bold hover:bg-[var(--surface-header-hover)] disabled:opacity-40"
+                                        className="h-9 w-full bg-[var(--surface-header)] text-sm font-bold hover:bg-[var(--surface-header-hover)] disabled:opacity-40 dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:text-[var(--neutral-white)] dark:hover:opacity-90"
                                     >
                                         + Tambah
                                     </Button>
@@ -237,17 +247,15 @@ export default function OrderPage({ items, categories }: Props) {
                     </div>
                 </div>
 
-                {/* Panel keranjang — nempel di kanan (desktop) */}
-                <div className="hidden w-80 shrink-0 border-l border-[var(--border-strong)] bg-[var(--neutral-white)] lg:block">
+                <div className="hidden w-80 shrink-0 border-l border-[var(--border-strong)] bg-[var(--neutral-white)] lg:block dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
                     <div className="sticky top-0">{cartPanel}</div>
                 </div>
 
-                {/* Tombol keranjang melayang (mobile) */}
                 {cartCount > 0 && (
                     <button
                         aria-label="Buka keranjang"
                         onClick={() => setCartOpen(true)}
-                        className="fixed right-5 bottom-5 z-40 flex items-center gap-2 rounded-full bg-[var(--surface-header)] px-5 py-3.5 text-white shadow-2xl lg:hidden"
+                        className="fixed right-5 bottom-5 z-40 flex items-center gap-2 rounded-full bg-[var(--surface-header)] px-5 py-3.5 text-white shadow-2xl lg:hidden dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]"
                     >
                         <ShoppingCart className="h-4 w-4" />
                         <span className="text-sm font-bold">
@@ -258,7 +266,7 @@ export default function OrderPage({ items, categories }: Props) {
 
                 {cartOpen && (
                     <div className="fixed inset-0 z-50 flex justify-end bg-black/40 lg:hidden">
-                        <div className="h-full w-[85vw] max-w-sm bg-[var(--neutral-white)]">{cartPanel}</div>
+                        <div className="h-full w-[85vw] max-w-sm bg-[var(--neutral-white)] dark:bg-[var(--primary-900)]">{cartPanel}</div>
                     </div>
                 )}
             </div>

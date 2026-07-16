@@ -1,6 +1,6 @@
 import { Eye, Pencil, Trash2 } from 'lucide-react';
 
-export interface InventoryCategory {
+interface InventoryCategory {
     id: number;
     name: string;
     color: string | null;

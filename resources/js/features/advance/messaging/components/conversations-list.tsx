@@ -50,7 +50,7 @@ export function ConversationList({
 
     return (
         <div className="flex h-full flex-col border-r border-[var(--border-strong)] bg-[var(--neutral-white)] dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
-            <div className="flex gap-2 border-b border-[var(--border-strong)] p-3 dark:border-[var(--border-strong)]">
+            <div className="flex h-15 gap-2 border-b border-[var(--border-strong)] p-3 dark:border-[var(--border-strong)]">
                 <button
                     aria-label="Tab Pesan"
                     onClick={() => onTabChange('pesan')}

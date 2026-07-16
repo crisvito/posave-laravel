@@ -1,4 +1,4 @@
-import { Button } from '@/components';
+import { Button, Input, Label } from '@/components';
 import { useForm } from '@inertiajs/react';
 import { ArrowRight, ChevronDown, Plus, Trash2, X } from 'lucide-react';
 import React from 'react';
@@ -194,7 +194,7 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
 
                     <div>
                         <div className="mb-2 flex items-center justify-between">
-                            <label className="text-sm font-medium text-[var(--subheading)] dark:text-white">Barang</label>
+                            <Label>Barang</Label>
                             <button
                                 type="button"
                                 onClick={addItem}
@@ -220,12 +220,11 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                             </option>
                                         ))}
                                     </select>
-                                    <input
+                                    <Input
                                         type="number"
                                         min={1}
                                         value={item.quantity}
                                         onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
-                                        className={`${inputClass} w-20`}
                                         placeholder="Qty"
                                     />
                                     {data.items.length > 1 && (

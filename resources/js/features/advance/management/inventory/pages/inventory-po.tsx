@@ -1,8 +1,10 @@
 import {
     Button,
+    CreateButton,
     DateNavigator,
     FilterDropdown,
     PaginationBar,
+    PrintButton,
     SearchInput,
     Table,
     TableBody,
@@ -16,7 +18,7 @@ import { InventoryPurchaseOrderActionsMenu, InventoryPurchaseOrderCreateModal } 
 import { useConfirmAction, useDropdownMenu, useFilters } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
-import { MoreVertical, Package, Plus, Printer, Store } from 'lucide-react';
+import { MoreVertical, Package, Store } from 'lucide-react';
 import { useState } from 'react';
 
 interface Supplier {
@@ -124,17 +126,8 @@ export default function InventoryPurchaseOrderList({
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <Button
-                            onClick={() => setShowCreateModal(true)}
-                            className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]"
-                        >
-                            <Plus className="mr-2 h-4 w-4" />
-                            Buat PO
-                        </Button>
-                        <Button variant="outline" className="bg-[var(--card)]">
-                            <Printer className="mr-2 h-4 w-4" />
-                            Cetak
-                        </Button>
+                        <CreateButton label="Buat PO" onClick={() => setShowCreateModal(true)} />
+                        <PrintButton />
                     </div>
                 </div>
 

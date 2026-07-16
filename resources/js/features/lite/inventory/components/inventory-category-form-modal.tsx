@@ -31,28 +31,31 @@ export function InventoryCategoryFormModal({ category, onClose, onDelete }: Inve
 
     return (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center sm:p-4">
-            <div className="w-full max-w-md rounded-t-3xl bg-[var(--neutral-white)] shadow-xl sm:rounded-3xl">
+            <div className="w-full max-w-md rounded-t-3xl bg-[var(--neutral-white)] shadow-xl sm:rounded-3xl dark:bg-[var(--primary-900)]">
                 <div className="flex items-center justify-between p-5">
                     <div className="flex items-center gap-3">
-                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--second-accent)]">
-                            <Tag className="h-6 w-6 text-[var(--subheading)]" />
+                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--second-accent)] dark:bg-[var(--border-strong)]">
+                            <Tag className="h-6 w-6 text-[var(--subheading)] dark:text-[var(--neutral-white)]" />
                         </span>
-                        <h3 className="text-xl font-bold text-[var(--subheading)]">{isEdit ? 'Ubah Kategori' : 'Tambah Kategori'}</h3>
+                        <h3 className="text-xl font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            {isEdit ? 'Ubah Kategori' : 'Tambah Kategori'}
+                        </h3>
                     </div>
                     <button aria-label="Tutup" onClick={onClose}>
-                        <X className="h-6 w-6 text-[var(--grey-text)]" />
+                        <X className="h-6 w-6 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-5 pb-5">
                     <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)]">Nama Kategori</label>
+                        <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            Nama Kategori
+                        </label>
                         <Input
                             aria-label="Nama kategori"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
                             placeholder="Contoh: Minuman, Sembako..."
-                            className="h-12 rounded-xl text-base"
                         />
                         {errors.name && <p className="mt-1 text-sm text-[var(--danger)]">{errors.name}</p>}
                     </div>
@@ -65,7 +68,7 @@ export function InventoryCategoryFormModal({ category, onClose, onDelete }: Inve
                             aria-label="Simpan kategori"
                             type="submit"
                             disabled={processing}
-                            className="h-12 rounded-xl bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)]"
+                            className="h-12 rounded-xl bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:opacity-90"
                         >
                             {processing ? 'Menyimpan...' : 'Simpan'}
                         </Button>
@@ -75,7 +78,7 @@ export function InventoryCategoryFormModal({ category, onClose, onDelete }: Inve
                                 type="button"
                                 variant="outline"
                                 onClick={onDelete}
-                                className="h-12 rounded-xl border-[var(--danger)] text-base font-bold text-[var(--danger)] hover:bg-[var(--danger-background)]"
+                                className="h-12 rounded-xl border-[var(--danger)] text-base font-bold text-[var(--danger)] hover:bg-[var(--danger-background)] dark:border-red-400 dark:text-red-400 dark:hover:bg-red-900/30"
                             >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Hapus Kategori

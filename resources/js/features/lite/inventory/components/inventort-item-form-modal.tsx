@@ -1,4 +1,5 @@
-import { Button, Input } from '@/components/ui';
+import { FilterDropdown } from '@/components';
+import { Button, Input, Label } from '@/components/ui';
 import { useForm } from '@inertiajs/react';
 import { Package, Trash2, UploadCloud, X } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -45,54 +46,51 @@ export function InventoryItemFormModal({ item, categories, onClose, onDelete }: 
 
     return (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center sm:p-4">
-            <div className="w-full max-w-md rounded-t-3xl bg-[var(--neutral-white)] shadow-xl sm:rounded-3xl">
+            <div className="w-full max-w-md rounded-t-3xl bg-[var(--neutral-white)] shadow-xl sm:rounded-3xl dark:bg-[var(--background)]">
                 <div className="flex items-center justify-between p-5">
                     <div className="flex items-center gap-3">
-                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--second-accent)]">
-                            <Package className="h-6 w-6 text-[var(--subheading)]" />
+                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--second-accent)] dark:bg-[var(--border-strong)]">
+                            <Package className="h-6 w-6 text-[var(--subheading)] dark:text-[var(--neutral-white)]" />
                         </span>
-                        <h3 className="text-xl font-bold text-[var(--subheading)]">{isEdit ? 'Ubah Barang' : 'Tambah Barang'}</h3>
+                        <h3 className="text-xl font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            {isEdit ? 'Ubah Barang' : 'Tambah Barang'}
+                        </h3>
                     </div>
                     <button aria-label="Tutup" onClick={onClose}>
-                        <X className="h-6 w-6 text-[var(--grey-text)]" />
+                        <X className="h-6 w-6 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex max-h-[75vh] flex-col gap-4 overflow-y-auto px-5 pb-5">
                     <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)]">Nama Barang</label>
+                        <Label>Nama Barang</Label>
                         <Input
                             aria-label="Nama barang"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
                             placeholder="Contoh: Indomie Goreng"
-                            className="h-12 rounded-xl text-base"
+                            className="h-12 rounded-xl text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                         />
                         {errors.name && <p className="mt-1 text-sm text-[var(--danger)]">{errors.name}</p>}
                     </div>
 
                     <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)]">Kategori</label>
-                        <select
-                            aria-label="Pilih kategori"
-                            value={data.category_id}
-                            onChange={(e) => setData('category_id', e.target.value)}
-                            className="h-12 w-full rounded-xl border border-[var(--border-strong)] bg-transparent px-3 text-base"
-                        >
-                            <option value="" disabled>
-                                Pilih kategori
-                            </option>
-                            {categories.map((c) => (
-                                <option key={c.id} value={c.id}>
-                                    {c.name}
-                                </option>
-                            ))}
-                        </select>
+                        <Label>Kategori</Label>
+                        <FilterDropdown
+                            value={data.category_id || undefined}
+                            allLabel="Pilih kategori"
+                            options={categories.map((c) => ({
+                                value: String(c.id),
+                                label: c.name,
+                            }))}
+                            onChange={(value) => setData('category_id', value ?? '')}
+                            buttonClassName="!w-full"
+                        />
                         {errors.category_id && <p className="mt-1 text-sm text-[var(--danger)]">{errors.category_id}</p>}
                     </div>
 
                     <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)]">Harga Jual</label>
+                        <Label>Harga Jual</Label>
                         <Input
                             aria-label="Harga jual"
                             type="number"
@@ -100,53 +98,55 @@ export function InventoryItemFormModal({ item, categories, onClose, onDelete }: 
                             value={data.price}
                             onChange={(e) => setData('price', e.target.value)}
                             placeholder="0"
-                            className="h-12 rounded-xl text-base"
+                            className="h-12 rounded-xl text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                         />
                         {errors.price && <p className="mt-1 text-sm text-[var(--danger)]">{errors.price}</p>}
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)]">
-                                {isEdit ? 'Stok Sekarang' : 'Stok Awal'}
-                            </label>
+                            <Label>{isEdit ? 'Stok Sekarang' : 'Stok Awal'}</Label>
                             <Input
                                 aria-label="Jumlah stok"
                                 type="number"
                                 min="0"
                                 value={data.current_stock}
                                 onChange={(e) => setData('current_stock', e.target.value)}
-                                className="h-12 rounded-xl text-base"
+                                className="h-12 rounded-xl text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                             />
                         </div>
                         <div>
-                            <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)]">Batas "Mau Habis"</label>
+                            <Label>Batas "Mau Habis"</Label>
                             <Input
                                 aria-label="Batas stok mau habis"
                                 type="number"
                                 min="0"
                                 value={data.min_stock}
                                 onChange={(e) => setData('min_stock', e.target.value)}
-                                className="h-12 rounded-xl text-base"
+                                className="h-12 rounded-xl text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                             />
                         </div>
                     </div>
-                    <p className="-mt-2 text-xs text-[var(--grey-text)]">Kalau stok sisa segini atau kurang, barang akan ditandai "Mau Habis".</p>
+                    <p className="-mt-2 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                        Kalau stok sisa segini atau kurang, barang akan ditandai "Mau Habis".
+                    </p>
 
                     <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)]">Foto (biar gampang dikenali)</label>
+                        <Label>Foto (biar gampang dikenali)</Label>
                         <div
                             onClick={() => fileInputRef.current?.click()}
-                            className="flex cursor-pointer items-center gap-4 rounded-xl border-2 border-dashed border-[var(--border-strong)] p-4 hover:bg-[var(--second-accent)]"
+                            className="flex cursor-pointer items-center gap-4 rounded-xl border-2 border-dashed border-[var(--border-strong)] p-4 hover:bg-[var(--second-accent)] dark:border-[var(--border-strong)] dark:hover:bg-white/10"
                         >
                             {preview ? (
                                 <img src={preview} alt="Pratinjau" className="h-14 w-14 rounded-lg object-cover" />
                             ) : (
-                                <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-[var(--second-accent)]">
-                                    <UploadCloud className="h-6 w-6 text-[var(--grey-text)]" />
+                                <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-[var(--second-accent)] dark:bg-[var(--border-strong)]">
+                                    <UploadCloud className="h-6 w-6 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                                 </div>
                             )}
-                            <span className="text-sm font-medium text-[var(--subheading)]">{preview ? 'Ganti foto' : 'Tap untuk pilih foto'}</span>
+                            <span className="text-sm font-medium text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                                {preview ? 'Ganti foto' : 'Tap untuk pilih foto'}
+                            </span>
                         </div>
                         <input
                             aria-label="Unggah foto barang"
@@ -163,7 +163,7 @@ export function InventoryItemFormModal({ item, categories, onClose, onDelete }: 
                             aria-label="Simpan barang"
                             type="submit"
                             disabled={processing}
-                            className="h-12 rounded-xl bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)]"
+                            className="h-12 rounded-xl bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:opacity-90"
                         >
                             {processing ? 'Menyimpan...' : 'Simpan'}
                         </Button>
@@ -173,7 +173,7 @@ export function InventoryItemFormModal({ item, categories, onClose, onDelete }: 
                                 type="button"
                                 variant="outline"
                                 onClick={onDelete}
-                                className="h-12 rounded-xl border-[var(--danger)] text-base font-bold text-[var(--danger)] hover:bg-[var(--danger-background)]"
+                                className="h-12 rounded-xl border-[var(--danger)] text-base font-bold text-[var(--danger)] hover:bg-[var(--danger-background)] dark:border-red-400 dark:text-red-400 dark:hover:bg-red-900/30"
                             >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Hapus Barang

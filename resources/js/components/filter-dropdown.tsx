@@ -13,9 +13,10 @@ interface FilterDropdownProps {
     onChange: (value: string | undefined) => void;
     icon?: ReactNode;
     className?: string;
+    buttonClassName?: string;
 }
 
-export function FilterDropdown({ value, options, allLabel, onChange, icon, className = '' }: FilterDropdownProps) {
+export function FilterDropdown({ value, options, allLabel, onChange, icon, className = '', buttonClassName }: FilterDropdownProps) {
     const [open, setOpen] = useState(false);
     const activeLabel = options.find((o) => o.value === value)?.label ?? allLabel;
 
@@ -25,17 +26,17 @@ export function FilterDropdown({ value, options, allLabel, onChange, icon, class
                 type="button"
                 aria-label={`Filter: ${activeLabel}`}
                 onClick={() => setOpen((v) => !v)}
-                className="flex items-center gap-2 rounded-lg border border-transparent bg-[var(--second-accent)] px-4 py-2 text-sm font-medium text-[var(--subheading)] shadow-sm hover:bg-[var(--surface-badge)] dark:border-[var(--border-strong)]"
+                className={`flex items-center gap-2 rounded-lg border border-transparent bg-[var(--second-accent)] px-4 py-2 text-sm font-medium text-[var(--subheading)] shadow-sm hover:bg-[var(--surface-badge)] dark:border-[var(--border-strong)] ${buttonClassName}`}
             >
                 {icon}
                 {activeLabel}
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="ml-auto h-4 w-4" />
             </button>
 
             {open && (
                 <>
                     <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-                    <div className="absolute top-full left-0 z-50 mt-1 w-48 overflow-hidden rounded-xl border border-transparent bg-[var(--neutral-white)] py-1 shadow-lg dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                    <div className="absolute top-full left-0 z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-xl border border-transparent bg-[var(--neutral-white)] py-1 shadow-lg dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                         <button
                             onClick={() => {
                                 onChange(undefined);

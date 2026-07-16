@@ -59,33 +59,29 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
     return (
         <DashboardSidebarLayout title="Perubahan Stok" description="Catat kalau ada barang rusak, hilang, atau ketemu lebih">
             <Head title="Perubahan Stok" />
-            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
+            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
                     <form onSubmit={handleSearchSubmit} className="relative flex-1">
-                        <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)]" />
+                        <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                         <Input
                             aria-label="Cari nama barang"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Cari nama barang..."
-                            className="h-12 rounded-2xl border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base"
+                            className="h-12 rounded-md border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                         />
                     </form>
-                    <Button
-                        aria-label="Catat perubahan stok baru"
-                        onClick={() => setShowForm(true)}
-                        className="h-12 rounded-2xl bg-[var(--surface-header)] px-6 text-base font-bold hover:bg-[var(--surface-header-hover)]"
-                    >
+                    <Button aria-label="Catat perubahan stok baru" onClick={() => setShowForm(true)} className="h-12">
                         <Plus className="mr-1 h-5 w-5" />
                         Catat Perubahan
                     </Button>
                 </div>
 
                 {adjustments.length === 0 ? (
-                    <div className="rounded-2xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center">
-                        <ClipboardEdit className="mx-auto mb-3 h-10 w-10 text-[var(--grey-text)]" />
-                        <p className="text-lg font-semibold text-[var(--subheading)]">Belum ada catatan perubahan</p>
-                        <p className="mt-1 text-sm text-[var(--grey-text)]">
+                    <div className="rounded-2xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
+                        <ClipboardEdit className="mx-auto mb-3 h-10 w-10 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
+                        <p className="text-lg font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Belum ada catatan perubahan</p>
+                        <p className="mt-1 text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
                             Kalau ada barang rusak atau hilang, catat di sini biar stok tetap akurat.
                         </p>
                     </div>
@@ -96,12 +92,14 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
                             return (
                                 <div
                                     key={a.id}
-                                    className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-4 shadow-sm"
+                                    className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-4 shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]"
                                 >
                                     <div className="min-w-0">
-                                        <p className="truncate text-base font-bold text-[var(--subheading)]">{a.item_name}</p>
-                                        <p className="text-sm text-[var(--grey-text)]">{a.note}</p>
-                                        <p className="mt-0.5 text-xs text-[var(--grey-text)]">
+                                        <p className="truncate text-base font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                                            {a.item_name}
+                                        </p>
+                                        <p className="text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">{a.note}</p>
+                                        <p className="mt-0.5 text-xs text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
                                             {new Date(a.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                                         </p>
                                     </div>
@@ -127,7 +125,7 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
                             variant="outline"
                             onClick={handleLoadMore}
                             disabled={loadingMore}
-                            className="h-12 rounded-2xl border-[var(--border-strong)] bg-[var(--neutral-white)] px-8 text-base font-semibold"
+                            className="h-12 rounded-2xl border-[var(--border-strong)] bg-[var(--neutral-white)] px-8 text-base font-semibold dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
                         >
                             {loadingMore ? 'Memuat...' : 'Tampilkan Lebih Banyak'}
                         </Button>

@@ -1,3 +1,4 @@
+import { Button, Input, Label } from '@/components';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, useForm } from '@inertiajs/react';
 import { useRef, useState } from 'react';
@@ -60,26 +61,21 @@ export default function CompanyProfilePage({ company }: Props) {
         post(route('settings.company-profile.update'), { forceFormData: true });
     };
 
-    const inputClass =
-        'w-full rounded-lg border border-[var(--border-strong)] bg-[var(--neutral-white)] px-3.5 py-2.5 text-sm outline-none focus:ring-1 focus:ring-ring transition-all';
-
     return (
         <DashboardSidebarLayout title="Profil Perusahaan" description="Kelola informasi dan identitas perusahaan kamu">
             <Head title="Profil Perusahaan" />
 
-            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
+            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <form onSubmit={submit}>
                     <div className="space-y-5">
-                        {/* Logo & Nama */}
-                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm">
-                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4">
-                                <h2 className="text-sm font-medium text-[var(--text-light)]">Identitas Perusahaan</h2>
+                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4 dark:border-[var(--border-strong)]">
+                                <h2 className="text-sm font-medium text-[var(--text-light)] dark:text-white">Identitas Perusahaan</h2>
                             </div>
 
                             <div className="p-4 sm:p-6">
-                                {/* Logo — stack vertikal di HP, sejajar mulai sm */}
-                                <div className="mb-6 flex flex-col items-start gap-4 border-b border-[var(--border-strong)] pb-6 sm:flex-row sm:items-center sm:gap-5">
-                                    <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--page-bg)]">
+                                <div className="mb-6 flex flex-col items-start gap-4 border-b border-[var(--border-strong)] pb-6 sm:flex-row sm:items-center sm:gap-5 dark:border-[var(--border-strong)]">
+                                    <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--page-bg)] dark:border-[var(--border-strong)] dark:bg-[#111827]">
                                         {logoPreview ? (
                                             <img src={logoPreview} alt="Logo perusahaan" className="h-full w-full object-contain" />
                                         ) : (
@@ -89,17 +85,19 @@ export default function CompanyProfilePage({ company }: Props) {
                                         )}
                                     </div>
                                     <div>
-                                        <p className="mb-1 text-sm font-medium text-[var(--grey-text)]">Logo Perusahaan</p>
-                                        <p className="mb-2 text-xs text-[var(--grey-text-muted)]">JPG, PNG, atau WEBP. Maksimal 2MB.</p>
-                                        <button
+                                        <p className="mb-1 text-sm font-medium text-[var(--grey-text)] dark:text-white">Logo Perusahaan</p>
+                                        <p className="mb-2 text-xs text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">
+                                            JPG, PNG, atau WEBP. Maksimal 2MB.
+                                        </p>
+                                        <Button
                                             type="button"
                                             aria-label="Ganti logo perusahaan"
                                             onClick={() => logoRef.current?.click()}
-                                            className="rounded-lg border border-[var(--border-strong)] bg-[var(--neutral-white)] px-3 py-1.5 text-xs font-medium text-[var(--grey-text)] transition-all hover:bg-[var(--second-accent)]"
+                                            className="px-3 py-1.5 text-xs font-medium"
                                         >
                                             Ganti Logo
-                                        </button>
-                                        <input
+                                        </Button>
+                                        <Input
                                             ref={logoRef}
                                             type="file"
                                             accept="image/*"
@@ -112,50 +110,39 @@ export default function CompanyProfilePage({ company }: Props) {
 
                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div className="md:col-span-2">
-                                        <label htmlFor="company-name" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                            Nama Perusahaan
-                                        </label>
-                                        <input
+                                        <Label htmlFor="company-name">Nama Perusahaan</Label>
+                                        <Input
                                             id="company-name"
                                             type="text"
                                             aria-label="Nama perusahaan"
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
                                             placeholder="PT. Maju Bersama"
-                                            className={inputClass}
-                                            style={{ borderColor: errors.name ? '#ef4444' : undefined }}
                                         />
                                         {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
                                     </div>
 
                                     <div>
-                                        <label htmlFor="company-phone" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                            Nomor Telepon
-                                        </label>
-                                        <input
+                                        <Label htmlFor="company-phone">Nomor Telepon</Label>
+                                        <Input
                                             id="company-phone"
                                             type="text"
                                             aria-label="Nomor telepon perusahaan"
                                             value={data.phone}
                                             onChange={(e) => setData('phone', e.target.value)}
                                             placeholder="+62 812 3456 7890"
-                                            className={inputClass}
                                         />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="company-website" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                            Website
-                                        </label>
-                                        <input
+                                        <Label htmlFor="company-website">Website</Label>
+                                        <Input
                                             id="company-website"
                                             type="url"
                                             aria-label="Website perusahaan"
                                             value={data.website}
                                             onChange={(e) => setData('website', e.target.value)}
                                             placeholder="https://posave.id"
-                                            className={inputClass}
-                                            style={{ borderColor: errors.website ? '#ef4444' : undefined }}
                                         />
                                         {errors.website && <p className="mt-1 text-xs text-red-500">{errors.website}</p>}
                                     </div>
@@ -163,192 +150,160 @@ export default function CompanyProfilePage({ company }: Props) {
                             </div>
                         </div>
 
-                        {/* Alamat */}
-                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm">
-                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4">
-                                <h2 className="text-sm font-medium text-[var(--text-light)]">Alamat</h2>
+                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4 dark:border-[var(--border-strong)]">
+                                <h2 className="text-sm font-medium text-[var(--text-light)] dark:text-white">Alamat</h2>
                             </div>
 
                             <div className="p-4 sm:p-6">
                                 <div className="mb-4">
-                                    <label htmlFor="company-address" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                        Alamat Lengkap
-                                    </label>
-                                    <input
+                                    <Label htmlFor="company-address">Alamat Lengkap</Label>
+                                    <Input
                                         id="company-address"
                                         type="text"
                                         aria-label="Alamat lengkap perusahaan"
                                         value={data.address}
                                         onChange={(e) => setData('address', e.target.value)}
                                         placeholder="Jl. Sudirman No. 1"
-                                        className={inputClass}
                                     />
                                 </div>
 
-                                {/* 1 kolom di HP, 3 kolom mulai sm — sebelumnya 3 kolom fixed, berantakan di layar sempit */}
                                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                                     <div>
-                                        <label htmlFor="company-province" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                            Provinsi
-                                        </label>
-                                        <input
+                                        <Label htmlFor="company-province">Provinsi</Label>
+                                        <Input
                                             id="company-province"
                                             type="text"
                                             aria-label="Provinsi"
                                             value={data.province}
                                             onChange={(e) => setData('province', e.target.value)}
                                             placeholder="DKI Jakarta"
-                                            className={inputClass}
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="company-city" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                            Kota
-                                        </label>
-                                        <input
+                                        <Label htmlFor="company-city">Kota</Label>
+                                        <Input
                                             id="company-city"
                                             type="text"
                                             aria-label="Kota"
                                             value={data.city}
                                             onChange={(e) => setData('city', e.target.value)}
                                             placeholder="Jakarta Pusat"
-                                            className={inputClass}
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="company-zip" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                            Kode Pos
-                                        </label>
-                                        <input
+                                        <Label htmlFor="company-zip">Kode Pos</Label>
+                                        <Input
                                             id="company-zip"
                                             type="text"
                                             aria-label="Kode pos"
                                             value={data.zip}
                                             onChange={(e) => setData('zip', e.target.value)}
                                             placeholder="10110"
-                                            className={inputClass}
                                         />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Sosial Media */}
-                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm">
-                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4">
-                                <h2 className="text-sm font-medium text-[var(--text-light)]">Media Sosial</h2>
+                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4 dark:border-[var(--border-strong)]">
+                                <h2 className="text-sm font-medium text-[var(--text-light)] dark:text-white">Media Sosial</h2>
                             </div>
 
                             <div className="p-4 sm:p-6">
                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div>
-                                        <label htmlFor="company-instagram" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                            Instagram
-                                        </label>
+                                        <Label htmlFor="company-instagram">Instagram</Label>
                                         <div className="flex">
-                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)]">
+                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)] dark:border-[var(--border-strong)] dark:bg-[var(--border-strong)] dark:text-[var(--muted-foreground)]">
                                                 @
                                             </span>
-                                            <input
+                                            <Input
                                                 id="company-instagram"
                                                 type="text"
                                                 aria-label="Username Instagram"
                                                 value={data.instagram}
                                                 onChange={(e) => setData('instagram', e.target.value)}
                                                 placeholder="posave.id"
-                                                className="w-full rounded-r-lg border border-[var(--border-strong)] bg-[var(--neutral-white)] px-3.5 py-2.5 text-sm outline-none"
+                                                className="!w-full !rounded-l-none"
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label htmlFor="company-facebook" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                            Facebook
-                                        </label>
+                                        <Label htmlFor="company-facebook">Facebook</Label>
                                         <div className="flex">
-                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)]">
+                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)] dark:border-[var(--border-strong)] dark:bg-[var(--border-strong)] dark:text-[var(--muted-foreground)]">
                                                 fb/
                                             </span>
-                                            <input
+                                            <Input
                                                 id="company-facebook"
                                                 type="text"
                                                 aria-label="Username Facebook"
                                                 value={data.facebook}
                                                 onChange={(e) => setData('facebook', e.target.value)}
                                                 placeholder="posave"
-                                                className="w-full rounded-r-lg border border-[var(--border-strong)] bg-[var(--neutral-white)] px-3.5 py-2.5 text-sm outline-none"
+                                                className="w-full !rounded-l-none"
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label htmlFor="company-x" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                            X (Twitter)
-                                        </label>
+                                        <Label htmlFor="company-x">X (Twitter)</Label>
                                         <div className="flex">
-                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)]">
+                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)] dark:border-[var(--border-strong)] dark:bg-[var(--border-strong)] dark:text-[var(--muted-foreground)]">
                                                 @
                                             </span>
-                                            <input
+                                            <Input
                                                 id="company-x"
                                                 type="text"
                                                 aria-label="Username X (Twitter)"
                                                 value={data.x}
                                                 onChange={(e) => setData('x', e.target.value)}
                                                 placeholder="posave"
-                                                className="w-full rounded-r-lg border border-[var(--border-strong)] bg-[var(--neutral-white)] px-3.5 py-2.5 text-sm outline-none"
+                                                className="w-full !rounded-l-none"
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label htmlFor="company-youtube" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                            YouTube
-                                        </label>
+                                        <Label htmlFor="company-youtube">YouTube</Label>
                                         <div className="flex">
-                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)]">
+                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)] dark:border-[var(--border-strong)] dark:bg-[var(--border-strong)] dark:text-[var(--muted-foreground)]">
                                                 @
                                             </span>
-                                            <input
+                                            <Input
                                                 id="company-youtube"
                                                 type="text"
                                                 aria-label="Username YouTube"
                                                 value={data.youtube}
                                                 onChange={(e) => setData('youtube', e.target.value)}
                                                 placeholder="posave"
-                                                className="w-full rounded-r-lg border border-[var(--border-strong)] bg-[var(--neutral-white)] px-3.5 py-2.5 text-sm outline-none"
+                                                className="w-full !rounded-l-none"
                                             />
                                         </div>
                                     </div>
 
                                     <div>
-                                        <label htmlFor="company-whatsapp" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                            WhatsApp
-                                        </label>
-                                        <input
+                                        <Label htmlFor="company-whatsapp">WhatsApp</Label>
+                                        <Input
                                             id="company-whatsapp"
                                             type="text"
                                             aria-label="Nomor WhatsApp"
                                             value={data.whatsapp}
                                             onChange={(e) => setData('whatsapp', e.target.value)}
                                             placeholder="+62 812 3456 7890"
-                                            className={inputClass}
                                         />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Submit */}
-                        <div className="flex justify-end">
-                            <button
-                                type="submit"
-                                aria-label="Simpan perubahan profil perusahaan"
-                                disabled={processing}
-                                className="w-full rounded-lg bg-[var(--surface-header)] px-6 py-2.5 text-sm font-medium text-[var(--text-light)] transition-all hover:bg-[var(--surface-header-hover)] disabled:opacity-50 sm:w-auto"
-                            >
+                        <div className="flex justify-start">
+                            <Button type="submit" aria-label="Simpan perubahan profil perusahaan" disabled={processing}>
                                 {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </form>

@@ -1,4 +1,4 @@
-import { Button } from '@/components';
+import { Button, Input, Label } from '@/components';
 import { useForm } from '@inertiajs/react';
 import { ChevronDown, X } from 'lucide-react';
 import React from 'react';
@@ -59,7 +59,7 @@ export function InventoryAdjustmentCreateModal({
             <div className="w-full max-w-md rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                 <div className="mb-5 flex items-center justify-between">
                     <h3 className="text-lg font-bold text-[var(--subheading)]">Buat Perubahan Stok</h3>
-                    <button
+                    <Button
                         type="button"
                         onClick={() => {
                             reset();
@@ -68,13 +68,13 @@ export function InventoryAdjustmentCreateModal({
                         aria-label="button-x"
                     >
                         <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)] dark:hover:text-white" />
-                    </button>
+                    </Button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Cabang</label>
+                            <Label>Cabang</Label>
                             {lockBranch ? (
                                 <div
                                     className={`${inputClass} flex items-center bg-[var(--second-accent)] text-[var(--subheading)] dark:bg-[var(--second-accent)]`}
@@ -104,14 +104,13 @@ export function InventoryAdjustmentCreateModal({
                             {errors.branch_id && <span className="text-xs text-red-500">{errors.branch_id}</span>}
                         </div>
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Tanggal</label>
-                            <input
+                            <Label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Tanggal</Label>
+                            <Input
                                 aria-label="input-date"
                                 type="date"
                                 value={data.date}
                                 onChange={(e) => setData('date', e.target.value)}
                                 style={{ resize: 'none' }}
-                                className={inputClass}
                             />
                             {errors.date && <span className="text-xs text-red-500">{errors.date}</span>}
                         </div>
@@ -142,7 +141,7 @@ export function InventoryAdjustmentCreateModal({
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Jenis Perubahan</label>
+                            <Label>Jenis Perubahan</Label>
                             <div className="relative">
                                 <select
                                     aria-label="input-perubahan"
@@ -161,29 +160,28 @@ export function InventoryAdjustmentCreateModal({
                             </div>
                         </div>
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Jumlah (Qty)</label>
-                            <input
+                            <Label>Jumlah (Qty)</Label>
+                            <Input
                                 aria-label="input-jumlah"
                                 type="number"
                                 min={1}
                                 value={data.quantity}
                                 onChange={(e) => setData('quantity', Number(e.target.value))}
                                 style={{ resize: 'none', MozAppearance: 'textfield' }}
-                                className={`${inputClass} [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
+                                className={`[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                             />
                             {errors.quantity && <span className="text-xs text-red-500">{errors.quantity}</span>}
                         </div>
                     </div>
 
                     <div>
-                        <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Catatan</label>
-                        <input
+                        <Label>Catatan</Label>
+                        <Input
                             type="text"
                             value={data.note}
                             onChange={(e) => setData('note', e.target.value)}
                             placeholder="Cth: Barang rusak, Retur, dll."
                             style={{ resize: 'none' }}
-                            className={inputClass}
                         />
                         {errors.note && <span className="text-xs text-red-500">{errors.note}</span>}
                     </div>

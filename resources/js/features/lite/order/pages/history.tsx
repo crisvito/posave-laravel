@@ -1,3 +1,4 @@
+import { Button, TableEmptyState } from '@/components';
 import { HistoryDetailModal } from '@/features/lite/order/components';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
@@ -69,16 +70,20 @@ export default function HistoryPage({ transactions, filters }: Props) {
     return (
         <DashboardSidebarLayout title="Riwayat Pesanan" description="Lihat semua penjualan yang sudah tercatat">
             <Head title="Riwayat Pesanan" />
-            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
-                <div className="mb-4 flex items-center justify-center gap-3 rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-3">
-                    <button aria-label="Hari sebelumnya" onClick={prevDay} className="rounded-full p-2 hover:bg-[var(--second-accent)]">
-                        <ChevronLeft className="h-5 w-5 text-[var(--subheading)]" />
+            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
+                <div className="mb-4 flex items-center justify-center gap-3 rounded-md border border-[var(--border-strong)] bg-[var(--neutral-white)] p-3 dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
+                    <button
+                        aria-label="Hari sebelumnya"
+                        onClick={prevDay}
+                        className="rounded-full p-2 hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)]"
+                    >
+                        <ChevronLeft className="h-5 w-5 text-[var(--subheading)] dark:text-[var(--neutral-white)]" />
                     </button>
                     <div
                         onClick={() => dateInputRef.current?.showPicker()}
-                        className="flex cursor-pointer items-center gap-2 text-base font-bold text-[var(--subheading)]"
+                        className="flex cursor-pointer items-center gap-2 text-base font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]"
                     >
-                        <CalendarDays className="h-5 w-5 text-[var(--grey-text)]" />
+                        <CalendarDays className="h-5 w-5 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                         {formattedDate}
                         <input
                             aria-label="Pilih tanggal"
@@ -89,39 +94,44 @@ export default function HistoryPage({ transactions, filters }: Props) {
                             className="pointer-events-none absolute h-0 w-0 opacity-0"
                         />
                     </div>
-                    <button aria-label="Hari berikutnya" onClick={nextDay} className="rounded-full p-2 hover:bg-[var(--second-accent)]">
-                        <ChevronRight className="h-5 w-5 text-[var(--subheading)]" />
+                    <button
+                        aria-label="Hari berikutnya"
+                        onClick={nextDay}
+                        className="rounded-full p-2 hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)]"
+                    >
+                        <ChevronRight className="h-5 w-5 text-[var(--subheading)] dark:text-[var(--neutral-white)]" />
                     </button>
                 </div>
 
                 {transactions.length > 0 && (
-                    <div className="mb-4 flex items-center justify-between rounded-2xl border-2 border-[var(--surface-header)] bg-[var(--second-accent)] px-5 py-4">
-                        <span className="text-base font-bold text-[var(--subheading)]">Total Hari Ini</span>
-                        <span className="text-xl font-extrabold text-[var(--subheading)]">Rp {totalHariIni.toLocaleString('id-ID')}</span>
+                    <div className="mb-4 flex items-center justify-between rounded-2xl border-2 border-[var(--surface-header)] bg-[var(--second-accent)] px-5 py-4 dark:border-[var(--border-strong)] dark:bg-[var(--border-strong)]">
+                        <span className="text-base font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Total Hari Ini</span>
+                        <span className="text-xl font-extrabold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            Rp {totalHariIni.toLocaleString('id-ID')}
+                        </span>
                     </div>
                 )}
 
                 <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
                     {PAYMENT_CHIPS.map((chip) => (
-                        <button
+                        <Button
                             aria-label={`Filter metode ${chip.label}`}
                             key={chip.value}
                             onClick={() => goTo({ payment_method: chip.value })}
-                            className={`shrink-0 rounded-full border-2 px-4 py-2 text-sm font-semibold transition ${
+                            className={`shrink-0 rounded-md border-2 px-4 py-2 text-sm font-semibold transition dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
                                 filters.payment_method === chip.value
-                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white'
-                                    : 'border-[var(--border-strong)] text-[var(--grey-text)]'
+                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white dark:border-[var(--neutral-white)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                    : 'border-[var(--border-strong)] text-[var(--grey-text)] dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]'
                             }`}
                         >
                             {chip.label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
                 {transactions.length === 0 ? (
-                    <div className="rounded-2xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center">
-                        <ClipboardList className="mx-auto mb-3 h-10 w-10 text-[var(--grey-text)]" />
-                        <p className="text-lg font-semibold text-[var(--subheading)]">Belum ada penjualan di tanggal ini</p>
+                    <div className="flex justify-center rounded-md border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
+                        <TableEmptyState colSpan={7} icon={ClipboardList} message="Belum ada penjualan di tanggal ini" />
                     </div>
                 ) : (
                     <div className="flex flex-col gap-3">
@@ -132,16 +142,16 @@ export default function HistoryPage({ transactions, filters }: Props) {
                                     aria-label={`Lihat detail ${tx.invoice}`}
                                     key={tx.id}
                                     onClick={() => setSelected(tx)}
-                                    className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-4 text-left shadow-sm transition hover:border-[var(--surface-header)]"
+                                    className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-4 text-left shadow-sm transition hover:border-[var(--surface-header)] dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]"
                                 >
                                     <div>
-                                        <p className="text-base font-bold text-[var(--subheading)]">{tx.invoice}</p>
-                                        <p className="text-sm text-[var(--grey-text)]">
+                                        <p className="text-base font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">{tx.invoice}</p>
+                                        <p className="text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
                                             {tx.time} · {tx.paymentMethod.toUpperCase()}
                                         </p>
                                     </div>
                                     <div className="flex flex-col items-end gap-1">
-                                        <span className="text-base font-extrabold text-[var(--subheading)]">
+                                        <span className="text-base font-extrabold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
                                             Rp {tx.total.toLocaleString('id-ID')}
                                         </span>
                                         <span

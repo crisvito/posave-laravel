@@ -74,7 +74,7 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
 
     return (
         <div className={`flex flex-col overflow-hidden bg-[var(--page-bg)] dark:bg-[var(--background)] ${className}`}>
-            <div className="flex items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+            <div className="flex h-15 items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                 {onBack && (
                     <button
                         type="button"

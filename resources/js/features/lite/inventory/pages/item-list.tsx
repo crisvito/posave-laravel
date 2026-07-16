@@ -1,4 +1,4 @@
-import { Button, Input } from '@/components/ui';
+import { Button, CreateButton, Input } from '@/components';
 import { InventoryItemFormModal } from '@/features/lite/inventory/components';
 import { useConfirmAction } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
@@ -129,13 +129,12 @@ export default function ItemList({ items: initialItems, categories, summary, fil
     return (
         <DashboardSidebarLayout title="Barang Kamu" description="Kelola stok warung dengan mudah">
             <Head title="Daftar Barang" />
-            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
-                {/* Ringkasan — SELALU tampil dua-duanya, angkanya boleh 0 */}
+            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <button
                         aria-label="Lihat barang yang habis"
                         onClick={() => handleStatusClick('out')}
-                        className="flex items-center justify-between rounded-2xl border-2 border-[var(--danger)] bg-[var(--danger-background)] px-5 py-4 text-left transition hover:opacity-90"
+                        className="flex items-center justify-between rounded-md border-2 border-[var(--danger)] bg-[var(--danger-background)] px-5 py-4 text-left transition hover:opacity-90"
                     >
                         <span className="text-base font-bold text-[var(--danger)]">Barang Habis</span>
                         <span className="text-2xl font-extrabold text-[var(--danger)]">{summary.out_of_stock}</span>
@@ -143,75 +142,65 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                     <button
                         aria-label="Lihat barang yang mau habis"
                         onClick={() => handleStatusClick('low')}
-                        className="flex items-center justify-between rounded-2xl border-2 border-[var(--warning)] bg-[var(--warning-background)] px-5 py-4 text-left transition hover:opacity-90"
+                        className="flex items-center justify-between rounded-md border-2 border-[var(--warning)] bg-[var(--warning-background)] px-5 py-4 text-left transition hover:opacity-90"
                     >
                         <span className="text-base font-bold text-[var(--warning)]">Stok Mau Habis</span>
                         <span className="text-2xl font-extrabold text-[var(--warning)]">{summary.low_stock}</span>
                     </button>
                 </div>
 
-                {/* Search + tombol tambah */}
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
                     <form onSubmit={handleSearchSubmit} className="relative flex-1">
-                        <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)]" />
+                        <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                         <Input
                             aria-label="Cari nama barang"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Cari nama barang..."
-                            className="h-12 rounded-2xl border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base"
+                            className="h-12 rounded-md border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                         />
                     </form>
-                    <Button
-                        aria-label="Tambah barang baru"
-                        onClick={() => setFormItem('new')}
-                        className="h-12 rounded-2xl bg-[var(--surface-header)] px-6 text-base font-bold hover:bg-[var(--surface-header-hover)]"
-                    >
-                        <Plus className="mr-1 h-5 w-5" />
-                        Tambah Barang
-                    </Button>
+                    <CreateButton label="Tambah Barang Baru" onClick={() => setFormItem('new')} className="h-12 rounded-md px-6" />
                 </div>
 
-                {/* Filter status stok — chip besar */}
                 <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
                     {STATUS_CHIPS.map((chip) => (
-                        <button
+                        <Button
                             aria-label={`Filter status ${chip.label}`}
                             key={chip.key}
                             onClick={() => handleStatusClick(chip.key)}
-                            className={`shrink-0 rounded-full border-2 px-4 py-2 text-sm font-semibold transition ${
+                            className={`shrink-0 border-2 px-4 py-2 text-sm font-semibold transition hover:border-[var(--surface-header)] hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
                                 activeStatus === chip.key
-                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white'
-                                    : 'border-[var(--border-strong)] bg-[var(--neutral-white)] text-[var(--grey-text)]'
+                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white dark:border-[var(--neutral-white)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                    : ''
                             }`}
                         >
                             {chip.label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
-                {/* Filter kategori — chip dengan avatar huruf */}
                 <div className="mb-6 flex gap-2 overflow-x-auto pb-1">
-                    <button
+                    <Button
                         aria-label="Lihat semua kategori"
                         onClick={() => handleCategoryClick('all')}
-                        className={`flex shrink-0 items-center gap-2 rounded-full border-2 px-3 py-1.5 text-sm font-semibold transition ${
+                        className={`flex shrink-0 items-center gap-2 border-2 px-3 py-1.5 text-sm font-semibold hover:border-[var(--surface-header)] hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
                             activeCategory === 'all'
-                                ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white'
-                                : 'border-[var(--border-strong)] bg-[var(--neutral-white)] text-[var(--grey-text)]'
+                                ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white dark:border-[var(--neutral-white)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                : ''
                         }`}
                     >
                         Semua Kategori
-                    </button>
+                    </Button>
                     {categories.map((cat) => (
-                        <button
+                        <Button
                             aria-label={`Filter kategori ${cat.name}`}
                             key={cat.id}
                             onClick={() => handleCategoryClick(cat.id)}
-                            className={`flex shrink-0 items-center gap-2 rounded-full border-2 px-3 py-1.5 text-sm font-semibold transition ${
+                            className={`flex shrink-0 items-center gap-2 border-2 px-3 py-1.5 text-sm font-semibold hover:border-[var(--surface-header)] hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
                                 activeCategory === cat.id
-                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white'
-                                    : 'border-[var(--border-strong)] bg-[var(--neutral-white)] text-[var(--grey-text)]'
+                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white dark:border-[var(--neutral-white)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                    : ''
                             }`}
                         >
                             <span
@@ -221,15 +210,16 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                                 {cat.name.charAt(0).toUpperCase()}
                             </span>
                             {cat.name}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
-                {/* List barang — kartu besar, bertumpuk */}
                 {items.length === 0 ? (
-                    <div className="rounded-2xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center">
-                        <p className="text-lg font-semibold text-[var(--subheading)]">Belum ada barang</p>
-                        <p className="mt-1 text-sm text-[var(--grey-text)]">Tekan "Tambah Barang" untuk mulai mencatat stok.</p>
+                    <div className="rounded-md border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
+                        <p className="text-lg font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Belum ada barang</p>
+                        <p className="mt-1 text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
+                            Tekan "Tambah Barang" untuk mulai mencatat stok.
+                        </p>
                     </div>
                 ) : (
                     <div className="flex flex-col gap-3">
@@ -241,7 +231,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                             return (
                                 <div
                                     key={item.id}
-                                    className="flex flex-col gap-3 rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+                                    className="flex flex-col gap-3 rounded-md border border-[var(--border-strong)] bg-[var(--neutral-white)] p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]"
                                 >
                                     <div className="flex items-center gap-3">
                                         {item.image ? (
@@ -255,9 +245,11 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                                             </span>
                                         )}
                                         <div>
-                                            <p className="text-base font-bold text-[var(--subheading)]">{item.name}</p>
-                                            <p className="text-sm text-[var(--grey-text)]">{item.category.name}</p>
-                                            <p className="text-sm font-semibold text-[var(--subheading)]">
+                                            <p className="text-base font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                                                {item.name}
+                                            </p>
+                                            <p className="text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">{item.category.name}</p>
+                                            <p className="text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
                                                 Rp {Number(item.price).toLocaleString('id-ID')}
                                             </p>
                                         </div>
@@ -269,12 +261,14 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                                                 aria-label={`Kurangi stok ${item.name}`}
                                                 disabled={isPending || item.current_stock === 0}
                                                 onClick={() => handleStockAdjust(item, -1)}
-                                                className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--border-strong)] text-[var(--subheading)] transition hover:bg-[var(--second-accent)] disabled:opacity-30"
+                                                className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--border-strong)] text-[var(--subheading)] transition hover:bg-[var(--second-accent)] disabled:opacity-30 dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
                                             >
                                                 <Minus className="h-4 w-4" />
                                             </button>
                                             <div className="w-14 text-center">
-                                                <p className="text-xl font-extrabold text-[var(--subheading)]">{item.current_stock}</p>
+                                                <p className="text-xl font-extrabold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                                                    {item.current_stock}
+                                                </p>
                                                 <span
                                                     className="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold"
                                                     style={{ backgroundColor: meta.bg, color: meta.text }}
@@ -286,7 +280,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                                                 aria-label={`Tambah stok ${item.name}`}
                                                 disabled={isPending}
                                                 onClick={() => handleStockAdjust(item, 1)}
-                                                className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--border-strong)] text-[var(--subheading)] transition hover:bg-[var(--second-accent)] disabled:opacity-30"
+                                                className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--border-strong)] text-[var(--subheading)] transition hover:bg-[var(--second-accent)] disabled:opacity-30 dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
                                             >
                                                 <Plus className="h-4 w-4" />
                                             </button>
@@ -295,7 +289,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                                         <Button
                                             aria-label={`Ubah data ${item.name}`}
                                             onClick={() => setFormItem(item)}
-                                            className="h-10 rounded-xl bg-[var(--surface-header)] px-4 text-sm font-bold hover:bg-[var(--surface-header-hover)]"
+                                            className="h-10 rounded-xl bg-[var(--surface-header)] px-4 text-sm font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:text-[var(--neutral-white)] dark:hover:opacity-90"
                                         >
                                             Ubah
                                         </Button>
@@ -313,7 +307,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                             variant="outline"
                             onClick={handleLoadMore}
                             disabled={loadingMore}
-                            className="h-12 rounded-2xl border-[var(--border-strong)] bg-[var(--neutral-white)] px-8 text-base font-semibold"
+                            className="h-12 rounded-md border-[var(--border-strong)] bg-[var(--neutral-white)] px-8 text-base font-semibold dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
                         >
                             {loadingMore ? 'Memuat...' : 'Tampilkan Lebih Banyak'}
                         </Button>

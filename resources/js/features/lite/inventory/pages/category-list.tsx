@@ -1,10 +1,11 @@
+import { CreateButton } from '@/components';
 import { Button, Input } from '@/components/ui';
 import { InventoryCategoryFormModal } from '@/features/lite/inventory/components';
 import { useConfirmAction } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
-import { Plus, Search, Tag } from 'lucide-react';
+import { Search, Tag } from 'lucide-react';
 import { useState } from 'react';
 
 interface CategoryItem {
@@ -64,40 +65,35 @@ export default function CategoryList({ categories: initialCategories, filters }:
     return (
         <DashboardSidebarLayout title="Kategori Barang" description="Kelompokkan barang biar gampang dicari">
             <Head title="Kategori" />
-            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
+            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
                     <form onSubmit={handleSearchSubmit} className="relative flex-1">
-                        <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)]" />
+                        <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                         <Input
                             aria-label="Cari kategori"
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Cari kategori..."
-                            className="h-12 rounded-2xl border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base"
+                            className="h-12 rounded-md border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                         />
                     </form>
-                    <Button
-                        aria-label="Tambah kategori baru"
-                        onClick={() => setFormCategory('new')}
-                        className="h-12 rounded-2xl bg-[var(--surface-header)] px-6 text-base font-bold hover:bg-[var(--surface-header-hover)]"
-                    >
-                        <Plus className="mr-1 h-5 w-5" />
-                        Tambah Kategori
-                    </Button>
+                    <CreateButton label="Tambah Kategori baru" onClick={() => setFormCategory('new')} className="h-12" />
                 </div>
 
                 {categories.length === 0 ? (
-                    <div className="rounded-2xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center">
-                        <Tag className="mx-auto mb-3 h-10 w-10 text-[var(--grey-text)]" />
-                        <p className="text-lg font-semibold text-[var(--subheading)]">Belum ada kategori</p>
-                        <p className="mt-1 text-sm text-[var(--grey-text)]">Buat kategori dulu sebelum menambah barang.</p>
+                    <div className="rounded-2xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
+                        <Tag className="mx-auto mb-3 h-10 w-10 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
+                        <p className="text-lg font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Belum ada kategori</p>
+                        <p className="mt-1 text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
+                            Buat kategori dulu sebelum menambah barang.
+                        </p>
                     </div>
                 ) : (
                     <div className="flex flex-col gap-3">
                         {categories.map((category) => (
                             <div
                                 key={category.id}
-                                className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-4 shadow-sm"
+                                className="flex items-center justify-between gap-3 rounded-md border border-[var(--border-strong)] bg-[var(--neutral-white)] p-4 shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]"
                             >
                                 <div className="flex items-center gap-3">
                                     <span
@@ -107,15 +103,19 @@ export default function CategoryList({ categories: initialCategories, filters }:
                                         {category.name.charAt(0).toUpperCase()}
                                     </span>
                                     <div>
-                                        <p className="text-base font-bold text-[var(--subheading)]">{category.name}</p>
-                                        <p className="text-sm text-[var(--grey-text)]">{category.items_count} Barang</p>
+                                        <p className="text-base font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                                            {category.name}
+                                        </p>
+                                        <p className="text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
+                                            {category.items_count} Barang
+                                        </p>
                                     </div>
                                 </div>
 
                                 <Button
                                     aria-label={`Ubah kategori ${category.name}`}
                                     onClick={() => setFormCategory(category)}
-                                    className="h-10 rounded-xl bg-[var(--surface-header)] px-4 text-sm font-bold hover:bg-[var(--surface-header-hover)]"
+                                    className="h-10 rounded-xl bg-[var(--surface-header)] px-4 text-sm font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:text-[var(--neutral-white)] dark:hover:opacity-90"
                                 >
                                     Ubah
                                 </Button>
@@ -131,7 +131,7 @@ export default function CategoryList({ categories: initialCategories, filters }:
                             variant="outline"
                             onClick={handleLoadMore}
                             disabled={loadingMore}
-                            className="h-12 rounded-2xl border-[var(--border-strong)] bg-[var(--neutral-white)] px-8 text-base font-semibold"
+                            className="h-12 rounded-2xl border-[var(--border-strong)] bg-[var(--neutral-white)] px-8 text-base font-semibold dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
                         >
                             {loadingMore ? 'Memuat...' : 'Tampilkan Lebih Banyak'}
                         </Button>

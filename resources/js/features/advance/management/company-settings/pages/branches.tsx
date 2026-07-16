@@ -1,4 +1,22 @@
-import { CountBadge, CreateButton, PaginationBar, PrintButton, SearchInput } from '@/components';
+import {
+    Button,
+    CountBadge,
+    CreateButton,
+    DeleteButton,
+    EditButton,
+    Input,
+    Label,
+    PaginationBar,
+    PrintButton,
+    SearchInput,
+    Table,
+    TableBody,
+    TableCell,
+    TableEmptyState,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components';
 import { useConfirmAction, useFilters } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, useForm } from '@inertiajs/react';
@@ -87,14 +105,11 @@ export default function BranchesPage({ branches, filters = {} }: Props) {
         );
     };
 
-    const inputClass =
-        'w-full rounded-lg border border-[var(--border-strong)] bg-[var(--neutral-white)] px-3.5 py-2.5 text-sm outline-none focus:ring-1 focus:ring-ring transition-all';
-
     return (
         <DashboardSidebarLayout title="Cabang" description="Kelola seluruh cabang anda">
             <Head title="Kelola Toko" />
 
-            <div className="min-h-screen bg-[var(--page-bg)] p-6">
+            <div className="min-h-screen bg-[var(--page-bg)] p-6 dark:bg-[var(--background)]">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
                     <div className="flex flex-wrap items-center gap-3">
                         <SearchInput value={search} onChange={setSearch} onSubmit={handleSearch} placeholder="Cari cabang..." />
@@ -107,85 +122,80 @@ export default function BranchesPage({ branches, filters = {} }: Props) {
                     </div>
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm">
-                    <table className="w-full">
-                        <thead>
-                            <tr className="border-b border-[var(--border-strong)] bg-[var(--surface-header)]">
-                                <th className="px-6 py-3.5 text-left text-sm font-medium text-[var(--text-light)]">Nama Cabang</th>
-                                <th className="px-6 py-3.5 text-left text-sm font-medium text-[var(--text-light)]">Alamat</th>
-                                <th className="px-6 py-3.5 text-left text-sm font-medium text-[var(--text-light)]">Nomor Telepon</th>
-                                <th className="px-6 py-3.5 text-left text-sm font-medium text-[var(--text-light)]">Status</th>
-                                <th className="w-32 px-6 py-3.5 text-left text-sm font-medium text-[var(--text-light)]">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-[var(--border-strong)]">
-                            {branches.data.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="py-16 text-center text-sm text-[var(--grey-text)]">
-                                        {filters?.search
-                                            ? `Cabang "${filters.search}" tidak ditemukan`
-                                            : 'Belum ada cabang, buat cabang terlebih dahulu'}
-                                    </td>
-                                </tr>
-                            ) : (
-                                branches.data.map((branch) => (
-                                    <tr key={branch.id} className="hover:bg-[var(--page-bg)]">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-sm font-medium text-[var(--grey-text)]">{branch.name}</span>
-                                                {branch.is_main && (
-                                                    <span className="rounded-full bg-[var(--surface-header)] px-2 py-0.5 text-xs text-[var(--text-light)]">
-                                                        Utama
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm dark:bg-[var(--card)]">
+                    <div className="overflow-x-auto">
+                        <Table className="min-w-[800px]">
+                            <TableHeader className="bg-[var(--surface-header)]">
+                                <TableRow className="border-none hover:bg-[var(--surface-header)]">
+                                    <TableHead className="text-[var(--text-light)]">Nama Cabang</TableHead>
+                                    <TableHead className="text-[var(--text-light)]">Alamat</TableHead>
+                                    <TableHead className="text-[var(--text-light)]">Nomor Telepon</TableHead>
+                                    <TableHead className="text-[var(--text-light)]">Status</TableHead>
+                                    <TableHead className="w-32 text-[var(--text-light)]">Aksi</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {branches.data.length === 0 ? (
+                                    <TableEmptyState
+                                        colSpan={5}
+                                        message={
+                                            filters?.search
+                                                ? `Cabang "${filters.search}" tidak ditemukan`
+                                                : 'Belum ada cabang, buat cabang terlebih dahulu'
+                                        }
+                                    />
+                                ) : (
+                                    branches.data.map((branch) => (
+                                        <TableRow key={branch.id} className="dark:border-[var(--border-strong)]">
+                                            <TableCell>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-medium text-[var(--subheading)] dark:text-white">
+                                                        {branch.name}
                                                     </span>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-start gap-1.5 text-sm text-[var(--grey-text)]">
-                                                <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)]" aria-hidden="true" />
-                                                <span>{branch.address || '-'}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-1.5 text-sm text-[var(--grey-text)]">
-                                                <Phone className="h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)]" aria-hidden="true" />
-                                                <span>{branch.phone || '-'}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span
-                                                className={`rounded-full px-3 py-1 text-xs font-medium ${
-                                                    branch.status === 'closed' ? 'bg-red-50 text-red-500' : 'bg-green-50 text-green-600'
-                                                }`}
-                                            >
-                                                {branch.status === 'closed' ? 'Close' : 'Open'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-2">
-                                                <button
-                                                    aria-label={`Edit cabang ${branch.name}`}
-                                                    onClick={() => openEdit(branch)}
-                                                    className="rounded-lg border border-[var(--border-strong)] px-3 py-1.5 text-xs font-medium text-[var(--grey-text)] transition-all hover:bg-[var(--second-accent)]"
+                                                    {branch.is_main && (
+                                                        <span className="rounded-full bg-[var(--surface-header)] px-2 py-0.5 text-xs text-[var(--text-light)]">
+                                                            Utama
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                                <div className="flex items-start gap-1.5">
+                                                    <MapPin
+                                                        className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span>{branch.address || '-'}</span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                                <div className="flex items-center gap-1.5">
+                                                    <Phone
+                                                        className="h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span>{branch.phone || '-'}</span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span
+                                                    className={`rounded-full px-3 py-1 text-xs font-medium ${branch.status === 'closed' ? 'bg-red-50 text-red-500 dark:bg-red-900/30 dark:text-red-400' : 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400'}`}
                                                 >
-                                                    Edit
-                                                </button>
-                                                {!branch.is_main && (
-                                                    <button
-                                                        aria-label={`Hapus cabang ${branch.name}`}
-                                                        onClick={() => handleDelete(branch)}
-                                                        className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-500 transition-all hover:bg-red-50"
-                                                    >
-                                                        Hapus
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                                                    {branch.status === 'closed' ? 'Close' : 'Open'}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell className="relative">
+                                                <div className="flex items-center gap-2">
+                                                    <EditButton label="edit" onClick={() => openEdit(branch)} />
+                                                    {!branch.is_main && <DeleteButton label="hapus" onClick={() => handleDelete(branch)} />}
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </div>
 
                 <PaginationBar
@@ -207,84 +217,64 @@ export default function BranchesPage({ branches, filters = {} }: Props) {
                         if (e.target === e.currentTarget) closeModal();
                     }}
                 >
-                    <div className="w-full max-w-md rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl">
+                    <div className="w-full max-w-md rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                         <div className="mb-5 flex items-center justify-between">
-                            <h2 className="text-base font-medium text-[var(--grey-text)]">{modal === 'add' ? 'Buat Cabang' : 'Edit Cabang'}</h2>
-                            <button
-                                aria-label="Tutup modal"
-                                onClick={closeModal}
-                                className="text-[var(--grey-text-muted)] hover:text-[var(--grey-text)]"
-                            >
+                            <h2 className="text-base font-medium text-[var(--grey-text)] dark:text-white">
+                                {modal === 'add' ? 'Buat Cabang' : 'Edit Cabang'}
+                            </h2>
+                            <Button aria-label="Tutup modal" onClick={closeModal}>
                                 ✕
-                            </button>
+                            </Button>
                         </div>
 
                         <form onSubmit={modal === 'add' ? submitAdd : submitEdit}>
                             <div className="mb-4">
-                                <label htmlFor="branch-name" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                    Nama Cabang
-                                </label>
-                                <input
+                                <Label htmlFor="branch-name">Nama Cabang</Label>
+                                <Input
                                     id="branch-name"
                                     type="text"
                                     aria-label="Nama cabang"
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
                                     placeholder="cth. Cabang Selatan"
-                                    className={inputClass}
-                                    style={{ borderColor: errors.name ? '#ef4444' : undefined }}
                                     autoFocus
                                 />
                                 {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
                             </div>
 
                             <div className="mb-4">
-                                <label htmlFor="branch-address" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                    Alamat
-                                </label>
-                                <input
+                                <Label htmlFor="branch-address">Alamat</Label>
+                                <Input
                                     id="branch-address"
                                     type="text"
                                     aria-label="Alamat cabang"
                                     value={data.address}
                                     onChange={(e) => setData('address', e.target.value)}
                                     placeholder="Jl. Sudirman No. 10"
-                                    className={inputClass}
                                 />
                             </div>
 
                             <div className="mb-6">
-                                <label htmlFor="branch-phone" className="mb-1.5 block text-sm font-medium text-[var(--grey-text)]">
-                                    Nomor Telepon
-                                </label>
-                                <input
+                                <Label htmlFor="branch-phone">Nomor Telepon</Label>
+                                <Input
                                     id="branch-phone"
                                     type="text"
                                     aria-label="Nomor telepon cabang"
                                     value={data.phone}
                                     onChange={(e) => setData('phone', e.target.value)}
                                     placeholder="+62 812 3456 7890"
-                                    className={inputClass}
                                 />
                             </div>
 
                             <div className="flex gap-3">
-                                <button
-                                    type="button"
-                                    aria-label="Batal"
-                                    onClick={closeModal}
-                                    className="flex-1 rounded-lg border border-[var(--border-strong)] py-2.5 text-sm font-medium text-[var(--grey-text)] transition-all hover:bg-[var(--second-accent)]"
-                                >
-                                    Batal
-                                </button>
-                                <button
+                                <DeleteButton type="button" label="Batal" onClick={closeModal} />
+                                <Button
                                     type="submit"
                                     aria-label={modal === 'add' ? 'Buat cabang baru' : 'Simpan perubahan cabang'}
                                     disabled={processing}
-                                    className="flex-1 rounded-lg bg-[var(--surface-header)] py-2.5 text-sm font-medium text-[var(--text-light)] transition-all hover:bg-[var(--surface-header-hover)] disabled:opacity-50"
                                 >
                                     {processing ? 'Menyimpan...' : modal === 'add' ? 'Buat Cabang' : 'Simpan'}
-                                </button>
+                                </Button>
                             </div>
                         </form>
                     </div>

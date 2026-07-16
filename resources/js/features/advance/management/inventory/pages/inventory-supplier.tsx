@@ -1,9 +1,20 @@
-import { Button, PaginationBar, SearchInput, Table, TableBody, TableCell, TableEmptyState, TableHead, TableHeader, TableRow } from '@/components';
+import {
+    CreateButton,
+    PaginationBar,
+    SearchInput,
+    Table,
+    TableBody,
+    TableCell,
+    TableEmptyState,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components';
 import { InventorySupplierCreateModal, InventorySupplierEditModal } from '@/features/advance/management/inventory/components';
 import { useConfirmAction, useFilters } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
-import { Building2, Package, Plus } from 'lucide-react';
+import { Building2, Package } from 'lucide-react';
 import { useState } from 'react';
 
 interface Supplier {
@@ -54,15 +65,7 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
                     <SearchInput value={search} onChange={setSearch} onSubmit={handleSearch} placeholder="Cari nama pemasok..." />
 
-                    {canManageCatalog && (
-                        <Button
-                            onClick={() => setShowCreateModal(true)}
-                            className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]"
-                        >
-                            <Plus className="mr-2 h-4 w-4" />
-                            Buat Pemasok
-                        </Button>
-                    )}
+                    {canManageCatalog && <CreateButton label="Buat Pemasok" onClick={() => setShowCreateModal(true)} />}
                 </div>
 
                 <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">

@@ -47,7 +47,7 @@ export function Chatbot() {
     return (
         <>
             <div className="fixed inset-0 z-40 bg-black/60" onClick={close} />
-            <div className="fixed inset-0 z-50 flex flex-col border-l bg-white shadow-2xl lg:top-0 lg:right-0 lg:left-auto lg:h-screen lg:w-[900px] lg:flex-row">
+            <div className="fixed inset-0 z-50 flex flex-col border-l bg-white shadow-2xl lg:top-0 lg:right-0 lg:left-auto lg:h-screen lg:w-[900px] lg:flex-row dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                 <div className="hidden lg:flex">
                     <ChatHistory
                         conversations={conversations}
@@ -73,7 +73,10 @@ export function Chatbot() {
             </div>
 
             <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
-                <SheetContent side="left" className="w-[85vw] p-0 sm:max-w-[320px] lg:hidden">
+                <SheetContent
+                    side="left"
+                    className="w-[85vw] border-[var(--border-strong)] bg-white p-0 sm:max-w-[320px] lg:hidden dark:bg-[var(--card)]"
+                >
                     <ChatHistory
                         conversations={conversations}
                         activeConversationId={activeConversationId}

@@ -25,22 +25,11 @@ class DemoSeeder extends Seeder
     private const LITE_OWNER_EMAIL = 'owner.lite@posave.test';
     private const PASSWORD = 'password';
 
-    /** Palet sama kayak CategoryController::COLOR_PALETTE / frontend CATEGORY_COLOR_SWATCHES. */
     private const CATEGORY_COLOR_PALETTE = ['#3d8ab8', '#16a34a', '#e75f1a', '#9f6fd5', '#dc2626', '#0891b2', '#ca8a04', '#db2777'];
 
-    /** @var array<int, array{0: string, 1: string}> */
+    /** @var array<int,*/
     private array $credentialRows = [];
 
-    /**
-     * Bikin data demo lengkap dari nol: company Advance (2 cabang, semua role)
-     * dan company Lite (1 cabang, owner merangkap kasir) — termasuk katalog,
-     * stok per cabang, riwayat adjustment, dan riwayat transaksi 7 hari.
-     *
-     * Aman dijalankan berkali-kali: data non-transaksional pakai firstOrCreate
-     * (gak duplikat), transaksi & adjustment di-reset tapi HANYA untuk
-     * company yang dibuat seeder ini sendiri — company/data asli kamu
-     * (hasil register manual) tidak akan tersentuh sama sekali.
-     */
     public function run(): void
     {
         $this->resetDemoTransactions([self::ADVANCE_OWNER_EMAIL, self::LITE_OWNER_EMAIL]);
@@ -52,7 +41,6 @@ class DemoSeeder extends Seeder
         $this->command?->table(['Role', 'Email'], $this->credentialRows);
     }
 
-    /** Hapus transaksi & adjustment lama, TAPI hanya milik company yang seeder ini kelola. */
     private function resetDemoTransactions(array $ownerEmails): void
     {
         $ownerIds = User::whereIn('email', $ownerEmails)->pluck('id');

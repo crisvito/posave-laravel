@@ -1,9 +1,10 @@
 import { Search } from 'lucide-react';
+import { Input } from './ui';
 
 interface SearchInputProps {
     value: string;
     onChange: (value: string) => void;
-    onSubmit: (e: React.FormEvent) => void;
+    onSubmit?: (e: React.FormEvent) => void;
     placeholder?: string;
     variant?: 'default' | 'kiosk';
     className?: string;
@@ -36,7 +37,7 @@ export function SearchInput({
         <form onSubmit={onSubmit} className={className}>
             <div className="relative">
                 <Search className={`absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 ${theme.icon}`} aria-hidden="true" />
-                <input
+                <Input
                     type="text"
                     aria-label={placeholder}
                     value={value}

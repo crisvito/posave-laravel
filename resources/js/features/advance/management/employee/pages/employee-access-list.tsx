@@ -1,4 +1,16 @@
-import { Button, PaginationBar, SearchInput, Table, TableBody, TableCell, TableEmptyState, TableHead, TableHeader, TableRow } from '@/components';
+import {
+    Button,
+    CreateButton,
+    PaginationBar,
+    SearchInput,
+    Table,
+    TableBody,
+    TableCell,
+    TableEmptyState,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components';
 import {
     EmployeeAccessActionsMenu,
     EmployeeAccessCreateModal,
@@ -8,7 +20,7 @@ import {
 import { useConfirmAction, useDropdownMenu, useFilters } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
-import { MoreVertical, Plus } from 'lucide-react';
+import { MoreVertical } from 'lucide-react';
 import { useState } from 'react';
 
 interface EmployeeAccessListProps {
@@ -55,14 +67,7 @@ export default function EmployeeAccessList({ accesses, filters }: EmployeeAccess
                     <SearchInput value={search} onChange={setSearch} onSubmit={handleSearch} placeholder="Cari kategori..." />
 
                     <div className="flex flex-wrap items-center gap-3">
-                        {/* Tombol Buat Kategori konsisten dengan contoh */}
-                        <Button
-                            onClick={() => setShowCreateModal(true)}
-                            className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]"
-                        >
-                            <Plus className="mr-2 h-4 w-4" />
-                            Buat Kategori
-                        </Button>
+                        <CreateButton label="Kategori" onClick={() => setShowCreateModal(true)} />
                     </div>
                 </div>
 
@@ -91,7 +96,6 @@ export default function EmployeeAccessList({ accesses, filters }: EmployeeAccess
                                     accesses.data.map((access) => (
                                         <TableRow key={access.id} className="dark:border-[var(--border-strong)]">
                                             <TableCell>
-                                                {/* Warna mengikuti pola yang Anda inginkan */}
                                                 <span
                                                     className="rounded-full px-3 py-1 text-xs font-medium"
                                                     style={{

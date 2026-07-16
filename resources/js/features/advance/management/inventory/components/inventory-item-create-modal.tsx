@@ -1,4 +1,4 @@
-import { Button } from '@/components';
+import { Button, Input, Label } from '@/components';
 import { useForm } from '@inertiajs/react';
 import { ChevronDown, Package, UploadCloud, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
@@ -85,21 +85,20 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
                 <form onSubmit={handleSubmit}>
                     <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto p-6">
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Nama Barang</label>
-                            <input
+                            <Label>Nama Barang</Label>
+                            <Input
                                 aria-label="Nama barang"
                                 type="text"
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
                                 placeholder="Masukkan nama barang"
-                                className={inputClass}
                             />
                             {errors.name && <span className="text-xs text-red-500">{errors.name}</span>}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Kategori</label>
+                                <Label>Kategori</Label>
                                 <div className="relative">
                                     <select
                                         aria-label="Pilih kategori barang"
@@ -121,7 +120,7 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
                                 {errors.category_id && <span className="text-xs text-red-500">{errors.category_id}</span>}
                             </div>
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Cabang</label>
+                                <Label>Cabang</Label>
                                 <div className="relative">
                                     <select
                                         aria-label="Pilih cabang untuk stok awal"
@@ -148,40 +147,37 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
                         </div>
 
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Harga</label>
-                            <input
+                            <Label>Harga</Label>
+                            <Input
                                 aria-label="Harga barang"
                                 type="number"
                                 min="0"
                                 value={data.price}
                                 onChange={(e) => setData('price', e.target.value)}
-                                className={inputClass}
                             />
                             {errors.price && <span className="text-xs text-red-500">{errors.price}</span>}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Stok Awal</label>
-                                <input
+                                <Label>Stok Awal</Label>
+                                <Input
                                     aria-label="Stok awal barang"
                                     type="number"
                                     min="0"
                                     value={data.current_stock}
                                     onChange={(e) => setData('current_stock', e.target.value)}
-                                    className={inputClass}
                                 />
                                 {errors.current_stock && <span className="text-xs text-red-500">{errors.current_stock}</span>}
                             </div>
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Stok Minimum</label>
-                                <input
+                                <Label>Stok Minimum</Label>
+                                <Input
                                     aria-label="Stok minimum barang"
                                     type="number"
                                     min="0"
                                     value={data.min_stock}
                                     onChange={(e) => setData('min_stock', e.target.value)}
-                                    className={inputClass}
                                 />
                                 <p className="mt-1 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
                                     Jumlah minimum sebelum stok dianggap rendah
@@ -190,9 +186,9 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
                         </div>
 
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">
+                            <Label>
                                 Gambar <span className="font-normal text-[var(--grey-text)]">(Opsional)</span>
-                            </label>
+                            </Label>
                             <div
                                 onClick={() => fileInputRef.current?.click()}
                                 className="flex cursor-pointer items-center gap-4 rounded-lg border border-dashed border-[var(--border-strong)] p-4 transition-colors hover:bg-[var(--surface-badge)] dark:hover:bg-[var(--second-accent)]"
@@ -213,7 +209,7 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
                                     </p>
                                 </div>
                             </div>
-                            <input type="file" ref={fileInputRef} accept="image/*" onChange={handleImage} className="hidden" />
+                            <Input type="file" ref={fileInputRef} accept="image/*" onChange={handleImage} className="hidden" />
                             {errors.image && <span className="text-xs text-red-500">{errors.image}</span>}
                         </div>
                     </div>

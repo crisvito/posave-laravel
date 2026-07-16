@@ -1,8 +1,9 @@
-import { Button } from '@/components';
+import { Button, Input, Label } from '@/components';
 import { useForm } from '@inertiajs/react';
 import { X } from 'lucide-react';
 import React, { useState } from 'react';
-import type { InventoryCategory, InventoryItem } from './inventory-item-actions-menu';
+import type { InventoryCategory } from './inventory-category-actions-menu';
+import type { InventoryItem } from './inventory-item-actions-menu';
 
 interface InventoryItemEditModalProps {
     item: InventoryItem;
@@ -76,40 +77,28 @@ export function InventoryItemEditModal({ item, categories, branches, selectedBra
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">
+                        <Label>
                             Gambar <span className="text-[var(--grey-text)]">(opsional)</span>
-                        </label>
+                        </Label>
                         {preview && <img src={preview} alt="Pratinjau gambar barang" className="mb-2 h-16 w-16 rounded-lg object-cover" />}
                         <input aria-label="Unggah gambar barang" type="file" accept="image/*" onChange={handleImage} className={inputClass} />
                         {errors.image && <span className="text-sm text-red-500">{errors.image}</span>}
                     </div>
 
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">Nama Barang</label>
-                        <input
-                            aria-label="Nama barang"
-                            type="text"
-                            value={data.name}
-                            onChange={(e) => setData('name', e.target.value)}
-                            className={inputClass}
-                        />
+                        <Label>Nama Barang</Label>
+                        <Input aria-label="Nama barang" type="text" value={data.name} onChange={(e) => setData('name', e.target.value)} />
                         {errors.name && <span className="text-sm text-red-500">{errors.name}</span>}
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">SKU</label>
-                            <input
-                                aria-label="SKU barang"
-                                type="text"
-                                value={data.sku}
-                                onChange={(e) => setData('sku', e.target.value)}
-                                className={inputClass}
-                            />
+                            <Label>SKU</Label>
+                            <Input aria-label="SKU barang" type="text" value={data.sku} onChange={(e) => setData('sku', e.target.value)} />
                             {errors.sku && <span className="text-xs text-red-500">{errors.sku}</span>}
                         </div>
                         <div>
-                            <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">Kategori</label>
+                            <Label>Kategori</Label>
                             <select
                                 aria-label="Pilih kategori barang"
                                 value={data.category_id}
@@ -132,10 +121,8 @@ export function InventoryItemEditModal({ item, categories, branches, selectedBra
                     {selectedBranchId ? (
                         <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">
-                                    Stok Saat Ini — {selectedBranchName}
-                                </label>
-                                <input
+                                <Label>Stok Saat Ini — {selectedBranchName}</Label>
+                                <Input
                                     aria-label={`Stok saat ini di cabang ${selectedBranchName ?? ''}`}
                                     type="number"
                                     min="0"
@@ -145,14 +132,13 @@ export function InventoryItemEditModal({ item, categories, branches, selectedBra
                                 />
                             </div>
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">Stok Minimum</label>
-                                <input
+                                <Label>Stok Minimum</Label>
+                                <Input
                                     aria-label="Stok minimum barang"
                                     type="number"
                                     min="0"
                                     value={data.min_stock}
                                     onChange={(e) => setData('min_stock', e.target.value)}
-                                    className={inputClass}
                                 />
                             </div>
                         </div>
@@ -163,14 +149,13 @@ export function InventoryItemEditModal({ item, categories, branches, selectedBra
                     )}
 
                     <div>
-                        <label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">Harga</label>
-                        <input
+                        <Label className="mb-1 block text-sm font-medium text-[var(--subheading)] dark:text-white">Harga</Label>
+                        <Input
                             aria-label="Harga barang"
                             type="number"
                             min="0"
                             value={data.price}
                             onChange={(e) => setData('price', e.target.value)}
-                            className={inputClass}
                         />
                     </div>
 

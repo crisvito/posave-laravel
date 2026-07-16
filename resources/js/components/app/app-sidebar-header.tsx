@@ -9,7 +9,7 @@ interface AppSidebarHeaderProps {
 export function AppSidebarHeader({ title, description }: AppSidebarHeaderProps) {
     const { open } = useChatbot();
     return (
-        <header className="border-sidebar-border/50 sticky top-0 z-[5] border-b bg-[var(--primary-900)]/95 text-white backdrop-blur dark:border-[var(--border-strong)] dark:bg-[var(--background)]/95">
+        <header className="sticky top-0 z-[5] border-b border-[var(--border-strong)] bg-[var(--neutral-white)] text-[var(--primary-700)] backdrop-blur dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-white">
             <div className="flex items-center justify-between px-6 py-4">
                 <div className="flex items-center gap-4">
                     <SidebarTrigger className="mt-1" />

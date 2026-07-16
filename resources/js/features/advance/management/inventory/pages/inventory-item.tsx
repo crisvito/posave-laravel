@@ -1,7 +1,9 @@
 import {
     Button,
+    CreateButton,
     FilterDropdown,
     PaginationBar,
+    PrintButton,
     SearchInput,
     Table,
     TableBody,
@@ -23,7 +25,7 @@ import { useConfirmAction, useDropdownMenu, useFilters } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
-import { Minus, MoreVertical, Package, Plus, Printer, Store } from 'lucide-react';
+import { Minus, MoreVertical, Package, Plus, Store } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { resolveBranchId } from '../lib';
 
@@ -120,19 +122,8 @@ export default function InventoryItemList({ items, categories, branches, filters
                             )}
                         </div>
                         <div className="flex items-center gap-3">
-                            {can_manage_catalog && (
-                                <Button
-                                    onClick={() => setShowCreateModal(true)}
-                                    className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]"
-                                >
-                                    <Plus className="mr-2 h-4 w-4" />
-                                    Buat Barang
-                                </Button>
-                            )}
-                            <Button variant="outline" className="bg-[var(--card)]">
-                                <Printer className="mr-2 h-4 w-4" />
-                                Cetak
-                            </Button>
+                            {can_manage_catalog && <CreateButton label="Buat Barang" onClick={() => setShowCreateModal(true)} />}
+                            <PrintButton />
                         </div>
                     </div>
                     <div className="flex w-full items-center justify-between">

@@ -1,8 +1,10 @@
 import {
     Button,
+    CreateButton,
     DateNavigator,
     FilterDropdown,
     PaginationBar,
+    PrintButton,
     SearchInput,
     Table,
     TableBody,
@@ -16,7 +18,7 @@ import { InventoryTransferCreateModal, TransferRejectModal } from '@/features/ad
 import { useConfirmAction, useFilters } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
-import { AlertCircle, Check, Package, Plus, Printer, X as XIcon } from 'lucide-react';
+import { AlertCircle, Check, Package, X as XIcon } from 'lucide-react';
 import { useState } from 'react';
 
 interface BranchOption {
@@ -115,7 +117,7 @@ export default function InventoryTransferList({
             <Head title="Kiriman" />
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--page-bg)] p-4 sm:p-6">
                 {incoming_pending_count > 0 && !showingIncomingTab && (
-                    <button
+                    <Button
                         onClick={() => applyFilters({ view: 'incoming', status: undefined })}
                         className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border-2 border-amber-400 bg-amber-50 px-4 py-3 text-left transition hover:bg-amber-100 dark:border-amber-700 dark:bg-amber-900/30 dark:hover:bg-amber-900/50"
                     >
@@ -124,18 +126,18 @@ export default function InventoryTransferList({
                             {incoming_pending_count} kiriman menunggu konfirmasi kamu
                         </span>
                         <span className="text-xs font-medium whitespace-nowrap text-amber-700 underline dark:text-amber-300">Lihat</span>
-                    </button>
+                    </Button>
                 )}
 
                 {showingIncomingTab && (
                     <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[var(--second-accent)] px-4 py-2.5">
                         <span className="text-sm font-medium text-[var(--subheading)]">Menampilkan: Perlu Konfirmasi Saya</span>
-                        <button
+                        <Button
                             onClick={() => applyFilters({ view: undefined })}
                             className="text-xs font-medium whitespace-nowrap text-[var(--secondary-700)] hover:underline"
                         >
                             Lihat Semua
-                        </button>
+                        </Button>
                     </div>
                 )}
 
@@ -143,17 +145,8 @@ export default function InventoryTransferList({
                     <DateNavigator date={currentDate} onChange={(date) => applyFilters({ date })} variant="default" size="sm" />
 
                     <div className="flex items-center gap-3">
-                        <Button
-                            onClick={() => setShowCreateModal(true)}
-                            className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]"
-                        >
-                            <Plus className="mr-2 h-4 w-4" />
-                            Buat Kiriman
-                        </Button>
-                        <Button variant="outline" className="bg-[var(--card)]">
-                            <Printer className="mr-2 h-4 w-4" />
-                            Cetak
-                        </Button>
+                        <CreateButton label="Buat Kiriman" onClick={() => setShowCreateModal(true)} />
+                        <PrintButton />
                     </div>
                 </div>
 

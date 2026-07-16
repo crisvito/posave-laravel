@@ -1,4 +1,4 @@
-import { Button, Input } from '@/components';
+import { Button, Input, Label } from '@/components';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ChevronLeft } from 'lucide-react';
@@ -49,9 +49,7 @@ export default function EmployeeCreate({ roles, branches }: EmployeeCreateProps)
                 <div className="max-w-2xl rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6">
                     <form onSubmit={submit} className="flex flex-col gap-5">
                         <div>
-                            <label htmlFor="emp-name" className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
-                                Nama Karyawan
-                            </label>
+                            <Label htmlFor="emp-name">Nama Karyawan</Label>
                             <Input
                                 id="emp-name"
                                 type="text"
@@ -64,9 +62,7 @@ export default function EmployeeCreate({ roles, branches }: EmployeeCreateProps)
                         </div>
 
                         <div>
-                            <label htmlFor="emp-email" className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
-                                Email
-                            </label>
+                            <Label htmlFor="emp-email">Email</Label>
                             <Input
                                 id="emp-email"
                                 type="email"
@@ -79,9 +75,7 @@ export default function EmployeeCreate({ roles, branches }: EmployeeCreateProps)
                         </div>
 
                         <div>
-                            <label htmlFor="emp-role" className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
-                                Role
-                            </label>
+                            <Label htmlFor="emp-role">Role</Label>
                             <select
                                 id="emp-role"
                                 aria-label="Role karyawan"

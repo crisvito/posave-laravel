@@ -1,3 +1,4 @@
+import { FilterDropdown } from '@/components';
 import { Button } from '@/components/ui';
 import { useForm } from '@inertiajs/react';
 import { ClipboardEdit, Minus, Plus, X } from 'lucide-react';
@@ -49,42 +50,38 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
 
     return (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center sm:p-4">
-            <div className="w-full max-w-md rounded-t-3xl bg-[var(--neutral-white)] shadow-xl sm:rounded-3xl">
+            <div className="w-full max-w-md rounded-t-3xl bg-[var(--neutral-white)] shadow-xl sm:rounded-3xl dark:bg-[var(--background)]">
                 <div className="flex items-center justify-between p-5">
                     <div className="flex items-center gap-3">
-                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--second-accent)]">
-                            <ClipboardEdit className="h-6 w-6 text-[var(--subheading)]" />
+                        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--second-accent)] dark:bg-[var(--border-strong)]">
+                            <ClipboardEdit className="h-6 w-6 text-[var(--subheading)] dark:text-[var(--neutral-white)]" />
                         </span>
-                        <h3 className="text-xl font-bold text-[var(--subheading)]">Catat Perubahan</h3>
+                        <h3 className="text-xl font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Catat Perubahan</h3>
                     </div>
                     <button aria-label="Tutup" onClick={onClose}>
-                        <X className="h-6 w-6 text-[var(--grey-text)]" />
+                        <X className="h-6 w-6 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-5 pb-5">
                     <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)]">Barang</label>
-                        <select
-                            aria-label="Pilih barang"
-                            value={data.inventory_item_id}
-                            onChange={(e) => setData('inventory_item_id', e.target.value)}
-                            className="h-12 w-full rounded-xl border border-[var(--border-strong)] bg-transparent px-3 text-base"
-                        >
-                            <option value="" disabled>
-                                Pilih barang
-                            </option>
-                            {items.map((i) => (
-                                <option key={i.id} value={i.id}>
-                                    {i.name}
-                                </option>
-                            ))}
-                        </select>
+                        <FilterDropdown
+                            value={data.inventory_item_id || undefined}
+                            allLabel="Pilih kategori"
+                            options={items.map((c) => ({
+                                value: String(c.id),
+                                label: c.name,
+                            }))}
+                            onChange={(value) => setData('inventory_item_id', value ?? '')}
+                            buttonClassName="!w-full"
+                        />
                         {errors.inventory_item_id && <p className="mt-1 text-sm text-[var(--danger)]">{errors.inventory_item_id}</p>}
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-sm font-semibold text-[var(--subheading)]">Apa yang terjadi?</label>
+                        <label className="mb-2 block text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            Apa yang terjadi?
+                        </label>
                         <div className="grid grid-cols-2 gap-3">
                             <button
                                 type="button"
@@ -92,8 +89,8 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
                                 onClick={() => handleDirectionChange('out')}
                                 className={`flex flex-col items-center gap-1.5 rounded-2xl border-2 p-4 transition ${
                                     data.direction === 'out'
-                                        ? 'border-[var(--danger)] bg-[var(--danger-background)] text-[var(--danger)]'
-                                        : 'border-[var(--border-strong)] text-[var(--grey-text)]'
+                                        ? 'border-[var(--danger)] bg-[var(--danger-background)] text-[var(--danger)] dark:border-red-400 dark:bg-red-900/30 dark:text-red-400'
+                                        : 'border-[var(--border-strong)] text-[var(--grey-text)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]'
                                 }`}
                             >
                                 <Minus className="h-6 w-6" />
@@ -105,8 +102,8 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
                                 onClick={() => handleDirectionChange('in')}
                                 className={`flex flex-col items-center gap-1.5 rounded-2xl border-2 p-4 transition ${
                                     data.direction === 'in'
-                                        ? 'border-[var(--success)] bg-[var(--success-background)] text-[var(--success)]'
-                                        : 'border-[var(--border-strong)] text-[var(--grey-text)]'
+                                        ? 'border-[var(--success)] bg-[var(--success-background)] text-[var(--success)] dark:border-green-400 dark:bg-green-900/30 dark:text-green-400'
+                                        : 'border-[var(--border-strong)] text-[var(--grey-text)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]'
                                 }`}
                             >
                                 <Plus className="h-6 w-6" />
@@ -116,19 +113,19 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
                     </div>
 
                     <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)]">Jumlah</label>
+                        <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Jumlah</label>
                         <input
                             aria-label="Jumlah perubahan"
                             type="number"
                             min="1"
                             value={data.amount}
                             onChange={(e) => setData('amount', e.target.value)}
-                            className="h-12 w-full rounded-xl border border-[var(--border-strong)] bg-transparent px-3 text-base"
+                            className="h-12 w-full rounded-xl border border-[var(--border-strong)] bg-transparent px-3 text-base dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
                         />
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-sm font-semibold text-[var(--subheading)]">Alasan</label>
+                        <label className="mb-2 block text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Alasan</label>
                         <div className="flex flex-wrap gap-2">
                             {REASONS[data.direction].map((reason) => (
                                 <button
@@ -138,8 +135,8 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
                                     onClick={() => setData('note', reason)}
                                     className={`rounded-full border-2 px-3 py-1.5 text-sm font-medium transition ${
                                         data.note === reason
-                                            ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white'
-                                            : 'border-[var(--border-strong)] text-[var(--grey-text)]'
+                                            ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white dark:border-[var(--neutral-white)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                            : 'border-[var(--border-strong)] text-[var(--grey-text)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10'
                                     }`}
                                 >
                                     {reason}
@@ -151,7 +148,7 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
                             value={data.note}
                             onChange={(e) => setData('note', e.target.value)}
                             placeholder="Atau tulis alasan lain..."
-                            className="mt-2 h-12 w-full rounded-xl border border-[var(--border-strong)] bg-transparent px-3 text-base"
+                            className="mt-2 h-12 w-full rounded-xl border border-[var(--border-strong)] bg-transparent px-3 text-base dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
                         />
                         {errors.note && <p className="mt-1 text-sm text-[var(--danger)]">{errors.note}</p>}
                     </div>
@@ -160,7 +157,7 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
                         aria-label="Simpan perubahan"
                         type="submit"
                         disabled={processing}
-                        className="mt-2 h-12 rounded-xl bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)]"
+                        className="mt-2 h-12 rounded-xl bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:opacity-90"
                     >
                         {processing ? 'Menyimpan...' : 'Simpan'}
                     </Button>
