@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('position');
             $table->string('company');
             $table->text('message');
+            $table->text('message_en')->nullable();
             $table->string('photo');
             $table->string('logo')->nullable();
             $table->timestamps();

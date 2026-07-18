@@ -17,6 +17,8 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->string('question');
             $table->text('answer');
+            $table->text('question_en')->nullable();
+            $table->text('answer_en')->nullable();
             $table->integer('sort_order')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamps();

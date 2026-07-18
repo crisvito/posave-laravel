@@ -1,31 +1,21 @@
 import { Breadcrumbs } from '@/components';
-import { Button, Sheet, SheetContent, SheetTrigger } from '@/components/ui';
-import { useInitials } from '@/hooks';
-import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
+import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Sheet, SheetContent, SheetTrigger } from '@/components/ui';
+import { useInitials, useLanguage } from '@/hooks';
+import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Menu } from 'lucide-react';
+import { Check, Globe, Menu } from 'lucide-react';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Beranda',
-        routeName: 'home',
-    },
-    {
-        title: 'Layanan',
-        routeName: 'service.index',
-    },
-    {
-        title: 'Artikel',
-        routeName: 'artikel.index',
-    },
-    {
-        title: 'FAQ',
-        routeName: 'faq',
-    },
-    {
-        title: 'Hubungi Kami',
-        routeName: 'contact-us.index',
-    },
+interface CompanyNavItem {
+    key: string;
+    routeName: string;
+}
+
+const mainNavItems: CompanyNavItem[] = [
+    { key: 'shared.nav.home', routeName: 'home' },
+    { key: 'shared.nav.services', routeName: 'service.index' },
+    { key: 'shared.nav.articles', routeName: 'artikel.index' },
+    { key: 'shared.nav.faq', routeName: 'faq' },
+    { key: 'shared.nav.contact', routeName: 'contact-us.index' },
 ];
 
 interface AppHeaderProps {
@@ -37,6 +27,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const { auth } = page.props;
 
     const getInitials = useInitials();
+    const { locale, setLocale, t } = useLanguage();
 
     const isActive = (routeName: string) => {
         if (!routeName) return false;
@@ -44,54 +35,71 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
         return route().current(routeName);
     };
 
-    const getHref = (item: NavItem) => {
-        if (item.routeName) {
-            return route(item.routeName);
-        }
+    const getHref = (item: CompanyNavItem) => route(item.routeName);
 
-        return item.url ?? '#';
-    };
+    const LanguageSwitcher = () => (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button
+                    variant="ghost"
+                    className="h-10 gap-1.5 rounded-full px-3 text-sm font-medium text-[var(--grey-text)] hover:bg-[var(--secondary-600)]/10 hover:text-[var(--secondary-600)]"
+                >
+                    <Globe className="h-4 w-4" />
+                    {locale.toUpperCase()}
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-40">
+                <DropdownMenuItem onClick={() => setLocale('id')} className="flex items-center justify-between gap-2">
+                    {t('shared.language.id')}
+                    {locale === 'id' && <Check className="h-4 w-4 text-[var(--secondary-600)]" />}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLocale('en')} className="flex items-center justify-between gap-2">
+                    {t('shared.language.en')}
+                    {locale === 'en' && <Check className="h-4 w-4 text-[var(--secondary-600)]" />}
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+        </DropdownMenu>
+    );
 
     return (
         <>
             <div className="sticky top-0 z-50 mx-auto w-full max-w-7xl px-8 pt-4 md:px-16">
-                <div className="flex h-16 w-full items-center justify-between rounded-full bg-[#F2F3F5] px-5 shadow-sm lg:px-15 dark:border dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
+                <div className="flex h-16 w-full items-center justify-between rounded-full border border-[var(--border-strong)] bg-[var(--card)] px-5 shadow-sm lg:px-15">
                     <div className="flex items-center gap-4">
-                        {/* MOBILE MENU */}
                         <div className="lg:hidden">
                             <Sheet>
                                 <SheetTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="dark:text-[var(--neutral-white)] dark:hover:bg-white/10">
+                                    <Button variant="ghost" size="icon" className="text-[var(--foreground)] hover:bg-[var(--second-accent)]">
                                         <Menu className="h-5 w-5" />
                                     </Button>
                                 </SheetTrigger>
 
-                                <SheetContent
-                                    side="left"
-                                    className="w-1/2 dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
-                                >
-                                    <div className="z-100 mt-6 flex h-full flex-col space-y-4">
+                                <SheetContent side="left" className="border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground)]">
+                                    <div className="z-100 mt-6 flex h-full flex-col space-y-6">
                                         <div className="flex flex-col space-y-4 text-sm">
                                             {mainNavItems.map((item) => (
                                                 <Link
-                                                    key={item.title}
+                                                    key={item.key}
                                                     href={getHref(item)}
                                                     className={`font-medium transition-colors ${
                                                         isActive(item.routeName)
-                                                            ? 'font-semibold text-[#253342] dark:text-[var(--neutral-white)]'
-                                                            : 'hover:text-slate-600 dark:text-slate-400 dark:hover:text-[var(--neutral-white)]'
+                                                            ? 'font-semibold text-[var(--secondary-600)]'
+                                                            : 'text-[var(--grey-text)] hover:text-[var(--secondary-600)]'
                                                     }`}
                                                 >
-                                                    {item.title}
+                                                    {t(item.key)}
                                                 </Link>
                                             ))}
+                                        </div>
+
+                                        <div className="border-t border-[var(--border-strong)] pt-4">
+                                            <LanguageSwitcher />
                                         </div>
                                     </div>
                                 </SheetContent>
                             </Sheet>
                         </div>
 
-                        {/* LOGO */}
                         <Link href={route('home')} className="flex items-center">
                             <img
                                 src="/assets/landing-page/logo.png"
@@ -101,59 +109,59 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         </Link>
                     </div>
 
-                    {/* CENTER MENU */}
                     <div className="ml-25 hidden items-center gap-10 lg:flex">
                         {mainNavItems.map((item) => (
                             <Link
-                                key={item.title}
+                                key={item.key}
                                 href={getHref(item)}
                                 className={`transition-colors ${
                                     isActive(item.routeName)
-                                        ? 'font-semibold text-[#253342] dark:text-[var(--neutral-white)]'
-                                        : 'text-slate-700 hover:text-slate-500 dark:text-slate-400 dark:hover:text-[var(--neutral-white)]'
+                                        ? 'font-semibold text-[var(--secondary-600)]'
+                                        : 'text-[var(--grey-text)] hover:text-[var(--secondary-600)]'
                                 }`}
                             >
-                                {item.title}
+                                {t(item.key)}
                             </Link>
                         ))}
                     </div>
 
-                    {/* RIGHT BUTTON */}
-                    <div className="hidden items-center space-x-4 lg:flex">
+                    <div className="hidden items-center gap-3 lg:flex">
+                        <LanguageSwitcher />
+
                         {auth?.user ? (
                             <>
                                 <Button
                                     variant="outline"
-                                    className="h-[44px] rounded-[10px] border-[#233246] px-6 text-[15px] font-semibold text-[#233246] dark:border-[var(--neutral-white)] dark:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[#233246]"
+                                    className="h-[44px] rounded-[10px] border-[var(--secondary-600)] px-6 text-[15px] font-semibold text-[var(--secondary-600)] hover:bg-[var(--secondary-600)]/10"
                                     asChild
                                 >
-                                    <Link href={route('dashboard.index')}>Dashboard</Link>
+                                    <Link href={route('dashboard.index')}>{t('shared.nav.dashboard')}</Link>
                                 </Button>
 
                                 <Button
-                                    className="h-[44px] rounded-[10px] bg-[#233246] px-6 text-[15px] font-semibold text-white hover:bg-[#1b2736] dark:bg-[var(--neutral-white)] dark:text-[#233246] dark:hover:bg-slate-200"
+                                    className="h-[44px] rounded-[10px] bg-[var(--secondary-600)] px-6 text-[15px] font-semibold text-white hover:bg-[var(--secondary-700)]"
                                     asChild
                                 >
                                     <Link href={route('logout')} method="post">
-                                        Logout
+                                        {t('shared.nav.logout')}
                                     </Link>
                                 </Button>
                             </>
                         ) : (
-                            <>
-                                <Button>
-                                    <Link href={route('login')}>Masuk</Link>
-                                </Button>
-                            </>
+                            <Button
+                                className="h-[44px] rounded-[10px] bg-[var(--secondary-600)] px-6 text-[15px] font-semibold text-white hover:bg-[var(--secondary-700)]"
+                                asChild
+                            >
+                                <Link href={route('login')}>{t('shared.nav.login')}</Link>
+                            </Button>
                         )}
                     </div>
                 </div>
             </div>
 
-            {/* BREADCRUMBS */}
             {breadcrumbs.length > 1 && (
-                <div className="border-sidebar-border/70 mt-4 border-b dark:border-[var(--border-strong)]">
-                    <div className="mx-auto flex h-12 w-full items-center px-4 text-neutral-500 md:max-w-7xl dark:text-neutral-400">
+                <div className="mt-4 border-b border-[var(--border-strong)]">
+                    <div className="mx-auto flex h-12 w-full items-center px-4 text-[var(--grey-text-muted)] md:max-w-7xl">
                         <Breadcrumbs breadcrumbs={breadcrumbs} />
                     </div>
                 </div>

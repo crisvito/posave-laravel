@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\CompanyProfile;
 
 use App\Http\Controllers\Controller;
+use App\Models\CompanyPage\Article;
+use App\Models\CompanyPage\ArticleCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,12 +15,30 @@ class BlogController extends Controller
      */
     public function index()
     {
-        return Inertia::render('company-profile/blog/blog');
+        $articles = Article::with('category')
+            ->where('is_active', true)
+            ->orderByDesc('published_at')
+            ->get();
+
+        $categories = ArticleCategory::orderBy('sort_order')->get();
+
+        return Inertia::render('company-profile/blog/blog', [
+            'featured'   => $articles->first(),
+            'articles'   => $articles->slice(1)->take(4)->values(),
+            'categories' => $categories,
+        ]);
     }
 
     public function all()
     {
-        return Inertia::render('company-profile/blog/all-articles');
+        $articles = Article::with('category')
+            ->where('is_active', true)
+            ->orderByDesc('published_at')
+            ->get();
+
+        return Inertia::render('company-profile/blog/all-articles', [
+            'articles' => $articles,
+        ]);
     }
 
     /**
@@ -39,8 +59,12 @@ class BlogController extends Controller
      */
     public function show(string $id)
     {
+        $article = Article::with('category')
+            ->where('is_active', true)
+            ->find($id);
+
         return Inertia::render('company-profile/blog/detail', [
-            'articleId' => $id
+            'article' => $article,
         ]);
     }
 

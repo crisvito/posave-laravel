@@ -1,4 +1,8 @@
+import { useLanguage } from '@/hooks';
+
 export function CtaSection() {
+    const { t } = useLanguage();
+
     return (
         <>
             <div
@@ -25,11 +29,11 @@ export function CtaSection() {
                             />
 
                             <h1 className="mx-auto max-w-[420px] text-[38px] leading-[1.1] font-medium tracking-[-0.055em] text-[var(--foreground)]">
-                                Selalu Menjadi Jawaban Terbaik Anda
+                                {t('companyProfile.welcome.cta.title')}
                             </h1>
 
                             <button className="mt-8 rounded-full bg-[var(--secondary-600)] px-12 py-3 text-[22px] font-medium text-white shadow-lg transition-all duration-300 hover:bg-[var(--secondary-700)]">
-                                Coba Sekarang
+                                {t('companyProfile.welcome.cta.button')}
                             </button>
                         </div>
                     </div>

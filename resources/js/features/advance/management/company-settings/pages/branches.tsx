@@ -17,7 +17,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components';
-import { useConfirmAction, useFilters } from '@/hooks';
+import { useConfirmAction, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, useForm } from '@inertiajs/react';
 import { MapPin, Phone } from 'lucide-react';
@@ -50,6 +50,7 @@ interface Props {
 type ModalMode = 'add' | 'edit' | null;
 
 export default function BranchesPage({ branches, filters = {} }: Props) {
+    const { t } = useLanguage();
     const [modal, setModal] = useState<ModalMode>(null);
     const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
     const { search, setSearch, applyFilters, handleSearch } = useFilters('settings.branches', filters);
@@ -100,38 +101,44 @@ export default function BranchesPage({ branches, filters = {} }: Props) {
     };
 
     const handleDelete = (branch: Branch) => {
-        confirmAndRun(`Hapus cabang "${branch.name}"? Tindakan ini tidak bisa dibatalkan.`, () =>
-            destroy(route('settings.branches.destroy', branch.id)),
+        confirmAndRun(
+            `${t('dashboardAdvance.branches.deleteConfirmPrefix')} "${branch.name}"? ${t('dashboardAdvance.branches.deleteConfirmSuffix')}`,
+            () => destroy(route('settings.branches.destroy', branch.id)),
         );
     };
 
     return (
-        <DashboardSidebarLayout title="Cabang" description="Kelola seluruh cabang anda">
-            <Head title="Kelola Toko" />
+        <DashboardSidebarLayout title={t('dashboardAdvance.branches.layoutTitle')} description={t('dashboardAdvance.branches.layoutDescription')}>
+            <Head title={t('dashboardAdvance.branches.headTitle')} />
 
-            <div className="min-h-screen bg-[var(--page-bg)] p-6 dark:bg-[var(--background)]">
+            <div className="min-h-screen bg-[var(--page-bg)] p-6">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
                     <div className="flex flex-wrap items-center gap-3">
-                        <SearchInput value={search} onChange={setSearch} onSubmit={handleSearch} placeholder="Cari cabang..." />
+                        <SearchInput
+                            value={search}
+                            onChange={setSearch}
+                            onSubmit={handleSearch}
+                            placeholder={t('dashboardAdvance.branches.searchPlaceholder')}
+                        />
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <CountBadge label="Cabang" count={branches.total} />
-                        <CreateButton label="Buat Cabang" onClick={openAdd} />
-                        <PrintButton label="Cetak" />
+                        <CountBadge label={t('dashboardAdvance.branches.countLabel')} count={branches.total} />
+                        <CreateButton label={t('dashboardAdvance.branches.createLabel')} onClick={openAdd} />
+                        <PrintButton label={t('dashboardAdvance.branches.printLabel')} />
                     </div>
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm dark:bg-[var(--card)]">
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
                     <div className="overflow-x-auto">
                         <Table className="min-w-[800px]">
                             <TableHeader className="bg-[var(--surface-header)]">
                                 <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="text-[var(--text-light)]">Nama Cabang</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Alamat</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Nomor Telepon</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Status</TableHead>
-                                    <TableHead className="w-32 text-[var(--text-light)]">Aksi</TableHead>
+                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnName')}</TableHead>
+                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnAddress')}</TableHead>
+                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnPhone')}</TableHead>
+                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnStatus')}</TableHead>
+                                    <TableHead className="w-32 text-[var(--text-light)]">{t('dashboardAdvance.branches.columnAction')}</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -140,54 +147,60 @@ export default function BranchesPage({ branches, filters = {} }: Props) {
                                         colSpan={5}
                                         message={
                                             filters?.search
-                                                ? `Cabang "${filters.search}" tidak ditemukan`
-                                                : 'Belum ada cabang, buat cabang terlebih dahulu'
+                                                ? `${t('dashboardAdvance.branches.searchNotFoundPrefix')} "${filters.search}" ${t('dashboardAdvance.branches.searchNotFoundSuffix')}`
+                                                : t('dashboardAdvance.branches.emptyState')
                                         }
                                     />
                                 ) : (
                                     branches.data.map((branch) => (
-                                        <TableRow key={branch.id} className="dark:border-[var(--border-strong)]">
+                                        <TableRow key={branch.id}>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-medium text-[var(--subheading)] dark:text-white">
-                                                        {branch.name}
-                                                    </span>
+                                                    <span className="text-sm font-medium text-[var(--subheading)]">{branch.name}</span>
                                                     {branch.is_main && (
                                                         <span className="rounded-full bg-[var(--surface-header)] px-2 py-0.5 text-xs text-[var(--text-light)]">
-                                                            Utama
+                                                            {t('dashboardAdvance.branches.mainBadge')}
                                                         </span>
                                                     )}
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                            <TableCell className="text-[var(--grey-text)]">
                                                 <div className="flex items-start gap-1.5">
                                                     <MapPin
-                                                        className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]"
+                                                        className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)]"
                                                         aria-hidden="true"
                                                     />
                                                     <span>{branch.address || '-'}</span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                            <TableCell className="text-[var(--grey-text)]">
                                                 <div className="flex items-center gap-1.5">
-                                                    <Phone
-                                                        className="h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]"
-                                                        aria-hidden="true"
-                                                    />
+                                                    <Phone className="h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)]" aria-hidden="true" />
                                                     <span>{branch.phone || '-'}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <span
-                                                    className={`rounded-full px-3 py-1 text-xs font-medium ${branch.status === 'closed' ? 'bg-red-50 text-red-500 dark:bg-red-900/30 dark:text-red-400' : 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400'}`}
+                                                    className={`rounded-full px-3 py-1 text-xs font-medium ${
+                                                        branch.status === 'closed'
+                                                            ? 'bg-[var(--danger-background)] text-[var(--danger)]'
+                                                            : 'bg-[var(--success-background)] text-[var(--success)]'
+                                                    }`}
                                                 >
-                                                    {branch.status === 'closed' ? 'Close' : 'Open'}
+                                                    {branch.status === 'closed'
+                                                        ? t('dashboardAdvance.branches.statusClosed')
+                                                        : t('dashboardAdvance.branches.statusOpen')}
                                                 </span>
                                             </TableCell>
                                             <TableCell className="relative">
                                                 <div className="flex items-center gap-2">
-                                                    <EditButton label="edit" onClick={() => openEdit(branch)} />
-                                                    {!branch.is_main && <DeleteButton label="hapus" onClick={() => handleDelete(branch)} />}
+                                                    <EditButton label={t('dashboardAdvance.branches.editLabel')} onClick={() => openEdit(branch)} />
+                                                    {!branch.is_main && (
+                                                        <DeleteButton
+                                                            label={t('dashboardAdvance.branches.deleteLabel')}
+                                                            onClick={() => handleDelete(branch)}
+                                                        />
+                                                    )}
                                                 </div>
                                             </TableCell>
                                         </TableRow>
@@ -202,7 +215,7 @@ export default function BranchesPage({ branches, filters = {} }: Props) {
                     from={branches.from ?? 0}
                     to={branches.to ?? 0}
                     total={branches.total}
-                    itemLabel="Cabang"
+                    itemLabel={t('dashboardAdvance.branches.countLabel')}
                     links={branches.links}
                     perPage={filters?.per_page ?? '5'}
                     onPerPageChange={(v) => applyFilters({ per_page: v })}
@@ -217,63 +230,71 @@ export default function BranchesPage({ branches, filters = {} }: Props) {
                         if (e.target === e.currentTarget) closeModal();
                     }}
                 >
-                    <div className="w-full max-w-md rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                    <div className="w-full max-w-md rounded-2xl bg-[var(--card)] p-6 shadow-xl dark:border dark:border-[var(--border-strong)]">
                         <div className="mb-5 flex items-center justify-between">
-                            <h2 className="text-base font-medium text-[var(--grey-text)] dark:text-white">
-                                {modal === 'add' ? 'Buat Cabang' : 'Edit Cabang'}
+                            <h2 className="text-base font-medium text-[var(--grey-text)]">
+                                {modal === 'add' ? t('dashboardAdvance.branches.modalTitleAdd') : t('dashboardAdvance.branches.modalTitleEdit')}
                             </h2>
-                            <Button aria-label="Tutup modal" onClick={closeModal}>
+                            <Button aria-label={t('dashboardAdvance.branches.closeModalLabel')} onClick={closeModal}>
                                 ✕
                             </Button>
                         </div>
 
                         <form onSubmit={modal === 'add' ? submitAdd : submitEdit}>
                             <div className="mb-4">
-                                <Label htmlFor="branch-name">Nama Cabang</Label>
+                                <Label htmlFor="branch-name">{t('dashboardAdvance.branches.nameLabel')}</Label>
                                 <Input
                                     id="branch-name"
                                     type="text"
-                                    aria-label="Nama cabang"
+                                    aria-label={t('dashboardAdvance.branches.nameAriaLabel')}
                                     value={data.name}
                                     onChange={(e) => setData('name', e.target.value)}
-                                    placeholder="cth. Cabang Selatan"
+                                    placeholder={t('dashboardAdvance.branches.namePlaceholder')}
                                     autoFocus
                                 />
-                                {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
+                                {errors.name && <p className="mt-1 text-xs text-[var(--danger)]">{errors.name}</p>}
                             </div>
 
                             <div className="mb-4">
-                                <Label htmlFor="branch-address">Alamat</Label>
+                                <Label htmlFor="branch-address">{t('dashboardAdvance.branches.addressLabel')}</Label>
                                 <Input
                                     id="branch-address"
                                     type="text"
-                                    aria-label="Alamat cabang"
+                                    aria-label={t('dashboardAdvance.branches.addressAriaLabel')}
                                     value={data.address}
                                     onChange={(e) => setData('address', e.target.value)}
-                                    placeholder="Jl. Sudirman No. 10"
+                                    placeholder={t('dashboardAdvance.branches.addressPlaceholder')}
                                 />
                             </div>
 
                             <div className="mb-6">
-                                <Label htmlFor="branch-phone">Nomor Telepon</Label>
+                                <Label htmlFor="branch-phone">{t('dashboardAdvance.branches.phoneLabel')}</Label>
                                 <Input
                                     id="branch-phone"
                                     type="text"
-                                    aria-label="Nomor telepon cabang"
+                                    aria-label={t('dashboardAdvance.branches.phoneAriaLabel')}
                                     value={data.phone}
                                     onChange={(e) => setData('phone', e.target.value)}
-                                    placeholder="+62 812 3456 7890"
+                                    placeholder={t('dashboardAdvance.branches.phonePlaceholder')}
                                 />
                             </div>
 
                             <div className="flex gap-3">
-                                <DeleteButton type="button" label="Batal" onClick={closeModal} />
+                                <DeleteButton type="button" label={t('dashboardAdvance.branches.cancel')} onClick={closeModal} />
                                 <Button
                                     type="submit"
-                                    aria-label={modal === 'add' ? 'Buat cabang baru' : 'Simpan perubahan cabang'}
+                                    aria-label={
+                                        modal === 'add'
+                                            ? t('dashboardAdvance.branches.submitCreateAriaLabel')
+                                            : t('dashboardAdvance.branches.submitEditAriaLabel')
+                                    }
                                     disabled={processing}
                                 >
-                                    {processing ? 'Menyimpan...' : modal === 'add' ? 'Buat Cabang' : 'Simpan'}
+                                    {processing
+                                        ? t('dashboardAdvance.branches.submitting')
+                                        : modal === 'add'
+                                          ? t('dashboardAdvance.branches.modalTitleAdd')
+                                          : t('dashboardAdvance.branches.submitEditLabel')}
                                 </Button>
                             </div>
                         </form>

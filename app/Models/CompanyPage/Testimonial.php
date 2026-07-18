@@ -13,5 +13,6 @@ class Testimonial extends Model
         'message',
         'photo',
         'logo',
+        'message_en'
     ];
 }

@@ -1,4 +1,8 @@
+import { useLanguage } from '@/hooks';
+
 export function WhySection() {
+    const { t } = useLanguage();
+
     return (
         <>
             <div className="mx-auto max-w-6xl">
@@ -19,7 +23,7 @@ export function WhySection() {
                     <div className="z-20 mt-12 flex w-full flex-col lg:mt-0 lg:-ml-30 lg:w-1/2">
                         <div className="mb-3 ml-15 lg:pl-12">
                             <h2 className="text-[52px] leading-none font-bold tracking-tight text-[var(--primary-900)] dark:text-[var(--text-light)]">
-                                Kenapa Pilih
+                                {t('companyProfile.welcome.why.titleLine1')}
                             </h2>
                             <div className="mt-0 ml-21.5 flex items-center gap-4">
                                 <img
@@ -38,9 +42,8 @@ export function WhySection() {
                             style={{ boxShadow: '0 40px 80px -15px rgba(0, 0, 0, 0.5)' }}
                         >
                             <p className="mb-10 text-[17px] leading-relaxed text-[var(--accent-800)]">
-                                <span className="text-lg font-bold text-white">Posave</span> dirancang khusus untuk UMKM Indonesia — dari warung
-                                kelontong sampai toko fashion. Tidak perlu pelatihan, tidak perlu hardware mahal. Cukup smartphone yang kamu pegang
-                                sekarang.
+                                <span className="text-lg font-bold text-white">{t('companyProfile.welcome.why.bodyBrand')}</span>{' '}
+                                {t('companyProfile.welcome.why.body')}
                             </p>
 
                             <div className="space-y-10">
@@ -75,10 +78,10 @@ export function WhySection() {
                                     </div>
 
                                     <div>
-                                        <h4 className="mb-1 text-[20px] font-bold">Asisten Personal AI</h4>
+                                        <h4 className="mb-1 text-[20px] font-bold">{t('companyProfile.welcome.why.feature1Title')}</h4>
 
                                         <p className="text-[15px] leading-snug text-[var(--accent-800)]">
-                                            Posave langsung catat transaksi, kurangi stok, dan simpan ke database tanpa ribet
+                                            {t('companyProfile.welcome.why.feature1Body')}
                                         </p>
                                     </div>
                                 </div>
@@ -104,10 +107,10 @@ export function WhySection() {
                                     </div>
 
                                     <div>
-                                        <h4 className="mb-1 text-[20px] font-bold">Lite Mode Simpel</h4>
+                                        <h4 className="mb-1 text-[20px] font-bold">{t('companyProfile.welcome.why.feature2Title')}</h4>
 
                                         <p className="text-[15px] leading-snug text-[var(--accent-800)]">
-                                            Mode khusus untuk UMKM yang baru pertama pakai aplikasi kasir, tampilan minimal dan mudah dipahami.
+                                            {t('companyProfile.welcome.why.feature2Body')}
                                         </p>
                                     </div>
                                 </div>
@@ -130,11 +133,10 @@ export function WhySection() {
                                     </div>
 
                                     <div>
-                                        <h4 className="mb-1 text-[20px] font-bold">Multi-cabang, Satu Kendali</h4>
+                                        <h4 className="mb-1 text-[20px] font-bold">{t('companyProfile.welcome.why.feature3Title')}</h4>
 
                                         <p className="text-[15px] leading-snug text-[var(--accent-800)]">
-                                            Owner lihat semua cabang dari satu dashboard. Kepala toko hanya akses cabangnya sendiri. Kasir fokus ke
-                                            transaksi. Semua punya peran yang jelas.
+                                            {t('companyProfile.welcome.why.feature3Body')}
                                         </p>
                                     </div>
                                 </div>

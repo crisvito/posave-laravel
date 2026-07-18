@@ -1,58 +1,52 @@
-// 1. Taruh DUMMY DATA di sini
-const FEATURES_DATA = [
-    {
-        id: 1,
-        iconSrc: "/assets/services/chatbot.png",
-        title: "AI Chatbot Assistant",
-        description: "Kelola toko lewat percakapan",
-    },
-    {
-        id: 2,
-        iconSrc: "/assets/services/laporan.png",
-        title: "Laporan Otomatis",
-        description: "Insight bisnis otomatis",
-    },
-    {
-        id: 3,
-        iconSrc: "/assets/services/mode.png",
-        title: "2 Versi Pengguna",
-        description: "Sesuaikan sistem dengan kebutuhan",
-        // Hapus mb-6 dan mt-5, cukup atur tingginya aja. Posisinya otomatis ke-tengah nanti.
-        iconClassName: "h-14", 
-    },
-    {
-        id: 4,
-        iconSrc: "/assets/services/transaksi.png",
-        title: "Transaksi",
-        description: "Catat transaksi secara cepat",
-    }
-];
+import { useLanguage } from '@/hooks';
 
 export const FeatureCard = () => {
+    const { t } = useLanguage();
+
+    const features = [
+        {
+            id: 1,
+            iconSrc: '/assets/services/chatbot.png',
+            title: t('companyProfile.services.features.chatbot.title'),
+            description: t('companyProfile.services.features.chatbot.desc'),
+        },
+        {
+            id: 2,
+            iconSrc: '/assets/services/laporan.png',
+            title: t('companyProfile.services.features.reports.title'),
+            description: t('companyProfile.services.features.reports.desc'),
+        },
+        {
+            id: 3,
+            iconSrc: '/assets/services/mode.png',
+            title: t('companyProfile.services.features.modes.title'),
+            description: t('companyProfile.services.features.modes.desc'),
+            iconClassName: 'h-14',
+        },
+        {
+            id: 4,
+            iconSrc: '/assets/services/transaksi.png',
+            title: t('companyProfile.services.features.transactions.title'),
+            description: t('companyProfile.services.features.transactions.desc'),
+        },
+    ];
+
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {FEATURES_DATA.map((feature) => (
-                <div 
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {features.map((feature) => (
+                <div
                     key={feature.id}
-                    className="bg-[var(--white)] min-h-[280px] rounded-[30px] p-6 flex flex-col items-center text-center shadow-sm drop-shadow-[2px_3px_6px_rgba(0,0,0,0.25)] h-full"
+                    className="flex h-full min-h-[280px] flex-col items-center rounded-[30px] bg-[var(--neutral-white)] p-6 text-center shadow-sm drop-shadow-[2px_3px_6px_rgba(0,0,0,0.25)]"
                 >
-                    <div className="h-24 flex items-center justify-center mb-4">
-                        <img 
-                            src={feature.iconSrc} 
-                            alt={feature.title} 
-                            className={feature.iconClassName || "h-20"} 
-                        />
-                    </div>
-                    
-                    <div className="min-h-[64px] flex items-start justify-center w-full">
-                        <h4 className="font-medium text-[20px] lg:text-[22px] text-[var(--black)] leading-snug">
-                            {feature.title}
-                        </h4>
+                    <div className="mb-4 flex h-24 items-center justify-center">
+                        <img src={feature.iconSrc} alt={feature.title} className={feature.iconClassName || 'h-20'} />
                     </div>
 
-                    <p className="text-[16px] lg:text-[18px] text-[var(--black)] mt-2">
-                        {feature.description}
-                    </p>
+                    <div className="flex min-h-[64px] w-full items-start justify-center">
+                        <h4 className="text-[20px] leading-snug font-medium text-[var(--primary-900)] lg:text-[22px]">{feature.title}</h4>
+                    </div>
+
+                    <p className="mt-2 text-[16px] text-[var(--primary-600)] lg:text-[18px]">{feature.description}</p>
                 </div>
             ))}
         </div>

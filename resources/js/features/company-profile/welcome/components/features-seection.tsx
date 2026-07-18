@@ -1,16 +1,21 @@
-import { features } from '../lib';
+import { useLanguage } from '@/hooks';
+import { useFeatures } from '../lib';
 
 export function FeaturesSection() {
+    const { t } = useLanguage();
+    const features = useFeatures();
+
     return (
         <>
             <div className="relative right-1/2 left-1/2 mt-10 w-screen -translate-x-1/2 bg-[var(--primary-900)] px-8 py-12 sm:px-6 lg:px-20">
-                <h2 className="mb-3 text-center text-[30px] font-black tracking-tight text-white md:text-[34px]">Fitur Utama Posave</h2>
+                <h2 className="mb-3 text-center text-[30px] font-black tracking-tight text-white md:text-[34px]">
+                    {t('companyProfile.welcome.features.title')}
+                </h2>
                 <p className="mx-auto mb-8 max-w-full overflow-hidden text-center text-[17px] leading-tight font-medium overflow-ellipsis whitespace-nowrap text-white md:text-[19px]">
-                    Prioritas kami adalah membantu Anda menjalankan bisnis dengan cepat, rapi, dan berkelanjutan.
+                    {t('companyProfile.welcome.features.subtitle')}
                 </p>
 
                 <div className="relative mx-auto max-w-4xl pt-14">
-                    {/* Big Card */}
                     <div
                         className="relative grid grid-cols-1 gap-4 overflow-visible rounded-[18px] pt-0 pb-8 md:grid-cols-3"
                         style={{ backgroundColor: 'var(--secondary-900)' }}

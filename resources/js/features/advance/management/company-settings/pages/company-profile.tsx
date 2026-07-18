@@ -1,4 +1,5 @@
 import { Button, Input, Label } from '@/components';
+import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, useForm } from '@inertiajs/react';
 import { useRef, useState } from 'react';
@@ -28,6 +29,7 @@ interface Props {
 }
 
 export default function CompanyProfilePage({ company }: Props) {
+    const { t } = useLanguage();
     const profile = company.profile;
 
     const { data, setData, post, processing, errors } = useForm({
@@ -62,22 +64,31 @@ export default function CompanyProfilePage({ company }: Props) {
     };
 
     return (
-        <DashboardSidebarLayout title="Profil Perusahaan" description="Kelola informasi dan identitas perusahaan kamu">
-            <Head title="Profil Perusahaan" />
+        <DashboardSidebarLayout
+            title={t('dashboardAdvance.companyProfile.layoutTitle')}
+            description={t('dashboardAdvance.companyProfile.layoutDescription')}
+        >
+            <Head title={t('dashboardAdvance.companyProfile.headTitle')} />
 
-            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
+            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
                 <form onSubmit={submit}>
                     <div className="space-y-5">
-                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
-                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4 dark:border-[var(--border-strong)]">
-                                <h2 className="text-sm font-medium text-[var(--text-light)] dark:text-white">Identitas Perusahaan</h2>
+                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
+                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4">
+                                <h2 className="text-sm font-medium text-[var(--text-light)]">
+                                    {t('dashboardAdvance.companyProfile.identitySection')}
+                                </h2>
                             </div>
 
                             <div className="p-4 sm:p-6">
-                                <div className="mb-6 flex flex-col items-start gap-4 border-b border-[var(--border-strong)] pb-6 sm:flex-row sm:items-center sm:gap-5 dark:border-[var(--border-strong)]">
-                                    <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--page-bg)] dark:border-[var(--border-strong)] dark:bg-[#111827]">
+                                <div className="mb-6 flex flex-col items-start gap-4 border-b border-[var(--border-strong)] pb-6 sm:flex-row sm:items-center sm:gap-5">
+                                    <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--page-bg)]">
                                         {logoPreview ? (
-                                            <img src={logoPreview} alt="Logo perusahaan" className="h-full w-full object-contain" />
+                                            <img
+                                                src={logoPreview}
+                                                alt={t('dashboardAdvance.companyProfile.logoAlt')}
+                                                className="h-full w-full object-contain"
+                                            />
                                         ) : (
                                             <span className="text-2xl" aria-hidden="true">
                                                 🏢
@@ -85,23 +96,23 @@ export default function CompanyProfilePage({ company }: Props) {
                                         )}
                                     </div>
                                     <div>
-                                        <p className="mb-1 text-sm font-medium text-[var(--grey-text)] dark:text-white">Logo Perusahaan</p>
-                                        <p className="mb-2 text-xs text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">
-                                            JPG, PNG, atau WEBP. Maksimal 2MB.
+                                        <p className="mb-1 text-sm font-medium text-[var(--grey-text)]">
+                                            {t('dashboardAdvance.companyProfile.logoLabel')}
                                         </p>
+                                        <p className="mb-2 text-xs text-[var(--grey-text-muted)]">{t('dashboardAdvance.companyProfile.logoHint')}</p>
                                         <Button
                                             type="button"
-                                            aria-label="Ganti logo perusahaan"
+                                            aria-label={t('dashboardAdvance.companyProfile.changeLogoAriaLabel')}
                                             onClick={() => logoRef.current?.click()}
                                             className="px-3 py-1.5 text-xs font-medium"
                                         >
-                                            Ganti Logo
+                                            {t('dashboardAdvance.companyProfile.changeLogoButton')}
                                         </Button>
                                         <Input
                                             ref={logoRef}
                                             type="file"
                                             accept="image/*"
-                                            aria-label="Upload logo perusahaan"
+                                            aria-label={t('dashboardAdvance.companyProfile.uploadLogoAriaLabel')}
                                             className="hidden"
                                             onChange={handleLogoChange}
                                         />
@@ -110,105 +121,107 @@ export default function CompanyProfilePage({ company }: Props) {
 
                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                     <div className="md:col-span-2">
-                                        <Label htmlFor="company-name">Nama Perusahaan</Label>
+                                        <Label htmlFor="company-name">{t('dashboardAdvance.companyProfile.nameLabel')}</Label>
                                         <Input
                                             id="company-name"
                                             type="text"
-                                            aria-label="Nama perusahaan"
+                                            aria-label={t('dashboardAdvance.companyProfile.nameAriaLabel')}
                                             value={data.name}
                                             onChange={(e) => setData('name', e.target.value)}
-                                            placeholder="PT. Maju Bersama"
+                                            placeholder={t('dashboardAdvance.companyProfile.namePlaceholder')}
                                         />
-                                        {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
+                                        {errors.name && <p className="mt-1 text-xs text-[var(--danger)]">{errors.name}</p>}
                                     </div>
 
                                     <div>
-                                        <Label htmlFor="company-phone">Nomor Telepon</Label>
+                                        <Label htmlFor="company-phone">{t('dashboardAdvance.companyProfile.phoneLabel')}</Label>
                                         <Input
                                             id="company-phone"
                                             type="text"
-                                            aria-label="Nomor telepon perusahaan"
+                                            aria-label={t('dashboardAdvance.companyProfile.phoneAriaLabel')}
                                             value={data.phone}
                                             onChange={(e) => setData('phone', e.target.value)}
-                                            placeholder="+62 812 3456 7890"
+                                            placeholder={t('dashboardAdvance.companyProfile.phonePlaceholder')}
                                         />
                                     </div>
 
                                     <div>
-                                        <Label htmlFor="company-website">Website</Label>
+                                        <Label htmlFor="company-website">{t('dashboardAdvance.companyProfile.websiteLabel')}</Label>
                                         <Input
                                             id="company-website"
                                             type="url"
-                                            aria-label="Website perusahaan"
+                                            aria-label={t('dashboardAdvance.companyProfile.websiteAriaLabel')}
                                             value={data.website}
                                             onChange={(e) => setData('website', e.target.value)}
-                                            placeholder="https://posave.id"
+                                            placeholder={t('dashboardAdvance.companyProfile.websitePlaceholder')}
                                         />
-                                        {errors.website && <p className="mt-1 text-xs text-red-500">{errors.website}</p>}
+                                        {errors.website && <p className="mt-1 text-xs text-[var(--danger)]">{errors.website}</p>}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
-                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4 dark:border-[var(--border-strong)]">
-                                <h2 className="text-sm font-medium text-[var(--text-light)] dark:text-white">Alamat</h2>
+                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
+                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4">
+                                <h2 className="text-sm font-medium text-[var(--text-light)]">
+                                    {t('dashboardAdvance.companyProfile.addressSection')}
+                                </h2>
                             </div>
 
                             <div className="p-4 sm:p-6">
                                 <div className="mb-4">
-                                    <Label htmlFor="company-address">Alamat Lengkap</Label>
+                                    <Label htmlFor="company-address">{t('dashboardAdvance.companyProfile.fullAddressLabel')}</Label>
                                     <Input
                                         id="company-address"
                                         type="text"
-                                        aria-label="Alamat lengkap perusahaan"
+                                        aria-label={t('dashboardAdvance.companyProfile.fullAddressAriaLabel')}
                                         value={data.address}
                                         onChange={(e) => setData('address', e.target.value)}
-                                        placeholder="Jl. Sudirman No. 1"
+                                        placeholder={t('dashboardAdvance.companyProfile.fullAddressPlaceholder')}
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                                     <div>
-                                        <Label htmlFor="company-province">Provinsi</Label>
+                                        <Label htmlFor="company-province">{t('dashboardAdvance.companyProfile.provinceLabel')}</Label>
                                         <Input
                                             id="company-province"
                                             type="text"
-                                            aria-label="Provinsi"
+                                            aria-label={t('dashboardAdvance.companyProfile.provinceLabel')}
                                             value={data.province}
                                             onChange={(e) => setData('province', e.target.value)}
-                                            placeholder="DKI Jakarta"
+                                            placeholder={t('dashboardAdvance.companyProfile.provincePlaceholder')}
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="company-city">Kota</Label>
+                                        <Label htmlFor="company-city">{t('dashboardAdvance.companyProfile.cityLabel')}</Label>
                                         <Input
                                             id="company-city"
                                             type="text"
-                                            aria-label="Kota"
+                                            aria-label={t('dashboardAdvance.companyProfile.cityLabel')}
                                             value={data.city}
                                             onChange={(e) => setData('city', e.target.value)}
-                                            placeholder="Jakarta Pusat"
+                                            placeholder={t('dashboardAdvance.companyProfile.cityPlaceholder')}
                                         />
                                     </div>
                                     <div>
-                                        <Label htmlFor="company-zip">Kode Pos</Label>
+                                        <Label htmlFor="company-zip">{t('dashboardAdvance.companyProfile.zipLabel')}</Label>
                                         <Input
                                             id="company-zip"
                                             type="text"
-                                            aria-label="Kode pos"
+                                            aria-label={t('dashboardAdvance.companyProfile.zipLabel')}
                                             value={data.zip}
                                             onChange={(e) => setData('zip', e.target.value)}
-                                            placeholder="10110"
+                                            placeholder={t('dashboardAdvance.companyProfile.zipPlaceholder')}
                                         />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
-                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4 dark:border-[var(--border-strong)]">
-                                <h2 className="text-sm font-medium text-[var(--text-light)] dark:text-white">Media Sosial</h2>
+                        <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
+                            <div className="border-b border-[var(--border-strong)] bg-[var(--surface-header)] px-4 py-3 sm:px-6 sm:py-4">
+                                <h2 className="text-sm font-medium text-[var(--text-light)]">{t('dashboardAdvance.companyProfile.socialSection')}</h2>
                             </div>
 
                             <div className="p-4 sm:p-6">
@@ -216,13 +229,13 @@ export default function CompanyProfilePage({ company }: Props) {
                                     <div>
                                         <Label htmlFor="company-instagram">Instagram</Label>
                                         <div className="flex">
-                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)] dark:border-[var(--border-strong)] dark:bg-[var(--border-strong)] dark:text-[var(--muted-foreground)]">
+                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)]">
                                                 @
                                             </span>
                                             <Input
                                                 id="company-instagram"
                                                 type="text"
-                                                aria-label="Username Instagram"
+                                                aria-label={t('dashboardAdvance.companyProfile.instagramAriaLabel')}
                                                 value={data.instagram}
                                                 onChange={(e) => setData('instagram', e.target.value)}
                                                 placeholder="posave.id"
@@ -234,13 +247,13 @@ export default function CompanyProfilePage({ company }: Props) {
                                     <div>
                                         <Label htmlFor="company-facebook">Facebook</Label>
                                         <div className="flex">
-                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)] dark:border-[var(--border-strong)] dark:bg-[var(--border-strong)] dark:text-[var(--muted-foreground)]">
+                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)]">
                                                 fb/
                                             </span>
                                             <Input
                                                 id="company-facebook"
                                                 type="text"
-                                                aria-label="Username Facebook"
+                                                aria-label={t('dashboardAdvance.companyProfile.facebookAriaLabel')}
                                                 value={data.facebook}
                                                 onChange={(e) => setData('facebook', e.target.value)}
                                                 placeholder="posave"
@@ -252,13 +265,13 @@ export default function CompanyProfilePage({ company }: Props) {
                                     <div>
                                         <Label htmlFor="company-x">X (Twitter)</Label>
                                         <div className="flex">
-                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)] dark:border-[var(--border-strong)] dark:bg-[var(--border-strong)] dark:text-[var(--muted-foreground)]">
+                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)]">
                                                 @
                                             </span>
                                             <Input
                                                 id="company-x"
                                                 type="text"
-                                                aria-label="Username X (Twitter)"
+                                                aria-label={t('dashboardAdvance.companyProfile.xAriaLabel')}
                                                 value={data.x}
                                                 onChange={(e) => setData('x', e.target.value)}
                                                 placeholder="posave"
@@ -270,13 +283,13 @@ export default function CompanyProfilePage({ company }: Props) {
                                     <div>
                                         <Label htmlFor="company-youtube">YouTube</Label>
                                         <div className="flex">
-                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)] dark:border-[var(--border-strong)] dark:bg-[var(--border-strong)] dark:text-[var(--muted-foreground)]">
+                                            <span className="flex items-center rounded-l-lg border border-r-0 border-[var(--border-strong)] bg-[var(--second-accent)] px-3 text-sm text-[var(--grey-text-muted)]">
                                                 @
                                             </span>
                                             <Input
                                                 id="company-youtube"
                                                 type="text"
-                                                aria-label="Username YouTube"
+                                                aria-label={t('dashboardAdvance.companyProfile.youtubeAriaLabel')}
                                                 value={data.youtube}
                                                 onChange={(e) => setData('youtube', e.target.value)}
                                                 placeholder="posave"
@@ -286,14 +299,14 @@ export default function CompanyProfilePage({ company }: Props) {
                                     </div>
 
                                     <div>
-                                        <Label htmlFor="company-whatsapp">WhatsApp</Label>
+                                        <Label htmlFor="company-whatsapp">{t('dashboardAdvance.companyProfile.whatsappLabel')}</Label>
                                         <Input
                                             id="company-whatsapp"
                                             type="text"
-                                            aria-label="Nomor WhatsApp"
+                                            aria-label={t('dashboardAdvance.companyProfile.whatsappAriaLabel')}
                                             value={data.whatsapp}
                                             onChange={(e) => setData('whatsapp', e.target.value)}
-                                            placeholder="+62 812 3456 7890"
+                                            placeholder={t('dashboardAdvance.companyProfile.phonePlaceholder')}
                                         />
                                     </div>
                                 </div>
@@ -301,8 +314,8 @@ export default function CompanyProfilePage({ company }: Props) {
                         </div>
 
                         <div className="flex justify-start">
-                            <Button type="submit" aria-label="Simpan perubahan profil perusahaan" disabled={processing}>
-                                {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                            <Button type="submit" aria-label={t('dashboardAdvance.companyProfile.submitAriaLabel')} disabled={processing}>
+                                {processing ? t('dashboardAdvance.companyProfile.submitting') : t('dashboardAdvance.companyProfile.submitLabel')}
                             </Button>
                         </div>
                     </div>

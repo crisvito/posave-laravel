@@ -14,82 +14,82 @@ import {
 
 export const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'dashboardAdvance.sidebar.dashboard',
         routeName: 'dashboard.index',
         icon: LayoutGrid,
     },
     {
-        title: 'Penyimpanan',
+        title: 'dashboardAdvance.sidebar.storage',
         url: '#',
         icon: Package,
         routeName: '',
         children: [
             {
-                title: 'Daftar Barang',
+                title: 'dashboardAdvance.sidebar.itemsList',
                 routeName: 'dashboard.inventory.items.index',
             },
             {
-                title: 'Pemasok',
+                title: 'dashboardAdvance.sidebar.suppliers',
                 routeName: 'dashboard.inventory.suppliers.index',
             },
             {
-                title: 'Pembelian',
+                title: 'dashboardAdvance.sidebar.purchaseOrders',
                 routeName: 'dashboard.inventory.purchase-orders.index',
             },
             {
-                title: 'Kiriman',
+                title: 'dashboardAdvance.sidebar.transfers',
                 routeName: 'dashboard.inventory.transfers.index',
             },
             {
-                title: 'Perubahan',
+                title: 'dashboardAdvance.sidebar.adjustments',
                 routeName: 'dashboard.inventory.adjustments.index',
             },
             {
-                title: 'Kategori',
+                title: 'dashboardAdvance.sidebar.categories',
                 routeName: 'dashboard.inventory.categories.index',
             },
         ],
     },
     {
-        title: 'Karyawan',
+        title: 'dashboardAdvance.sidebar.employees',
         icon: Group,
         routeName: '',
         children: [
             {
-                title: 'Daftar Karyawan',
+                title: 'dashboardAdvance.sidebar.employeesList',
                 routeName: 'dashboard.employees.index',
             },
             {
-                title: 'Akses Karyawan',
+                title: 'dashboardAdvance.sidebar.employeesAccess',
                 routeName: 'dashboard.employees-access.index',
             },
         ],
     },
     {
-        title: 'Laporan',
+        title: 'dashboardAdvance.sidebar.reports',
         routeName: 'dashboard.reports.index',
         icon: ReceiptPoundSterling,
     },
     {
-        title: 'Pesan',
+        title: 'dashboardAdvance.sidebar.messages',
         routeName: 'messaging.index',
         icon: MessageCircle,
     },
     {
-        title: 'Pengaturan',
+        title: 'dashboardAdvance.sidebar.settings',
         routeName: '',
         icon: Building,
         children: [
             {
-                title: 'Perusahaan',
+                title: 'dashboardAdvance.sidebar.settingsCompany',
                 routeName: 'settings.company-profile',
             },
             {
-                title: 'Bukti Bayar',
+                title: 'dashboardAdvance.sidebar.settingsReceipt',
                 routeName: 'settings.receipt',
             },
             {
-                title: 'Toko',
+                title: 'dashboardAdvance.sidebar.settingsBranches',
                 routeName: 'settings.branches',
             },
         ],
@@ -98,46 +98,46 @@ export const mainNavItems: NavItem[] = [
 
 export const branchManagerNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'dashboardAdvance.sidebar.dashboard',
         routeName: 'dashboard.index',
         icon: LayoutGrid,
     },
     {
-        title: 'Penyimpanan',
+        title: 'dashboardAdvance.sidebar.storage',
         url: '#',
         icon: Package,
         routeName: '',
         children: [
             {
-                title: 'Daftar Barang',
+                title: 'dashboardAdvance.sidebar.itemsList',
                 routeName: 'dashboard.inventory.items.index',
             },
             {
-                title: 'Pembelian',
+                title: 'dashboardAdvance.sidebar.purchaseOrders',
                 routeName: 'dashboard.inventory.purchase-orders.index',
             },
             {
-                title: 'Kiriman',
+                title: 'dashboardAdvance.sidebar.transfers',
                 routeName: 'dashboard.inventory.transfers.index',
             },
             {
-                title: 'Perubahan',
+                title: 'dashboardAdvance.sidebar.adjustments',
                 routeName: 'dashboard.inventory.adjustments.index',
             },
         ],
     },
     {
-        title: 'Karyawan',
+        title: 'dashboardAdvance.sidebar.employees',
         icon: Group,
         routeName: 'dashboard.employees.index',
     },
     {
-        title: 'Laporan',
+        title: 'dashboardAdvance.sidebar.reports',
         routeName: 'dashboard.reports.index',
         icon: ReceiptPoundSterling,
     },
     {
-        title: 'Pesan',
+        title: 'dashboardAdvance.sidebar.messages',
         routeName: 'messaging.index',
         icon: MessageCircle,
     },
@@ -145,17 +145,17 @@ export const branchManagerNavItems: NavItem[] = [
 
 export const cashierNavItems: NavItem[] = [
     {
-        title: 'Pesanan',
+        title: 'cashier.sidebar.orders',
         routeName: 'cashier.order.index',
         icon: ShoppingCart,
     },
     {
-        title: 'Riwayat Pesanan',
+        title: 'cashier.sidebar.orderHistory',
         routeName: 'cashier.history.index',
         icon: ClipboardList,
     },
     {
-        title: 'Pesan',
+        title: 'cashier.sidebar.messages',
         routeName: 'messaging.index',
         icon: MessageCircle,
     },
@@ -163,52 +163,52 @@ export const cashierNavItems: NavItem[] = [
 
 export const liteNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'dashboardLite.sidebar.dashboard',
         routeName: 'dashboard.index',
         icon: LayoutGrid,
     },
     {
-        title: 'Penyimpanan',
+        title: 'dashboardLite.sidebar.storage',
         url: '#',
         icon: Package,
         routeName: '',
         children: [
-            { title: 'Daftar Barang', routeName: 'lite.inventory.items.index' },
-            { title: 'Perubahan', routeName: 'lite.inventory.adjustments.index' },
-            { title: 'Kategori', routeName: 'lite.inventory.categories.index' },
+            { title: 'dashboardLite.sidebar.itemsList', routeName: 'lite.inventory.items.index' },
+            { title: 'dashboardLite.sidebar.adjustments', routeName: 'lite.inventory.adjustments.index' },
+            { title: 'dashboardLite.sidebar.categories', routeName: 'lite.inventory.categories.index' },
         ],
     },
     {
-        title: 'Pesanan',
+        title: 'dashboardLite.sidebar.orders',
         routeName: 'lite.order.index',
         icon: ShoppingCart,
     },
     {
-        title: 'Riwayat Pesanan',
+        title: 'dashboardLite.sidebar.orderHistory',
         routeName: 'lite.history.index',
         icon: ClipboardList,
     },
     {
-        title: 'Pengaturan',
+        title: 'dashboardLite.sidebar.settings',
         url: '#',
         icon: Building,
         routeName: '',
         children: [
-            { title: 'Profil', routeName: 'lite.settings.profile.index' },
-            { title: 'Bukti Bayar', routeName: 'lite.settings.receipt.index' },
+            { title: 'dashboardLite.sidebar.settingsProfile', routeName: 'lite.settings.profile.index' },
+            { title: 'dashboardLite.sidebar.settingsReceipt', routeName: 'lite.settings.receipt.index' },
         ],
     },
 ];
 
 export const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
+        title: 'shared.sidebarFooter.repository',
         url: 'https://github.com/laravel/react-starter-kit',
         routeName: '',
         icon: Folder,
     },
     {
-        title: 'Documentation',
+        title: 'shared.sidebarFooter.documentation',
         url: 'https://laravel.com/docs/starter-kits',
         routeName: '',
         icon: BookOpen,

@@ -1,0 +1,26 @@
+const blog = {
+    pageTitle: 'Artikel - POSAVE',
+    heroTitle: 'Cerita & Tips untuk',
+    heroTitleLine2: 'Bisnis Anda',
+    heroSubtitle: 'Insight dan tips untuk mengembangkan bisnis anda',
+    readMore: 'Baca Selengkapnya',
+    readTimeUnit: 'Menit Baca',
+    all: 'Semua',
+    latestArticles: 'Artikel Terbaru',
+    viewAllArticles: 'Lihat Semua Artikel',
+    emptyCategory: 'Belum ada artikel untuk kategori ini.',
+    emptyAll: 'Belum ada artikel yang dipublikasikan.',
+    ctaTitle: 'Kelola Toko Lebih Mudah dengan POSAVE',
+    ctaSubtitle: 'Semua fitur yang Anda butuhkan untuk mengembangkan bisnis, dalam satu platform.',
+    ctaButton: 'Coba POSAVE Sekarang',
+    backToBlogFull: 'Kembali ke Blog Utama',
+    backToBlog: 'Kembali ke Blog',
+    allArticlesTitle: 'Semua Artikel',
+    allArticlesSubtitle: 'Eksplorasi seluruh insight, cerita, dan tips praktis untuk membantu mengembangkan bisnis Anda ke level selanjutnya.',
+    notFoundTitle: 'Artikel Tidak Ditemukan',
+    share: 'Bagikan:',
+    nextStepsTitle: 'Mulai Terapkan Sekarang',
+    nextStepsBody: 'Teori tanpa eksekusi hanyalah angan-angan. Segera terapkan strategi di atas pada bisnis Anda hari ini juga, dan rasakan perbedaannya di bulan depan.',
+};
+
+export default blog;

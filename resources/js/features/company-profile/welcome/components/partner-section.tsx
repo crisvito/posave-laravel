@@ -1,14 +1,18 @@
+import { useLanguage } from '@/hooks';
+
 export function PartnerSection() {
+    const { t } = useLanguage();
+
     return (
         <>
             <div className="mx-auto max-w-6xl px-8 md:px-16">
                 <div className="mb-12 text-center">
                     <h2 className="text-[42px] leading-none font-black tracking-tight text-[var(--primary-900)] dark:text-[var(--text-light)]">
-                        Our Partners
+                        {t('companyProfile.welcome.partners.title')}
                     </h2>
 
                     <p className="mt-4 text-[22px] font-medium text-[var(--grey-text)] dark:text-[var(--grey-text-muted)]">
-                        We proudly present our partners, #UMKMJaya
+                        {t('companyProfile.welcome.partners.subtitle')}
                     </p>
                 </div>
 

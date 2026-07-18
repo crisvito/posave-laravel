@@ -1,0 +1,26 @@
+const blog = {
+    pageTitle: 'Article - POSAVE',
+    heroTitle: 'Stories & Tips for',
+    heroTitleLine2: 'Your Business',
+    heroSubtitle: 'Insights and tips to help grow your business',
+    readMore: 'Read More',
+    readTimeUnit: 'Min Read',
+    all: 'All',
+    latestArticles: 'Latest Articles',
+    viewAllArticles: 'View All Articles',
+    emptyCategory: 'No articles yet for this category.',
+    emptyAll: 'No articles have been published yet.',
+    ctaTitle: 'Manage Your Store Easier with POSAVE',
+    ctaSubtitle: 'All the features you need to grow your business, in one platform.',
+    ctaButton: 'Try POSAVE Now',
+    backToBlogFull: 'Back to Blog',
+    backToBlog: 'Back to Blog',
+    allArticlesTitle: 'All Articles',
+    allArticlesSubtitle: 'Explore all the insights, stories, and practical tips to help take your business to the next level.',
+    notFoundTitle: 'Article Not Found',
+    share: 'Share:',
+    nextStepsTitle: 'Start Applying It Now',
+    nextStepsBody: "Theory without execution is just wishful thinking. Apply the strategies above to your business today, and see the difference next month.",
+};
+
+export default blog;
