@@ -2,8 +2,6 @@ import { AppLayout } from '@/layouts';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 
-// Types
-
 interface FaqCategory {
     id: number;
     name: string;
@@ -24,14 +22,12 @@ interface Props {
     faqs: FaqItem[];
 }
 
-// AccordionItem
-
 function AccordionItem({ faq, isOpen, onToggle }: { faq: FaqItem; isOpen: boolean; onToggle: () => void }) {
     return (
-        <div className="border-primary overflow-hidden rounded-xl border">
+        <div className="overflow-hidden rounded-xl border border-[var(--border-strong)]">
             <button
                 onClick={onToggle}
-                className="bg-primary hover:bg-accent flex w-full items-center justify-between px-5 py-4 text-left text-white transition-colors"
+                className="flex w-full items-center justify-between bg-[var(--primary-900)] px-5 py-4 text-left text-white transition-colors hover:bg-[var(--secondary-700)]"
             >
                 <span className="pr-4 text-sm font-medium">{faq.question}</span>
                 <svg
@@ -44,17 +40,14 @@ function AccordionItem({ faq, isOpen, onToggle }: { faq: FaqItem; isOpen: boolea
                 </svg>
             </button>
 
-            {/* Smooth accordion animation pakai CSS grid trick */}
             <div className={`grid transition-all duration-300 ease-in-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
                 <div className="overflow-hidden">
-                    <p className="bg-primary px-5 py-4 text-sm leading-relaxed text-white">{faq.answer}</p>
+                    <p className="bg-[var(--primary-900)]/95 px-5 py-4 text-sm leading-relaxed text-white/90">{faq.answer}</p>
                 </div>
             </div>
         </div>
     );
 }
-
-// Main Page
 
 export default function Faq({ categories, faqs }: Props) {
     const [activeCategory, setActiveCategory] = useState<number>(categories[0]?.id ?? 0);
@@ -75,21 +68,16 @@ export default function Faq({ categories, faqs }: Props) {
         <AppLayout>
             <Head title="FAQ - Posave" />
 
-            {/* Hero */}
-            <section className="via-primary relative mt-6 min-h-[280px] overflow-hidden rounded-t-2xl bg-gradient-to-br from-gray-900 to-gray-900 p-8">
-                {/* Overlay putih dari bawah supaya teks tetap terbaca */}
-                <div className="absolute inset-0 z-10 bg-gradient-to-t from-white to-transparent to-50%" />{' '}
-                {/* ↓ FOTO HERO — ganti src dengan path foto kamu */}
+            <section className="relative mt-6 min-h-[280px] overflow-hidden rounded-t-2xl bg-[var(--primary-900)] p-8">
+                <div className="absolute inset-0 z-10 bg-gradient-to-t from-[var(--background)] to-transparent to-50%" />
                 <img
                     src="assets/faq/faq_hero.png"
                     alt="FAQ Hero"
                     className="absolute inset-0 h-full w-full object-cover object-top opacity-60"
                     onError={(e) => {
-                        // Kalau foto belum ada, sembunyikan img supaya tidak broken
                         (e.target as HTMLImageElement).style.display = 'none';
                     }}
                 />
-                {/* Teks hero */}
                 <div className="relative z-20 flex min-h-[280px] items-center px-8 py-16 md:px-16">
                     <div>
                         <h1 className="max-w-xl text-3xl leading-tight font-medium text-white md:text-4xl">
@@ -101,17 +89,14 @@ export default function Faq({ categories, faqs }: Props) {
                 </div>
             </section>
 
-            {/* FAQ Section */}
             <section className="mt-8">
                 <div className="mx-auto max-w-5xl">
-                    {/* Heading */}
                     <div className="mb-12 text-center">
-                        <h2 className="text-3xl font-bold text-black dark:text-white">Frequently Asked Question</h2>
-                        <p className="text-med mt-2 text-gray-500 dark:text-gray-400">Pertanyaan yang sudah terjawab</p>
+                        <h2 className="text-3xl font-bold text-[var(--foreground)]">Frequently Asked Question</h2>
+                        <p className="text-med mt-2 text-[var(--muted-foreground)]">Pertanyaan yang sudah terjawab</p>
                     </div>
 
                     <div className="flex flex-col gap-4 md:flex-row">
-                        {/* Category sidebar  */}
                         <div className="flex flex-row flex-wrap gap-2 rounded-xl p-3 md:w-45 md:flex-col md:flex-nowrap">
                             {categories.map((cat) => (
                                 <button
@@ -119,8 +104,8 @@ export default function Faq({ categories, faqs }: Props) {
                                     onClick={() => handleCategoryChange(cat.id)}
                                     className={`rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-all duration-200 ${
                                         activeCategory === cat.id
-                                            ? 'bg-primary text-white shadow-sm'
-                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                                            ? 'bg-[var(--secondary-600)] text-white shadow-sm'
+                                            : 'bg-[var(--second-accent)] text-[var(--grey-text)] hover:bg-[var(--surface-badge)]'
                                     }`}
                                 >
                                     {cat.name}
@@ -128,11 +113,15 @@ export default function Faq({ categories, faqs }: Props) {
                             ))}
                         </div>
 
-                        {/* Accordion */}
                         <div className="flex flex-1 flex-col gap-3 pt-3">
                             {filteredFaqs.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                                    <svg className="mb-4 h-10 w-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg
+                                        className="mb-4 h-10 w-10 text-[var(--grey-text-muted)]"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
                                         <path
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
@@ -140,7 +129,7 @@ export default function Faq({ categories, faqs }: Props) {
                                             d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                         />
                                     </svg>
-                                    <p className="text-sm text-gray-400">Belum ada pertanyaan untuk kategori ini.</p>
+                                    <p className="text-sm text-[var(--grey-text-muted)]">Belum ada pertanyaan untuk kategori ini.</p>
                                 </div>
                             ) : (
                                 filteredFaqs.map((faq) => (
@@ -152,15 +141,14 @@ export default function Faq({ categories, faqs }: Props) {
                 </div>
             </section>
 
-            {/* CTA Section */}
             <section className="px-8 py-8">
                 <div className="mx-auto max-w-2xl">
-                    <div className="rounded-full bg-gray-900 px-24 py-12 text-center dark:bg-slate-800">
+                    <div className="rounded-full bg-[var(--primary-900)] px-24 py-12 text-center">
                         <h3 className="text-2xl font-semibold text-white">Pertanyaanmu belum terjawab?</h3>
-                        <p className="text-med mt-2 text-gray-300">Kontak kami melalui tombol dibawah ini</p>
+                        <p className="text-med mt-2 text-white/80">Kontak kami melalui tombol dibawah ini</p>
                         <Link
                             href="/contact"
-                            className="text-accent-900 mt-8 inline-block rounded-full bg-white px-8 py-2.5 text-sm font-medium transition-colors hover:bg-gray-200"
+                            className="mt-8 inline-block rounded-full bg-[var(--secondary-600)] px-8 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[var(--secondary-700)]"
                         >
                             Hubungi Kami
                         </Link>

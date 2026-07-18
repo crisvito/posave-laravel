@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { Mail, Phone, Instagram, Youtube, Linkedin } from 'lucide-react';
+import { Instagram, Linkedin, Mail, Phone, Youtube } from 'lucide-react';
 
 const TiktokIcon = ({ className }: { className?: string }) => (
     <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" className={className}>
@@ -9,15 +9,14 @@ const TiktokIcon = ({ className }: { className?: string }) => (
 
 export function AppFooter() {
     return (
-        <footer className="w-full bg-[#346280] text-white">
+        <footer className="w-full bg-[#346280] text-white dark:bg-[var(--primary-900)]">
             <div className="mx-auto w-full max-w-7xl px-8 py-12 md:px-16">
-                
                 <div className="flex flex-col justify-between gap-12 lg:flex-row">
-                    
                     <div className="flex flex-col space-y-6 lg:max-w-[400px]">
                         <h2 className="text-2xl font-bold tracking-wide">POSAVE</h2>
                         <p className="pr-4 text-sm leading-relaxed text-white/90">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam semper id lorem eu euismod. Nullam velit massa, finibus nec sollicitudin vel.
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam semper id lorem eu euismod. Nullam velit massa, finibus nec
+                            sollicitudin vel.
                         </p>
                         <div className="flex flex-col space-y-4 pt-2">
                             <div className="flex items-center space-x-3">
@@ -36,23 +35,50 @@ export function AppFooter() {
                     </div>
 
                     <div className="flex flex-col gap-12 sm:flex-row sm:gap-16 lg:gap-20">
-                        
                         <div className="flex flex-col">
                             <h3 className="mb-6 text-lg font-semibold">Explore Us</h3>
                             <ul className="flex flex-col space-y-4 text-sm text-white/90">
-                                <li><Link href="/" className="transition-colors hover:text-white hover:underline whitespace-nowrap">Home</Link></li>
-                                <li><Link href="/tentang-kami" className="transition-colors hover:text-white hover:underline whitespace-nowrap">About Us</Link></li>
-                                <li><Link href="/layanan" className="transition-colors hover:text-white hover:underline whitespace-nowrap">Services</Link></li>
-                                <li><Link href="/artikel" className="transition-colors hover:text-white hover:underline whitespace-nowrap">Blog</Link></li>
+                                <li>
+                                    <Link href="/" className="whitespace-nowrap transition-colors hover:text-white hover:underline">
+                                        Home
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/tentang-kami" className="whitespace-nowrap transition-colors hover:text-white hover:underline">
+                                        About Us
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/layanan" className="whitespace-nowrap transition-colors hover:text-white hover:underline">
+                                        Services
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/artikel" className="whitespace-nowrap transition-colors hover:text-white hover:underline">
+                                        Blog
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
 
                         <div className="flex flex-col">
                             <h3 className="mb-6 text-lg font-semibold">Important Links</h3>
                             <ul className="flex flex-col space-y-4 text-sm text-white/90">
-                                <li><Link href="/faq" className="transition-colors hover:text-white hover:underline whitespace-nowrap">FAQ</Link></li>
-                                <li><Link href="/hubungi-kami" className="transition-colors hover:text-white hover:underline whitespace-nowrap">Contact Us</Link></li>
-                                <li><Link href="/mitra" className="transition-colors hover:text-white hover:underline whitespace-nowrap">Become A Partner</Link></li>
+                                <li>
+                                    <Link href="/faq" className="whitespace-nowrap transition-colors hover:text-white hover:underline">
+                                        FAQ
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/hubungi-kami" className="whitespace-nowrap transition-colors hover:text-white hover:underline">
+                                        Contact Us
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/mitra" className="whitespace-nowrap transition-colors hover:text-white hover:underline">
+                                        Become A Partner
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
 
@@ -86,7 +112,6 @@ export function AppFooter() {
                                 </a>
                             </div>
                         </div>
-                        
                     </div>
                 </div>
 

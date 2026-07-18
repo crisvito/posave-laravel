@@ -3,10 +3,7 @@ import { AppLayout } from '@/layouts';
 import { Link } from '@inertiajs/react';
 import { ArrowLeft, Calendar, Clock, Facebook, Link as LinkIcon, Twitter } from 'lucide-react';
 
-// Menangkap properti 'articleId' yang dikirim dari web.php
 export default function ArticleDetail({ articleId }: { articleId: string }) {
-    // 1. DATABASE BOHONGAN (MOCK DATA)
-    // Sesuai dengan 4 gambar referensi Yang Mulia!
     const articlesDb = [
         {
             id: '1',
@@ -19,7 +16,7 @@ export default function ArticleDetail({ articleId }: { articleId: string }) {
                 'Tips praktis untuk membantu toko kecil Anda lebih efisien dalam operasional sehari-hari dan meningkatkan penjualan dengan teknologi kasir digital...',
         },
         {
-            id: '2', // Biasanya ID berupa angka/string
+            id: '2',
             category: 'Manajemen Toko',
             title: 'Tips Mengatur Stok Barang untuk UMKM',
             date: '21 April 2026',
@@ -60,17 +57,14 @@ export default function ArticleDetail({ articleId }: { articleId: string }) {
         },
     ];
 
-    // 2. MENCARI ARTIKEL YANG SESUAI ID
-    // Kita suruh Javascript mencari artikel yang ID-nya sama dengan ID di URL
     const article = articlesDb.find((a) => a.id === String(articleId));
 
-    // 3. JIKA ARTIKEL TIDAK DITEMUKAN (Contoh user iseng ketik /artikel/99)
     if (!article) {
         return (
             <AppLayout>
                 <div className="py-32 text-center">
-                    <h1 className="mb-4 text-3xl font-bold text-slate-900">Artikel Tidak Ditemukan</h1>
-                    <Link href="/artikel" className="text-[#1A2B4C] hover:underline">
+                    <h1 className="mb-4 text-3xl font-bold text-[var(--foreground)]">Artikel Tidak Ditemukan</h1>
+                    <Link href="/artikel" className="text-[var(--secondary-600)] hover:underline">
                         Kembali ke Blog
                     </Link>
                 </div>
@@ -78,56 +72,55 @@ export default function ArticleDetail({ articleId }: { articleId: string }) {
         );
     }
 
-    // 4. JIKA KETEMU, MASUKKAN KE DALAM BINGKAI!
     return (
         <AppLayout>
             <div className="mx-auto max-w-4xl px-4 py-12 font-sans sm:px-6 lg:px-8">
                 <Link
                     href="/artikel"
-                    className="group mb-8 flex w-fit items-center font-medium text-slate-500 transition-colors hover:text-[#1A2B4C]"
+                    className="group mb-8 flex w-fit items-center font-medium text-[var(--grey-text)] transition-colors hover:text-[var(--secondary-600)]"
                 >
                     <ArrowLeft className="mr-2 h-5 w-5 transition-transform group-hover:-translate-x-1" />
                     <span>Kembali ke Blog</span>
                 </Link>
 
                 <header className="mb-10 text-center md:text-left">
-                    {/* Variabel Dinamis Kategori */}
-                    <Badge className="mb-6 rounded-full border-none bg-[#EAF3FA] px-4 py-1.5 text-sm font-medium text-[#1A2B4C] hover:bg-[#EAF3FA]">
+                    <Badge className="mb-6 rounded-full border-none bg-[var(--secondary-600)]/10 px-4 py-1.5 text-sm font-medium text-[var(--secondary-600)] hover:bg-[var(--secondary-600)]/10">
                         {article.category}
                     </Badge>
 
-                    {/* Variabel Dinamis Judul */}
-                    <h1 className="mb-6 text-4xl leading-[1.15] font-extrabold tracking-tight text-slate-900 md:text-5xl">{article.title}</h1>
+                    <h1 className="mb-6 text-4xl leading-[1.15] font-extrabold tracking-tight text-[var(--foreground)] md:text-5xl">
+                        {article.title}
+                    </h1>
 
-                    <div className="flex flex-col items-center justify-between gap-4 border-y border-slate-200 py-5 md:flex-row">
-                        <div className="flex items-center space-x-6 text-sm font-medium text-slate-500">
+                    <div className="flex flex-col items-center justify-between gap-4 border-y border-[var(--border-strong)] py-5 md:flex-row">
+                        <div className="flex items-center space-x-6 text-sm font-medium text-[var(--grey-text)]">
                             <div className="flex items-center space-x-2">
                                 <Calendar className="h-4 w-4" />
-                                <span>{article.date}</span> {/* Variabel Dinamis Tanggal */}
+                                <span>{article.date}</span>
                             </div>
                             <div className="flex items-center space-x-2">
                                 <Clock className="h-4 w-4" />
-                                <span>{article.readTime}</span> {/* Variabel Dinamis Waktu */}
+                                <span>{article.readTime}</span>
                             </div>
                         </div>
 
                         <div className="flex items-center space-x-3">
-                            <span className="mr-2 text-sm font-medium text-slate-500">Bagikan:</span>
+                            <span className="mr-2 text-sm font-medium text-[var(--grey-text)]">Bagikan:</span>
                             <button
                                 aria-label="Facebook"
-                                className="rounded-full bg-slate-100 p-2.5 text-slate-600 transition-all hover:-translate-y-0.5 hover:bg-[#1A2B4C] hover:text-white"
+                                className="rounded-full bg-[var(--second-accent)] p-2.5 text-[var(--grey-text)] transition-all hover:-translate-y-0.5 hover:bg-[var(--secondary-600)] hover:text-white"
                             >
                                 <Facebook className="h-4 w-4" />
                             </button>
                             <button
                                 aria-label="Twitter"
-                                className="rounded-full bg-slate-100 p-2.5 text-slate-600 transition-all hover:-translate-y-0.5 hover:bg-[#1A2B4C] hover:text-white"
+                                className="rounded-full bg-[var(--second-accent)] p-2.5 text-[var(--grey-text)] transition-all hover:-translate-y-0.5 hover:bg-[var(--secondary-600)] hover:text-white"
                             >
                                 <Twitter className="h-4 w-4" />
                             </button>
                             <button
                                 aria-label="Copy Link"
-                                className="rounded-full bg-slate-100 p-2.5 text-slate-600 transition-all hover:-translate-y-0.5 hover:bg-[#1A2B4C] hover:text-white"
+                                className="rounded-full bg-[var(--second-accent)] p-2.5 text-[var(--grey-text)] transition-all hover:-translate-y-0.5 hover:bg-[var(--secondary-600)] hover:text-white"
                             >
                                 <LinkIcon className="h-4 w-4" />
                             </button>
@@ -135,17 +128,14 @@ export default function ArticleDetail({ articleId }: { articleId: string }) {
                     </div>
                 </header>
 
-                <div className="mb-12 h-64 w-full overflow-hidden rounded-[2rem] bg-slate-100 shadow-sm md:h-[450px]">
-                    {/* Variabel Dinamis Gambar */}
+                <div className="mb-12 h-64 w-full overflow-hidden rounded-[2rem] bg-[var(--second-accent)] shadow-sm md:h-[450px]">
                     <img src={article.image} alt={article.title} className="h-full w-full object-cover" />
                 </div>
 
-                <article className="prose prose-slate prose-lg md:prose-xl mx-auto max-w-3xl leading-relaxed text-slate-700">
-                    {/* Variabel Dinamis Konten Text */}
-                    <p className="lead font-medium text-slate-600">{article.content}</p>
+                <article className="prose prose-lg md:prose-xl dark:prose-invert mx-auto max-w-3xl leading-relaxed text-[var(--muted-foreground)]">
+                    <p className="lead font-medium text-[var(--foreground)]">{article.content}</p>
 
-                    {/* Konten dummy statis untuk meramaikan tampilan bawahnya */}
-                    <h2 className="mt-12 mb-6 text-3xl font-bold tracking-tight text-slate-900">Mulai Terapkan Sekarang</h2>
+                    <h2 className="mt-12 mb-6 text-3xl font-bold tracking-tight text-[var(--foreground)]">Mulai Terapkan Sekarang</h2>
                     <p>
                         Teori tanpa eksekusi hanyalah angan-angan. Segera terapkan strategi di atas pada bisnis Anda hari ini juga, dan rasakan
                         perbedaannya di bulan depan.
