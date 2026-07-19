@@ -2,17 +2,16 @@ import { FilterDropdown } from '@/components';
 import { Button, Input, Label } from '@/components/ui';
 import { useLanguage } from '@/hooks';
 import { useForm } from '@inertiajs/react';
-import { Package, Trash2, UploadCloud, X } from 'lucide-react';
+import { Package, UploadCloud, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 interface InventoryItemFormModalProps {
     item: { id: number; name: string; category_id: number; price: number; current_stock: number; min_stock: number; image: string | null } | null;
     categories: { id: number; name: string }[];
     onClose: () => void;
-    onDelete?: () => void;
 }
 
-export function InventoryItemFormModal({ item, categories, onClose, onDelete }: InventoryItemFormModalProps) {
+export function InventoryItemFormModal({ item, categories, onClose }: InventoryItemFormModalProps) {
     const { t } = useLanguage();
     const isEdit = !!item;
     const [preview, setPreview] = useState<string | null>(item?.image ? `/storage/${item.image}` : null);
@@ -177,18 +176,6 @@ export function InventoryItemFormModal({ item, categories, onClose, onDelete }: 
                         >
                             {processing ? t('dashboardLite.inventoryItems.modal.savingButton') : t('dashboardLite.inventoryItems.modal.saveButton')}
                         </Button>
-                        {onDelete && (
-                            <Button
-                                aria-label={t('dashboardLite.inventoryItems.modal.deleteAria')}
-                                type="button"
-                                variant="outline"
-                                onClick={onDelete}
-                                className="h-12 rounded-xl border-[var(--danger)] text-base font-bold text-[var(--danger)] hover:bg-[var(--danger-background)]"
-                            >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                {t('dashboardLite.inventoryItems.modal.deleteButton')}
-                            </Button>
-                        )}
                     </div>
                 </form>
             </div>

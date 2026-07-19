@@ -122,13 +122,24 @@ export default function CategoryList({ categories: initialCategories, filters }:
                                     </div>
                                 </div>
 
-                                <Button
-                                    aria-label={`${t('dashboardLite.inventoryCategories.editAriaPrefix')} ${category.name}`}
-                                    onClick={() => setFormCategory(category)}
-                                    className="h-10 rounded-xl bg-[var(--surface-header)] px-4 text-sm font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:text-[var(--neutral-white)] dark:hover:opacity-90"
-                                >
-                                    {t('dashboardLite.inventoryCategories.editButton')}
-                                </Button>
+                                <div className="flex gap-2">
+                                    <Button
+                                        aria-label={`${t('dashboardLite.inventoryCategories.editAriaPrefix')} ${category.name}`}
+                                        onClick={() => setFormCategory(category)}
+                                        className="h-10 rounded-xl bg-[var(--surface-header)] px-4 text-sm font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:text-[var(--neutral-white)] dark:hover:opacity-90"
+                                    >
+                                        {t('dashboardLite.inventoryCategories.editButton')}
+                                    </Button>
+                                    <Button
+                                        aria-label={t('dashboardLite.inventoryCategories.modal.deleteAria')}
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => handleDelete(category)}
+                                        className="h-10 rounded-xl border-[var(--danger)] text-sm font-bold text-[var(--danger)] hover:bg-[var(--danger-background)]"
+                                    >
+                                        {t('dashboardLite.inventoryCategories.modal.deleteButton')}
+                                    </Button>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -152,11 +163,7 @@ export default function CategoryList({ categories: initialCategories, filters }:
             </div>
 
             {formCategory && (
-                <InventoryCategoryFormModal
-                    category={formCategory === 'new' ? null : formCategory}
-                    onClose={() => setFormCategory(null)}
-                    onDelete={formCategory !== 'new' ? () => handleDelete(formCategory) : undefined}
-                />
+                <InventoryCategoryFormModal category={formCategory === 'new' ? null : formCategory} onClose={() => setFormCategory(null)} />
             )}
         </DashboardSidebarLayout>
     );

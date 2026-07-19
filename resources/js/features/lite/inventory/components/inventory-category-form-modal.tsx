@@ -2,15 +2,14 @@ import { Button, CATEGORY_COLOR_SWATCHES, CategoryColorPicker } from '@/componen
 import { Input } from '@/components/ui';
 import { useLanguage } from '@/hooks';
 import { useForm } from '@inertiajs/react';
-import { Tag, Trash2, X } from 'lucide-react';
+import { Tag, X } from 'lucide-react';
 
 interface InventoryCategoryFormModalProps {
     category: { id: number; name: string; color: string | null } | null;
     onClose: () => void;
-    onDelete?: () => void;
 }
 
-export function InventoryCategoryFormModal({ category, onClose, onDelete }: InventoryCategoryFormModalProps) {
+export function InventoryCategoryFormModal({ category, onClose }: InventoryCategoryFormModalProps) {
     const { t } = useLanguage();
     const isEdit = !!category;
 
@@ -78,18 +77,6 @@ export function InventoryCategoryFormModal({ category, onClose, onDelete }: Inve
                                 ? t('dashboardLite.inventoryCategories.modal.savingButton')
                                 : t('dashboardLite.inventoryCategories.modal.saveButton')}
                         </Button>
-                        {onDelete && (
-                            <Button
-                                aria-label={t('dashboardLite.inventoryCategories.modal.deleteAria')}
-                                type="button"
-                                variant="outline"
-                                onClick={onDelete}
-                                className="h-12 rounded-xl border-[var(--danger)] text-base font-bold text-[var(--danger)] hover:bg-[var(--danger-background)]"
-                            >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                {t('dashboardLite.inventoryCategories.modal.deleteButton')}
-                            </Button>
-                        )}
                     </div>
                 </form>
             </div>

@@ -300,13 +300,25 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                                             </button>
                                         </div>
 
-                                        <Button
-                                            aria-label={`${t('dashboardLite.inventoryItems.editAriaPrefix')} ${item.name}`}
-                                            onClick={() => setFormItem(item)}
-                                            className="h-10 rounded-xl bg-[var(--surface-header)] px-4 text-sm font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:text-[var(--neutral-white)] dark:hover:opacity-90"
-                                        >
-                                            {t('dashboardLite.inventoryItems.editButton')}
-                                        </Button>
+                                        <div className="flex gap-2">
+                                            <Button
+                                                aria-label={`${t('dashboardLite.inventoryItems.editAriaPrefix')} ${item.name}`}
+                                                onClick={() => setFormItem(item)}
+                                                className="h-10 rounded-xl bg-[var(--surface-header)] px-4 text-sm font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:text-[var(--neutral-white)] dark:hover:opacity-90"
+                                            >
+                                                {t('dashboardLite.inventoryItems.editButton')}
+                                            </Button>
+
+                                            <Button
+                                                aria-label={t('dashboardLite.inventoryItems.modal.deleteAria')}
+                                                type="button"
+                                                variant="outline"
+                                                onClick={() => handleDelete(item)}
+                                                className="h-10 rounded-xl border-[var(--danger)] text-sm font-bold text-[var(--danger)] hover:bg-[var(--danger-background)]"
+                                            >
+                                                {t('dashboardLite.inventoryItems.modal.deleteButton')}
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
                             );
@@ -330,12 +342,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
             </div>
 
             {formItem && (
-                <InventoryItemFormModal
-                    item={formItem === 'new' ? null : formItem}
-                    categories={categories}
-                    onClose={() => setFormItem(null)}
-                    onDelete={formItem !== 'new' ? () => handleDelete(formItem) : undefined}
-                />
+                <InventoryItemFormModal item={formItem === 'new' ? null : formItem} categories={categories} onClose={() => setFormItem(null)} />
             )}
         </DashboardSidebarLayout>
     );

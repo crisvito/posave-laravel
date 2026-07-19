@@ -91,7 +91,7 @@ export default function OrderPage({ items, categories }: Props) {
                         {t('dashboardLite.order.cart.empty')}
                     </p>
                 ) : (
-                    <div className="flex flex-col gap-3">
+                    <div className="mb-3 flex flex-col gap-3">
                         {cart.map((item) => (
                             <div
                                 key={item.itemId}
