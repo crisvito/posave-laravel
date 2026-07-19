@@ -1,4 +1,5 @@
 import { DropdownActionMenu } from '@/components';
+import { useLanguage } from '@/hooks';
 import { Pencil, Trash2 } from 'lucide-react';
 
 export interface EmployeeAccess {
@@ -16,13 +17,20 @@ interface EmployeeAccessActionsMenuProps {
 }
 
 export function EmployeeAccessActionsMenu({ access, position, onClose, onEdit, onDelete }: EmployeeAccessActionsMenuProps) {
+    const { t } = useLanguage();
+
     return (
         <DropdownActionMenu
             position={position}
             onClose={onClose}
             items={[
-                { label: 'Ubah', icon: Pencil, onClick: () => onEdit(access) },
-                { label: 'Hapus', icon: Trash2, onClick: () => onDelete(access.id), variant: 'danger' },
+                { label: t('dashboardAdvance.employeeAccess.actionsMenu.edit'), icon: Pencil, onClick: () => onEdit(access) },
+                {
+                    label: t('dashboardAdvance.employeeAccess.actionsMenu.delete'),
+                    icon: Trash2,
+                    onClick: () => onDelete(access.id),
+                    variant: 'danger',
+                },
             ]}
         />
     );

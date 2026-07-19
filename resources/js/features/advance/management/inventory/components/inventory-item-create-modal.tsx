@@ -1,4 +1,5 @@
 import { Button, Input, Label } from '@/components';
+import { useLanguage } from '@/hooks';
 import { useForm } from '@inertiajs/react';
 import { ChevronDown, Package, UploadCloud, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
@@ -11,6 +12,7 @@ interface InventoryItemCreateModalProps {
 }
 
 export function InventoryItemCreateModal({ categories, branches, onClose }: InventoryItemCreateModalProps) {
+    const { t } = useLanguage();
     const [preview, setPreview] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -58,25 +60,23 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
     };
 
     const inputClass =
-        'w-full rounded-lg border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)] dark:text-white';
+        'w-full rounded-lg border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm text-[var(--subheading)] shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)]';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-lg rounded-2xl bg-[var(--neutral-white)] shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+            <div className="w-full max-w-lg rounded-2xl bg-[var(--card)] shadow-xl">
                 <div className="flex items-start justify-between p-6 pb-4">
                     <div className="flex items-center gap-4">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 dark:bg-[var(--second-accent)]">
-                            <Package className="h-7 w-7 text-gray-500 dark:text-[var(--muted-foreground)]" />
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--second-accent)]">
+                            <Package className="h-7 w-7 text-[var(--grey-text-muted)]" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold text-[var(--subheading)] dark:text-white">Buat Barang</h3>
-                            <p className="text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                                Tambah barang baru ke inventori anda
-                            </p>
+                            <h3 className="text-xl font-bold text-[var(--subheading)]">{t('dashboardAdvance.inventoryItems.createModal.title')}</h3>
+                            <p className="text-sm text-[var(--grey-text)]">{t('dashboardAdvance.inventoryItems.createModal.subtitle')}</p>
                         </div>
                     </div>
-                    <button aria-label="Tutup modal buat barang" onClick={handleClose} className="mt-1">
-                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)] dark:hover:text-white" />
+                    <button aria-label={t('dashboardAdvance.inventoryItems.createModal.closeAriaLabel')} onClick={handleClose} className="mt-1">
+                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
                     </button>
                 </div>
 
@@ -85,145 +85,152 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
                 <form onSubmit={handleSubmit}>
                     <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto p-6">
                         <div>
-                            <Label>Nama Barang</Label>
+                            <Label>{t('dashboardAdvance.inventoryItems.createModal.nameLabel')}</Label>
                             <Input
-                                aria-label="Nama barang"
+                                aria-label={t('dashboardAdvance.inventoryItems.createModal.nameAriaLabel')}
                                 type="text"
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
-                                placeholder="Masukkan nama barang"
+                                placeholder={t('dashboardAdvance.inventoryItems.createModal.namePlaceholder')}
                             />
-                            {errors.name && <span className="text-xs text-red-500">{errors.name}</span>}
+                            {errors.name && <span className="text-xs text-[var(--danger)]">{errors.name}</span>}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <Label>Kategori</Label>
+                                <Label>{t('dashboardAdvance.inventoryItems.createModal.categoryLabel')}</Label>
                                 <div className="relative">
                                     <select
-                                        aria-label="Pilih kategori barang"
+                                        aria-label={t('dashboardAdvance.inventoryItems.createModal.categoryAriaLabel')}
                                         value={data.category_id}
                                         onChange={(e) => setData('category_id', e.target.value)}
                                         className={`${inputClass} appearance-none`}
                                     >
-                                        <option value="" disabled className="dark:bg-[var(--card)]">
-                                            Pilih Kategori
+                                        <option value="" disabled className="bg-[var(--card)]">
+                                            {t('dashboardAdvance.inventoryItems.createModal.categoryPlaceholder')}
                                         </option>
                                         {categories.map((cat) => (
-                                            <option key={cat.id} value={cat.id} className="dark:bg-[var(--card)]">
+                                            <option key={cat.id} value={cat.id} className="bg-[var(--card)]">
                                                 {cat.name}
                                             </option>
                                         ))}
                                     </select>
-                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                                 </div>
-                                {errors.category_id && <span className="text-xs text-red-500">{errors.category_id}</span>}
+                                {errors.category_id && <span className="text-xs text-[var(--danger)]">{errors.category_id}</span>}
                             </div>
                             <div>
-                                <Label>Cabang</Label>
+                                <Label>{t('dashboardAdvance.inventoryItems.createModal.branchLabel')}</Label>
                                 <div className="relative">
                                     <select
-                                        aria-label="Pilih cabang untuk stok awal"
+                                        aria-label={t('dashboardAdvance.inventoryItems.createModal.branchAriaLabel')}
                                         value={data.branch_id}
                                         onChange={(e) => setData('branch_id', e.target.value)}
                                         className={`${inputClass} appearance-none`}
                                     >
-                                        <option value="" disabled className="dark:bg-[var(--card)]">
-                                            Pilih Cabang
+                                        <option value="" disabled className="bg-[var(--card)]">
+                                            {t('dashboardAdvance.inventoryItems.createModal.branchPlaceholder')}
                                         </option>
                                         {branches.map((b) => (
-                                            <option key={b.id} value={b.id} className="dark:bg-[var(--card)]">
+                                            <option key={b.id} value={b.id} className="bg-[var(--card)]">
                                                 {b.name}
                                             </option>
                                         ))}
                                     </select>
-                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                                 </div>
-                                {errors.branch_id && <span className="text-xs text-red-500">{errors.branch_id}</span>}
-                                <p className="mt-1 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                                    Stok awal tercatat untuk cabang ini
-                                </p>
+                                {errors.branch_id && <span className="text-xs text-[var(--danger)]">{errors.branch_id}</span>}
+                                <p className="mt-1 text-xs text-[var(--grey-text)]">{t('dashboardAdvance.inventoryItems.createModal.branchHint')}</p>
                             </div>
                         </div>
 
                         <div>
-                            <Label>Harga</Label>
+                            <Label>{t('dashboardAdvance.inventoryItems.createModal.priceLabel')}</Label>
                             <Input
-                                aria-label="Harga barang"
+                                aria-label={t('dashboardAdvance.inventoryItems.createModal.priceAriaLabel')}
                                 type="number"
                                 min="0"
                                 value={data.price}
                                 onChange={(e) => setData('price', e.target.value)}
                             />
-                            {errors.price && <span className="text-xs text-red-500">{errors.price}</span>}
+                            {errors.price && <span className="text-xs text-[var(--danger)]">{errors.price}</span>}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <Label>Stok Awal</Label>
+                                <Label>{t('dashboardAdvance.inventoryItems.createModal.initialStockLabel')}</Label>
                                 <Input
-                                    aria-label="Stok awal barang"
+                                    aria-label={t('dashboardAdvance.inventoryItems.createModal.initialStockAriaLabel')}
                                     type="number"
                                     min="0"
                                     value={data.current_stock}
                                     onChange={(e) => setData('current_stock', e.target.value)}
                                 />
-                                {errors.current_stock && <span className="text-xs text-red-500">{errors.current_stock}</span>}
+                                {errors.current_stock && <span className="text-xs text-[var(--danger)]">{errors.current_stock}</span>}
                             </div>
                             <div>
-                                <Label>Stok Minimum</Label>
+                                <Label>{t('dashboardAdvance.inventoryItems.createModal.minStockLabel')}</Label>
                                 <Input
-                                    aria-label="Stok minimum barang"
+                                    aria-label={t('dashboardAdvance.inventoryItems.createModal.minStockAriaLabel')}
                                     type="number"
                                     min="0"
                                     value={data.min_stock}
                                     onChange={(e) => setData('min_stock', e.target.value)}
                                 />
-                                <p className="mt-1 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                                    Jumlah minimum sebelum stok dianggap rendah
+                                <p className="mt-1 text-xs text-[var(--grey-text)]">
+                                    {t('dashboardAdvance.inventoryItems.createModal.minStockHint')}
                                 </p>
                             </div>
                         </div>
 
                         <div>
                             <Label>
-                                Gambar <span className="font-normal text-[var(--grey-text)]">(Opsional)</span>
+                                {t('dashboardAdvance.inventoryItems.createModal.imageLabel')}{' '}
+                                <span className="font-normal text-[var(--grey-text)]">
+                                    {t('dashboardAdvance.inventoryItems.createModal.imageOptional')}
+                                </span>
                             </Label>
                             <div
                                 onClick={() => fileInputRef.current?.click()}
-                                className="flex cursor-pointer items-center gap-4 rounded-lg border border-dashed border-[var(--border-strong)] p-4 transition-colors hover:bg-[var(--surface-badge)] dark:hover:bg-[var(--second-accent)]"
+                                className="flex cursor-pointer items-center gap-4 rounded-lg border border-dashed border-[var(--border-strong)] p-4 transition-colors hover:bg-[var(--second-accent)]"
                             >
                                 {preview ? (
-                                    <img src={preview} alt="Pratinjau gambar barang" className="h-12 w-12 rounded-lg object-cover" />
+                                    <img
+                                        src={preview}
+                                        alt={t('dashboardAdvance.inventoryItems.createModal.imageLabel')}
+                                        className="h-12 w-12 rounded-lg object-cover"
+                                    />
                                 ) : (
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 dark:bg-[var(--border-strong)]">
-                                        <UploadCloud className="h-6 w-6 text-gray-400" />
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--second-accent)]">
+                                        <UploadCloud className="h-6 w-6 text-[var(--grey-text-muted)]" />
                                     </div>
                                 )}
                                 <div>
-                                    <p className="text-sm font-medium text-[var(--subheading)] dark:text-white">
-                                        {preview ? 'Ganti gambar' : 'Klik untuk upload gambar'}
+                                    <p className="text-sm font-medium text-[var(--subheading)]">
+                                        {preview
+                                            ? t('dashboardAdvance.inventoryItems.createModal.changeImage')
+                                            : t('dashboardAdvance.inventoryItems.createModal.uploadImage')}
                                     </p>
-                                    <p className="text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                                        PNG, JPG atau WEBP. Maksimal 2MB
-                                    </p>
+                                    <p className="text-xs text-[var(--grey-text)]">{t('dashboardAdvance.inventoryItems.createModal.imageHint')}</p>
                                 </div>
                             </div>
                             <Input type="file" ref={fileInputRef} accept="image/*" onChange={handleImage} className="hidden" />
-                            {errors.image && <span className="text-xs text-red-500">{errors.image}</span>}
+                            {errors.image && <span className="text-xs text-[var(--danger)]">{errors.image}</span>}
                         </div>
                     </div>
 
                     <div className="flex justify-end gap-2 border-t border-[var(--border-strong)] px-6 py-4">
-                        <Button type="button" variant="outline" onClick={handleClose} className="dark:text-white">
-                            Batal
+                        <Button type="button" variant="outline" onClick={handleClose}>
+                            {t('dashboardAdvance.inventoryItems.createModal.cancel')}
                         </Button>
                         <Button
                             type="submit"
                             disabled={processing}
-                            className="bg-[var(--surface-header)] text-white hover:bg-[var(--surface-header-hover)] dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                            className="bg-[var(--surface-header)] text-white hover:bg-[var(--surface-header-hover)]"
                         >
-                            {processing ? 'Menyimpan...' : 'Simpan Barang'}
+                            {processing
+                                ? t('dashboardAdvance.inventoryItems.createModal.submitting')
+                                : t('dashboardAdvance.inventoryItems.createModal.submitLabel')}
                         </Button>
                     </div>
                 </form>

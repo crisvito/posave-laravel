@@ -1,3 +1,4 @@
+import { useLanguage } from '@/hooks';
 import { ArrowLeft, Info, Paperclip, Send, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { Conversation, Message } from '../types';
@@ -15,6 +16,7 @@ interface ChatAreaProps {
 }
 
 export function ChatArea({ conversation, messages, authUserId, isLoading, onSendMessage, onBack, onOpenInfo, className = '' }: ChatAreaProps) {
+    const { t } = useLanguage();
     const [body, setBody] = useState('');
     const [files, setFiles] = useState<File[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -50,12 +52,12 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
 
     if (!conversation) {
         return (
-            <div className={`flex flex-col items-center justify-center bg-[var(--page-bg)] dark:bg-[var(--background)] ${className}`}>
+            <div className={`flex flex-col items-center justify-center bg-[var(--page-bg)] ${className}`}>
                 <div className="flex flex-1 flex-col items-center justify-center">
                     <p className="mb-3 text-4xl">💬</p>
-                    <p className="text-sm font-medium text-[var(--subheading)] dark:text-white">Pilih percakapan</p>
-                    <p className="mt-1 px-6 text-center text-xs text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">
-                        Pilih percakapan di sebelah kiri atau mulai chat baru dari tab Kontak
+                    <p className="text-sm font-medium text-[var(--subheading)]">{t('dashboardAdvance.messaging.chatArea.emptyTitle')}</p>
+                    <p className="mt-1 px-6 text-center text-xs text-[var(--grey-text-muted)]">
+                        {t('dashboardAdvance.messaging.chatArea.emptyBody')}
                     </p>
                 </div>
             </div>
@@ -63,7 +65,9 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
     }
 
     const conversationName =
-        conversation.type === 'group' ? (conversation.name ?? 'Group') : (conversation.members.find((m) => m.id !== authUserId)?.name ?? 'Unknown');
+        conversation.type === 'group'
+            ? (conversation.name ?? t('dashboardAdvance.messaging.chatArea.groupFallback'))
+            : (conversation.members.find((m) => m.id !== authUserId)?.name ?? t('dashboardAdvance.messaging.chatArea.unknownFallback'));
 
     const initials = conversationName
         .split(' ')
@@ -73,14 +77,14 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
         .toUpperCase();
 
     return (
-        <div className={`flex flex-col overflow-hidden bg-[var(--page-bg)] dark:bg-[var(--background)] ${className}`}>
-            <div className="flex h-15 items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+        <div className={`flex flex-col overflow-hidden bg-[var(--page-bg)] ${className}`}>
+            <div className="flex h-15 items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5 dark:bg-[var(--card)]">
                 {onBack && (
                     <button
                         type="button"
-                        aria-label="Kembali ke daftar percakapan"
+                        aria-label={t('dashboardAdvance.messaging.chatArea.backAriaLabel')}
                         onClick={onBack}
-                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--grey-text)] hover:bg-[var(--second-accent)] lg:hidden dark:text-white dark:hover:bg-[var(--border-strong)]"
+                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--grey-text)] hover:bg-[var(--second-accent)] lg:hidden dark:hover:bg-[var(--border-strong)]"
                     >
                         <ArrowLeft className="h-4 w-4" />
                     </button>
@@ -91,18 +95,20 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                 </div>
 
                 <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-[var(--subheading)] dark:text-white">{conversationName}</p>
-                    <p className="truncate text-xs text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">
-                        {conversation.type === 'group' ? `${conversation.members.length} anggota` : 'Pesan pribadi'}
+                    <p className="truncate text-sm font-medium text-[var(--subheading)]">{conversationName}</p>
+                    <p className="truncate text-xs text-[var(--grey-text-muted)]">
+                        {conversation.type === 'group'
+                            ? `${conversation.members.length} ${t('dashboardAdvance.messaging.chatArea.membersCount')}`
+                            : t('dashboardAdvance.messaging.chatArea.privateChat')}
                     </p>
                 </div>
 
                 {onOpenInfo && (
                     <button
                         type="button"
-                        aria-label="Buka info percakapan"
+                        aria-label={t('dashboardAdvance.messaging.chatArea.infoAriaLabel')}
                         onClick={onOpenInfo}
-                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--grey-text)] hover:bg-[var(--second-accent)] lg:hidden dark:text-white dark:hover:bg-[var(--border-strong)]"
+                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--grey-text)] hover:bg-[var(--second-accent)] lg:hidden dark:hover:bg-[var(--border-strong)]"
                     >
                         <Info className="h-4 w-4" />
                     </button>
@@ -112,13 +118,11 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
             <div className="flex-1 overflow-y-auto p-4">
                 {isLoading ? (
                     <div className="flex h-full items-center justify-center">
-                        <p className="text-sm text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">Memuat pesan...</p>
+                        <p className="text-sm text-[var(--grey-text-muted)]">{t('dashboardAdvance.messaging.chatArea.loadingMessages')}</p>
                     </div>
                 ) : messages.length === 0 ? (
                     <div className="flex h-full items-center justify-center">
-                        <p className="text-sm text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">
-                            Belum ada pesan. Mulai percakapan!
-                        </p>
+                        <p className="text-sm text-[var(--grey-text-muted)]">{t('dashboardAdvance.messaging.chatArea.emptyMessages')}</p>
                     </div>
                 ) : (
                     <div className="flex flex-col gap-3">
@@ -131,15 +135,15 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
             </div>
 
             {files.length > 0 && (
-                <div className="flex flex-wrap gap-2 border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-2 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                <div className="flex flex-wrap gap-2 border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-2 dark:bg-[var(--card)]">
                     {files.map((file, i) => (
                         <div
                             key={i}
-                            className="flex items-center gap-1.5 rounded-lg border border-[var(--border-strong)] bg-[var(--second-accent)] px-2 py-1 text-xs text-[var(--grey-text)] dark:border-transparent dark:bg-[var(--border-strong)] dark:text-white"
+                            className="flex items-center gap-1.5 rounded-lg border border-[var(--border-strong)] bg-[var(--second-accent)] px-2 py-1 text-xs text-[var(--grey-text)] dark:border-transparent dark:bg-[var(--border-strong)]"
                         >
                             <span className="max-w-[120px] truncate">{file.name}</span>
                             <button
-                                aria-label={`Hapus file ${file.name}`}
+                                aria-label={`${t('dashboardAdvance.messaging.chatArea.removeFileAriaLabel')} ${file.name}`}
                                 onClick={() => removeFile(i)}
                                 className="text-[var(--grey-text-muted)] hover:text-red-500"
                             >
@@ -150,25 +154,32 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                 </div>
             )}
 
-            <div className="border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-3 py-3 sm:px-4 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+            <div className="border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-3 py-3 sm:px-4 dark:bg-[var(--card)]">
                 <div className="flex items-end gap-2">
                     <button
-                        aria-label="Lampirkan file"
+                        aria-label={t('dashboardAdvance.messaging.chatArea.attachAriaLabel')}
                         onClick={() => fileInputRef.current?.click()}
-                        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--border-strong)] text-[var(--grey-text)] transition-all hover:bg-[var(--second-accent)] dark:border-[var(--border-strong)] dark:text-white dark:hover:bg-[var(--border-strong)]"
+                        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--border-strong)] text-[var(--grey-text)] transition-all hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)]"
                     >
                         <Paperclip className="h-4 w-4" />
                     </button>
-                    <input ref={fileInputRef} type="file" multiple aria-label="Upload file" className="hidden" onChange={handleFileChange} />
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        multiple
+                        aria-label={t('dashboardAdvance.messaging.chatArea.uploadAriaLabel')}
+                        className="hidden"
+                        onChange={handleFileChange}
+                    />
 
                     <textarea
-                        aria-label="Ketik pesan"
+                        aria-label={t('dashboardAdvance.messaging.chatArea.typeAriaLabel')}
                         value={body}
                         onChange={(e) => setBody(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder="Ketik pesan..."
+                        placeholder={t('dashboardAdvance.messaging.chatArea.typePlaceholder')}
                         rows={1}
-                        className="flex-1 resize-none rounded-lg border border-[var(--border-strong)] bg-[var(--page-bg)] px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-[var(--border-strong)] dark:border-[var(--border-strong)] dark:bg-[#111827] dark:text-white"
+                        className="flex-1 resize-none rounded-lg border border-[var(--border-strong)] bg-[var(--page-bg)] px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-[var(--border-strong)]"
                         style={{ maxHeight: '120px' }}
                         onInput={(e) => {
                             const el = e.currentTarget;
@@ -178,10 +189,10 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                     />
 
                     <button
-                        aria-label="Kirim pesan"
+                        aria-label={t('dashboardAdvance.messaging.chatArea.sendAriaLabel')}
                         onClick={handleSend}
                         disabled={!body.trim() && files.length === 0}
-                        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[var(--surface-header)] text-white transition-all hover:bg-[var(--surface-header-hover)] disabled:opacity-40 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                        className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[var(--surface-header)] text-white transition-all hover:bg-[var(--surface-header-hover)] disabled:opacity-40"
                     >
                         <Send className="h-4 w-4" />
                     </button>

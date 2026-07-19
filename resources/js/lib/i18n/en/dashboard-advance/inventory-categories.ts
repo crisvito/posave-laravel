@@ -1,0 +1,47 @@
+const inventoryCategories = {
+    list: {
+        headTitle: 'Categories',
+        layoutTitle: 'Categories',
+        layoutDescription: 'Manage your item categories',
+        searchPlaceholder: 'Search categories...',
+        createButton: 'Add Category',
+        columnName: 'Category Name',
+        columnItemsCount: 'Registered Items',
+        columnAction: 'Action',
+        itemsCountSuffix: 'Items',
+        notFoundPrefix: 'Category',
+        notFoundSuffix: 'not found',
+        emptyState: 'No categories yet, create one to get started',
+        deleteConfirm: 'Delete this category? Linked items will not be deleted.',
+        itemLabel: 'Categories',
+    },
+    createModal: {
+        title: 'Create New Category',
+        closeAriaLabel: 'Close create category modal',
+        nameLabel: 'Category Name',
+        nameAriaLabel: 'Category name',
+        namePlaceholder: 'e.g. Groceries, Beverages...',
+        cancelAriaLabel: 'Cancel create category',
+        cancel: 'Cancel',
+        submitAriaLabel: 'Save new category',
+        submitting: 'Saving...',
+        submitLabel: 'Create Category',
+    },
+    editModal: {
+        title: 'Edit Category',
+        closeAriaLabel: 'Close edit category modal',
+        nameLabel: 'Category Name',
+        nameAriaLabel: 'Category name',
+        cancelAriaLabel: 'Cancel edit category',
+        cancel: 'Cancel',
+        submitAriaLabel: 'Save category changes',
+        submitting: 'Saving...',
+        submitLabel: 'Save Changes',
+    },
+    actionsMenu: {
+        edit: 'Edit',
+        delete: 'Delete',
+    },
+};
+
+export default inventoryCategories;

@@ -15,7 +15,7 @@ import {
     TableRow,
 } from '@/components';
 import { InventoryPurchaseOrderActionsMenu, InventoryPurchaseOrderCreateModal } from '@/features/advance/management/inventory/components';
-import { useConfirmAction, useDropdownMenu, useFilters } from '@/hooks';
+import { useConfirmAction, useDropdownMenu, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import { MoreVertical, Package, Store } from 'lucide-react';
@@ -63,18 +63,6 @@ interface InventoryPurchaseOrderListProps {
     filters: { branch_id?: string; date?: string; status?: string; search?: string; per_page?: string };
 }
 
-const statusLabel: Record<string, { text: string; className: string }> = {
-    waiting_fulfilment: { text: 'Menunggu', className: 'bg-[var(--warning-background)] text-[var(--warning)]' },
-    success: { text: 'Selesai', className: 'bg-[var(--success-background)] text-[var(--success)]' },
-    cancelled: { text: 'Dibatalkan', className: 'bg-[var(--danger-background)] text-[var(--danger)]' },
-};
-
-const STATUS_OPTIONS = [
-    { value: 'waiting_fulfilment', label: 'Menunggu' },
-    { value: 'success', label: 'Selesai' },
-    { value: 'cancelled', label: 'Dibatalkan' },
-];
-
 export default function InventoryPurchaseOrderList({
     purchaseOrders,
     suppliers,
@@ -84,11 +72,35 @@ export default function InventoryPurchaseOrderList({
     is_branch_manager,
     filters,
 }: InventoryPurchaseOrderListProps) {
+    const { locale, t } = useLanguage();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const { search, setSearch, applyFilters, handleSearch } = useFilters('dashboard.inventory.purchase-orders.index', filters);
     const { openId: openMenuId, position: menuPosition, buttonRefs, toggleMenu, closeMenu } = useDropdownMenu();
     const currentDate = filters.date ?? new Date().toISOString().slice(0, 10);
     const { confirmAndDelete } = useConfirmAction();
+
+    const dateLocale = locale === 'en' ? 'en-US' : 'id-ID';
+
+    const statusLabel: Record<string, { text: string; className: string }> = {
+        waiting_fulfilment: {
+            text: t('dashboardAdvance.inventoryPurchaseOrders.list.statusWaiting'),
+            className: 'bg-[var(--warning-background)] text-[var(--warning)]',
+        },
+        success: {
+            text: t('dashboardAdvance.inventoryPurchaseOrders.list.statusSuccess'),
+            className: 'bg-[var(--success-background)] text-[var(--success)]',
+        },
+        cancelled: {
+            text: t('dashboardAdvance.inventoryPurchaseOrders.list.statusCancelled'),
+            className: 'bg-[var(--danger-background)] text-[var(--danger)]',
+        },
+    };
+
+    const STATUS_OPTIONS = [
+        { value: 'waiting_fulfilment', label: t('dashboardAdvance.inventoryPurchaseOrders.list.statusWaiting') },
+        { value: 'success', label: t('dashboardAdvance.inventoryPurchaseOrders.list.statusSuccess') },
+        { value: 'cancelled', label: t('dashboardAdvance.inventoryPurchaseOrders.list.statusCancelled') },
+    ];
 
     const handleUpdateStatus = (id: number, status: 'success' | 'cancelled') => {
         router.put(route('dashboard.inventory.purchase-orders.update', id), { status });
@@ -96,14 +108,17 @@ export default function InventoryPurchaseOrderList({
     };
 
     const handleDelete = (id: number) => {
-        confirmAndDelete('Yakin ingin menghapus PO ini?', route('dashboard.inventory.purchase-orders.destroy', id));
+        confirmAndDelete(t('dashboardAdvance.inventoryPurchaseOrders.list.deleteConfirm'), route('dashboard.inventory.purchase-orders.destroy', id));
         closeMenu();
     };
     const activeMenuPO = purchaseOrders.data.find((po) => po.id === openMenuId);
 
     return (
-        <DashboardSidebarLayout title="Pembelian" description="Kelola pembelian barang dari pemasok anda">
-            <Head title="Pembelian" />
+        <DashboardSidebarLayout
+            title={t('dashboardAdvance.inventoryPurchaseOrders.list.layoutTitle')}
+            description={t('dashboardAdvance.inventoryPurchaseOrders.list.layoutDescription')}
+        >
+            <Head title={t('dashboardAdvance.inventoryPurchaseOrders.list.headTitle')} />
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--page-bg)] p-4 sm:p-6">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
                     <div className="flex flex-wrap items-center gap-3">
@@ -111,14 +126,14 @@ export default function InventoryPurchaseOrderList({
                             <FilterDropdown
                                 value={filters.branch_id}
                                 options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
-                                allLabel="Semua Cabang"
+                                allLabel={t('dashboardAdvance.inventoryPurchaseOrders.list.allBranches')}
                                 onChange={(v) => applyFilters({ branch_id: v })}
                                 icon={<Store className="h-4 w-4" />}
                             />
                         ) : (
                             <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)]">
                                 <Store className="h-4 w-4" />
-                                {branches[0]?.name ?? 'Cabang Anda'}
+                                {branches[0]?.name ?? t('dashboardAdvance.inventoryPurchaseOrders.list.yourBranchFallback')}
                             </div>
                         )}
 
@@ -126,18 +141,26 @@ export default function InventoryPurchaseOrderList({
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <CreateButton label="Buat PO" onClick={() => setShowCreateModal(true)} />
+                        <CreateButton
+                            label={t('dashboardAdvance.inventoryPurchaseOrders.list.createButton')}
+                            onClick={() => setShowCreateModal(true)}
+                        />
                         <PrintButton />
                     </div>
                 </div>
 
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-                    <SearchInput value={search} onChange={setSearch} onSubmit={handleSearch} placeholder="Cari nomor PO..." />
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        onSubmit={handleSearch}
+                        placeholder={t('dashboardAdvance.inventoryPurchaseOrders.list.searchPlaceholder')}
+                    />
 
                     <FilterDropdown
                         value={filters.status}
                         options={STATUS_OPTIONS}
-                        allLabel="Semua Status"
+                        allLabel={t('dashboardAdvance.inventoryPurchaseOrders.list.allStatus')}
                         onChange={(v) => applyFilters({ status: v })}
                     />
                 </div>
@@ -147,13 +170,27 @@ export default function InventoryPurchaseOrderList({
                         <Table className="min-w-[760px]">
                             <TableHeader className="bg-[var(--surface-header)]">
                                 <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="text-[var(--text-light)]">Tanggal PO</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Cabang</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Pemasok</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Nomor PO</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Total Harga</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Status</TableHead>
-                                    <TableHead className="w-[60px] text-[var(--text-light)]">Aksi</TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnDate')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnBranch')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnSupplier')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnPoNumber')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnTotalPrice')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnStatus')}
+                                    </TableHead>
+                                    <TableHead className="w-[60px] text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnAction')}
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
 
@@ -162,19 +199,22 @@ export default function InventoryPurchaseOrderList({
                                     <TableEmptyState
                                         colSpan={7}
                                         icon={Package}
-                                        message="Belum ada Pembelian"
-                                        description="Klik tombol Untuk Buat Pembelian"
-                                        action={{ label: '+ Buat Pembelian', onClick: () => setShowCreateModal(true) }}
+                                        message={t('dashboardAdvance.inventoryPurchaseOrders.list.emptyTitle')}
+                                        description={t('dashboardAdvance.inventoryPurchaseOrders.list.emptyDescription')}
+                                        action={{
+                                            label: t('dashboardAdvance.inventoryPurchaseOrders.list.emptyActionLabel'),
+                                            onClick: () => setShowCreateModal(true),
+                                        }}
                                     />
                                 ) : (
                                     purchaseOrders.data.map((po) => (
                                         <TableRow key={po.id}>
                                             <TableCell>
                                                 <div className="font-medium whitespace-nowrap">
-                                                    {new Date(po.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                                                    {new Date(po.date).toLocaleTimeString(dateLocale, { hour: '2-digit', minute: '2-digit' })}
                                                 </div>
                                                 <div className="text-xs whitespace-nowrap text-[var(--grey-text)]">
-                                                    {new Date(po.date).toLocaleDateString('id-ID', {
+                                                    {new Date(po.date).toLocaleDateString(dateLocale, {
                                                         day: 'numeric',
                                                         month: 'long',
                                                         year: 'numeric',
@@ -216,7 +256,7 @@ export default function InventoryPurchaseOrderList({
                     from={purchaseOrders.from ?? 0}
                     to={purchaseOrders.to ?? 0}
                     total={purchaseOrders.total}
-                    itemLabel="Pembelian"
+                    itemLabel={t('dashboardAdvance.inventoryPurchaseOrders.list.itemLabel')}
                     links={purchaseOrders.links}
                     perPage={filters.per_page ?? '6'}
                     onPerPageChange={(v) => applyFilters({ per_page: v })}

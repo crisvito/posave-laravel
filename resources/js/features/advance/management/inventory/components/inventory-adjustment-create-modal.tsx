@@ -1,4 +1,5 @@
 import { Button, Input, Label } from '@/components';
+import { useLanguage } from '@/hooks';
 import { useForm } from '@inertiajs/react';
 import { ChevronDown, X } from 'lucide-react';
 import React from 'react';
@@ -30,6 +31,7 @@ export function InventoryAdjustmentCreateModal({
     lockBranch,
     onClose,
 }: InventoryAdjustmentCreateModalProps) {
+    const { t } = useLanguage();
     const { data, setData, post, processing, errors, reset } = useForm({
         branch_id: defaultBranchId ? String(defaultBranchId) : '',
         date: new Date().toISOString().slice(0, 10),
@@ -50,119 +52,119 @@ export function InventoryAdjustmentCreateModal({
     };
 
     const inputClass =
-        'w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:border-[var(--border-strong)] dark:text-white dark:focus-visible:ring-[var(--ring)]';
+        'w-full rounded-md border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm text-[var(--subheading)] shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)]';
 
     const lockedBranchName = branches.find((b) => b.id === defaultBranchId)?.name ?? '';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+            <div className="w-full max-w-md rounded-2xl bg-[var(--card)] p-6 shadow-xl">
                 <div className="mb-5 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[var(--subheading)]">Buat Perubahan Stok</h3>
+                    <h3 className="text-lg font-bold text-[var(--subheading)]">{t('dashboardAdvance.inventoryAdjustments.createModal.title')}</h3>
                     <Button
                         type="button"
                         onClick={() => {
                             reset();
                             onClose();
                         }}
-                        aria-label="button-x"
+                        aria-label={t('dashboardAdvance.inventoryAdjustments.createModal.closeAriaLabel')}
                     >
-                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)] dark:hover:text-white" />
+                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
                     </Button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <Label>Cabang</Label>
+                            <Label>{t('dashboardAdvance.inventoryAdjustments.createModal.branchLabel')}</Label>
                             {lockBranch ? (
-                                <div
-                                    className={`${inputClass} flex items-center bg-[var(--second-accent)] text-[var(--subheading)] dark:bg-[var(--second-accent)]`}
-                                >
-                                    {lockedBranchName || '-'}
-                                </div>
+                                <div className={`${inputClass} flex items-center bg-[var(--second-accent)]`}>{lockedBranchName || '-'}</div>
                             ) : (
                                 <div className="relative">
                                     <select
-                                        aria-label="input-cabang"
+                                        aria-label={t('dashboardAdvance.inventoryAdjustments.createModal.branchAriaLabel')}
                                         value={data.branch_id}
                                         onChange={(e) => setData('branch_id', e.target.value)}
-                                        className="border-input focus-visible:ring-ring w-full appearance-none rounded-md border bg-transparent py-2 pr-10 pl-3 text-sm focus-visible:ring-1 focus-visible:outline-none dark:border-[var(--border-strong)] dark:text-white dark:focus-visible:ring-[var(--ring)]"
+                                        className={`${inputClass} appearance-none pr-10`}
                                     >
-                                        <option value="" disabled className="dark:bg-[var(--card)]">
-                                            Pilih cabang
+                                        <option value="" disabled className="bg-[var(--card)]">
+                                            {t('dashboardAdvance.inventoryAdjustments.createModal.branchPlaceholder')}
                                         </option>
                                         {branches.map((b) => (
-                                            <option key={b.id} value={b.id} className="dark:bg-[var(--card)]">
+                                            <option key={b.id} value={b.id} className="bg-[var(--card)]">
                                                 {b.name}
                                             </option>
                                         ))}
                                     </select>
-                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-[var(--muted-foreground)]" />
+                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                                 </div>
                             )}
-                            {errors.branch_id && <span className="text-xs text-red-500">{errors.branch_id}</span>}
+                            {errors.branch_id && <span className="text-xs text-[var(--danger)]">{errors.branch_id}</span>}
                         </div>
                         <div>
-                            <Label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Tanggal</Label>
+                            <Label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
+                                {t('dashboardAdvance.inventoryAdjustments.createModal.dateLabel')}
+                            </Label>
                             <Input
-                                aria-label="input-date"
+                                aria-label={t('dashboardAdvance.inventoryAdjustments.createModal.dateAriaLabel')}
                                 type="date"
                                 value={data.date}
                                 onChange={(e) => setData('date', e.target.value)}
                                 style={{ resize: 'none' }}
                             />
-                            {errors.date && <span className="text-xs text-red-500">{errors.date}</span>}
+                            {errors.date && <span className="text-xs text-[var(--danger)]">{errors.date}</span>}
                         </div>
                     </div>
 
                     <div>
-                        <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Barang</label>
+                        <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
+                            {t('dashboardAdvance.inventoryAdjustments.createModal.itemLabel')}
+                        </label>
                         <div className="relative">
                             <select
-                                aria-label="input-barang"
+                                aria-label={t('dashboardAdvance.inventoryAdjustments.createModal.itemAriaLabel')}
                                 value={data.inventory_item_id}
                                 onChange={(e) => setData('inventory_item_id', e.target.value)}
-                                className="border-input focus-visible:ring-ring w-full appearance-none rounded-md border bg-transparent py-2 pr-10 pl-3 text-sm focus-visible:ring-1 focus-visible:outline-none dark:border-[var(--border-strong)] dark:text-white dark:focus-visible:ring-[var(--ring)]"
+                                className={`${inputClass} appearance-none pr-10`}
                             >
-                                <option value="" disabled className="dark:bg-[var(--card)]">
-                                    Pilih barang
+                                <option value="" disabled className="bg-[var(--card)]">
+                                    {t('dashboardAdvance.inventoryAdjustments.createModal.itemPlaceholder')}
                                 </option>
                                 {inventoryItems.map((i) => (
-                                    <option key={i.id} value={i.id} className="dark:bg-[var(--card)]">
+                                    <option key={i.id} value={i.id} className="bg-[var(--card)]">
                                         {i.name} ({i.sku})
                                     </option>
                                 ))}
                             </select>
-                            <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-[var(--muted-foreground)]" />
+                            <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                         </div>
-                        {errors.inventory_item_id && <span className="text-xs text-red-500">{errors.inventory_item_id}</span>}
+                        {errors.inventory_item_id && <span className="text-xs text-[var(--danger)]">{errors.inventory_item_id}</span>}
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <Label>Jenis Perubahan</Label>
+                            <Label>{t('dashboardAdvance.inventoryAdjustments.createModal.typeLabel')}</Label>
                             <div className="relative">
                                 <select
-                                    aria-label="input-perubahan"
+                                    aria-label={t('dashboardAdvance.inventoryAdjustments.createModal.typeAriaLabel')}
                                     value={data.type}
                                     onChange={(e) => setData('type', e.target.value)}
-                                    className="border-input focus-visible:ring-ring w-full appearance-none rounded-md border bg-transparent py-2 pr-10 pl-3 text-sm focus-visible:ring-1 focus-visible:outline-none dark:border-[var(--border-strong)] dark:text-white dark:focus-visible:ring-[var(--ring)]"
+                                    className={`${inputClass} appearance-none pr-10`}
                                 >
-                                    <option value="in" className="dark:bg-[var(--card)]">
-                                        Barang Masuk (+)
+                                    <option value="in" className="bg-[var(--card)]">
+                                        {t('dashboardAdvance.inventoryAdjustments.createModal.typeInOption')}
                                     </option>
-                                    <option value="out" className="dark:bg-[var(--card)]">
-                                        Barang Keluar (-)
+                                    <option value="out" className="bg-[var(--card)]">
+                                        {t('dashboardAdvance.inventoryAdjustments.createModal.typeOutOption')}
                                     </option>
                                 </select>
-                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-[var(--muted-foreground)]" />
+                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                             </div>
                         </div>
                         <div>
-                            <Label>Jumlah (Qty)</Label>
+                            <Label>{t('dashboardAdvance.inventoryAdjustments.createModal.qtyLabel')}</Label>
                             <Input
-                                aria-label="input-jumlah"
+                                aria-label={t('dashboardAdvance.inventoryAdjustments.createModal.qtyAriaLabel')}
                                 type="number"
                                 min={1}
                                 value={data.quantity}
@@ -170,20 +172,20 @@ export function InventoryAdjustmentCreateModal({
                                 style={{ resize: 'none', MozAppearance: 'textfield' }}
                                 className={`[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                             />
-                            {errors.quantity && <span className="text-xs text-red-500">{errors.quantity}</span>}
+                            {errors.quantity && <span className="text-xs text-[var(--danger)]">{errors.quantity}</span>}
                         </div>
                     </div>
 
                     <div>
-                        <Label>Catatan</Label>
+                        <Label>{t('dashboardAdvance.inventoryAdjustments.createModal.noteLabel')}</Label>
                         <Input
                             type="text"
                             value={data.note}
                             onChange={(e) => setData('note', e.target.value)}
-                            placeholder="Cth: Barang rusak, Retur, dll."
+                            placeholder={t('dashboardAdvance.inventoryAdjustments.createModal.notePlaceholder')}
                             style={{ resize: 'none' }}
                         />
-                        {errors.note && <span className="text-xs text-red-500">{errors.note}</span>}
+                        {errors.note && <span className="text-xs text-[var(--danger)]">{errors.note}</span>}
                     </div>
 
                     <div className="mt-2 flex justify-end gap-2">
@@ -194,16 +196,18 @@ export function InventoryAdjustmentCreateModal({
                                 reset();
                                 onClose();
                             }}
-                            className="bg-transparent dark:text-white"
+                            className="bg-transparent"
                         >
-                            Batal
+                            {t('dashboardAdvance.inventoryAdjustments.createModal.cancel')}
                         </Button>
                         <Button
                             type="submit"
                             disabled={processing}
-                            className="bg-[var(--surface-header)] text-[var(--text-light)] hover:bg-[var(--surface-header-hover)] dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                            className="bg-[var(--surface-header)] text-[var(--text-light)] hover:bg-[var(--surface-header-hover)]"
                         >
-                            {processing ? 'Menyimpan...' : 'Simpan'}
+                            {processing
+                                ? t('dashboardAdvance.inventoryAdjustments.createModal.submitting')
+                                : t('dashboardAdvance.inventoryAdjustments.createModal.submitLabel')}
                         </Button>
                     </div>
                 </form>

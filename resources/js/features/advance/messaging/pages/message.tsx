@@ -1,6 +1,6 @@
 import { Sheet, SheetContent } from '@/components/ui';
 import { ChatArea, ConversationList, InfoPanel } from '@/features/advance/messaging/components';
-import { useConfirmAction } from '@/hooks';
+import { useConfirmAction, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import { useEchoPresence, useEchoPublic } from '@laravel/echo-react';
@@ -23,6 +23,7 @@ export default function MessagingIndex({
     contacts,
     auth_user,
 }: Props) {
+    const { t } = useLanguage();
     const [activeTab, setActiveTab] = useState<'pesan' | 'kontak'>('pesan');
     const [search, setSearch] = useState('');
     const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
@@ -172,22 +173,25 @@ export default function MessagingIndex({
         }
     }, []);
 
-    const handleDeleteNote = useCallback((id: number) => {
-        confirmAndRun('Hapus catatan ini?', async () => {
-            try {
-                await axios.delete(route('messaging.note.destroy', id));
-                setNotes((prev) => prev.filter((n) => n.id !== id));
-            } catch (err) {
-                console.error('Gagal menghapus catatan:', err);
-            }
-        });
-    }, []);
+    const handleDeleteNote = useCallback(
+        (id: number) => {
+            confirmAndRun(t('dashboardAdvance.messaging.deleteNoteConfirm'), async () => {
+                try {
+                    await axios.delete(route('messaging.note.destroy', id));
+                    setNotes((prev) => prev.filter((n) => n.id !== id));
+                } catch (err) {
+                    console.error('Gagal menghapus catatan:', err);
+                }
+            });
+        },
+        [confirmAndRun, t],
+    );
 
     return (
-        <DashboardSidebarLayout title="Pesan" description="Buat pesan terhadap rekan-rekan anda">
-            <Head title="Pesan" />
+        <DashboardSidebarLayout title={t('dashboardAdvance.messaging.layoutTitle')} description={t('dashboardAdvance.messaging.layoutDescription')}>
+            <Head title={t('dashboardAdvance.messaging.headTitle')} />
 
-            <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[var(--page-bg)] dark:bg-[var(--background)]">
+            <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[var(--page-bg)]">
                 <div className={`h-full w-full flex-col lg:flex lg:w-72 lg:flex-shrink-0 ${mobileView === 'list' ? 'flex' : 'hidden'}`}>
                     <ConversationList
                         conversations={conversations}

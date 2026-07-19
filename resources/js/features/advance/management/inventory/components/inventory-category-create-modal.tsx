@@ -1,4 +1,5 @@
 import { Button, CategoryColorPicker, Input, Label } from '@/components';
+import { useLanguage } from '@/hooks';
 import { useForm } from '@inertiajs/react';
 import { X } from 'lucide-react';
 import React from 'react';
@@ -8,6 +9,7 @@ interface InventoryCategoryCreateModalProps {
 }
 
 export function InventoryCategoryCreateModal({ onClose }: InventoryCategoryCreateModalProps) {
+    const { t } = useLanguage();
     const { data, setData, post, processing, errors, reset } = useForm<{ name: string; color: string | null }>({
         name: '',
         color: null,
@@ -30,47 +32,51 @@ export function InventoryCategoryCreateModal({ onClose }: InventoryCategoryCreat
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-md rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+            <div className="w-full max-w-md rounded-2xl bg-[var(--card)] p-6 shadow-xl">
                 <div className="mb-5 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[var(--subheading)]">Buat Kategori Baru</h3>
-                    <button aria-label="Tutup modal buat kategori" onClick={handleClose}>
-                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)] dark:hover:text-white" />
+                    <h3 className="text-lg font-bold text-[var(--subheading)]">{t('dashboardAdvance.inventoryCategories.createModal.title')}</h3>
+                    <button aria-label={t('dashboardAdvance.inventoryCategories.createModal.closeAriaLabel')} onClick={handleClose}>
+                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div>
-                        <Label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">Nama Kategori</Label>
+                        <Label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
+                            {t('dashboardAdvance.inventoryCategories.createModal.nameLabel')}
+                        </Label>
                         <Input
-                            aria-label="Nama kategori"
+                            aria-label={t('dashboardAdvance.inventoryCategories.createModal.nameAriaLabel')}
                             type="text"
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            placeholder="Contoh: Sembako, Minuman..."
+                            placeholder={t('dashboardAdvance.inventoryCategories.createModal.namePlaceholder')}
                         />
-                        {errors.name && <span className="text-sm text-red-500">{errors.name}</span>}
+                        {errors.name && <span className="text-sm text-[var(--danger)]">{errors.name}</span>}
                     </div>
 
                     <CategoryColorPicker value={data.color} onChange={(color) => setData('color', color)} allowAuto />
-                    {errors.color && <span className="text-sm text-red-500">{errors.color}</span>}
+                    {errors.color && <span className="text-sm text-[var(--danger)]">{errors.color}</span>}
 
                     <div className="mt-2 flex justify-end gap-2">
                         <Button
-                            aria-label="Batal buat kategori"
+                            aria-label={t('dashboardAdvance.inventoryCategories.createModal.cancelAriaLabel')}
                             type="button"
                             variant="outline"
                             onClick={handleClose}
-                            className="bg-transparent dark:text-white"
+                            className="bg-transparent"
                         >
-                            Batal
+                            {t('dashboardAdvance.inventoryCategories.createModal.cancel')}
                         </Button>
                         <Button
-                            aria-label="Simpan kategori baru"
+                            aria-label={t('dashboardAdvance.inventoryCategories.createModal.submitAriaLabel')}
                             type="submit"
                             disabled={processing}
-                            className="bg-[var(--surface-header)] text-[var(--text-light)] hover:bg-[var(--surface-header-hover)] dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                            className="bg-[var(--surface-header)] text-[var(--text-light)] hover:bg-[var(--surface-header-hover)]"
                         >
-                            {processing ? 'Menyimpan...' : 'Buat Kategori'}
+                            {processing
+                                ? t('dashboardAdvance.inventoryCategories.createModal.submitting')
+                                : t('dashboardAdvance.inventoryCategories.createModal.submitLabel')}
                         </Button>
                     </div>
                 </form>

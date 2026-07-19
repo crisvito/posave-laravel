@@ -1,0 +1,47 @@
+const inventoryCategories = {
+    list: {
+        headTitle: 'Kategori',
+        layoutTitle: 'Kategori',
+        layoutDescription: 'Kelola daftar kategori untuk barang-barang anda',
+        searchPlaceholder: 'Cari kategori...',
+        createButton: 'Buat Kategori',
+        columnName: 'Nama Kategori',
+        columnItemsCount: 'Barang Terdaftar',
+        columnAction: 'Aksi',
+        itemsCountSuffix: 'Barang',
+        notFoundPrefix: 'Kategori',
+        notFoundSuffix: 'tidak ditemukan',
+        emptyState: 'Belum ada kategori, buat kategori terlebih dahulu',
+        deleteConfirm: 'Yakin ingin menghapus kategori ini? Barang yang terhubung tidak akan terhapus.',
+        itemLabel: 'Kategori',
+    },
+    createModal: {
+        title: 'Buat Kategori Baru',
+        closeAriaLabel: 'Tutup modal buat kategori',
+        nameLabel: 'Nama Kategori',
+        nameAriaLabel: 'Nama kategori',
+        namePlaceholder: 'Contoh: Sembako, Minuman...',
+        cancelAriaLabel: 'Batal buat kategori',
+        cancel: 'Batal',
+        submitAriaLabel: 'Simpan kategori baru',
+        submitting: 'Menyimpan...',
+        submitLabel: 'Buat Kategori',
+    },
+    editModal: {
+        title: 'Ubah Kategori',
+        closeAriaLabel: 'Tutup modal ubah kategori',
+        nameLabel: 'Nama Kategori',
+        nameAriaLabel: 'Nama kategori',
+        cancelAriaLabel: 'Batal ubah kategori',
+        cancel: 'Batal',
+        submitAriaLabel: 'Simpan perubahan kategori',
+        submitting: 'Menyimpan...',
+        submitLabel: 'Simpan Perubahan',
+    },
+    actionsMenu: {
+        edit: 'Ubah',
+        delete: 'Hapus',
+    },
+};
+
+export default inventoryCategories;

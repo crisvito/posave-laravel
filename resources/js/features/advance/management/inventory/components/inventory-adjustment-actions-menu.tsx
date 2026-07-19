@@ -1,4 +1,5 @@
 import { DropdownActionMenu } from '@/components';
+import { useLanguage } from '@/hooks';
 import { Trash2 } from 'lucide-react';
 
 export interface Adjustment {
@@ -18,11 +19,20 @@ interface InventoryAdjustmentActionsMenuProps {
 }
 
 export function InventoryAdjustmentActionsMenu({ adjustment, position, onClose, onDelete }: InventoryAdjustmentActionsMenuProps) {
+    const { t } = useLanguage();
+
     return (
         <DropdownActionMenu
             position={position}
             onClose={onClose}
-            items={[{ label: 'Hapus', icon: Trash2, onClick: () => onDelete(adjustment.id), variant: 'danger' }]}
+            items={[
+                {
+                    label: t('dashboardAdvance.inventoryAdjustments.actionsMenu.delete'),
+                    icon: Trash2,
+                    onClick: () => onDelete(adjustment.id),
+                    variant: 'danger',
+                },
+            ]}
         />
     );
 }

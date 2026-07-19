@@ -9,6 +9,7 @@ import {
 } from '@/features/advance/management/report/components';
 import { deltaPct } from '@/features/advance/management/report/lib/calculations';
 import { cur, pct, type Cell, type CompanyInfo, type ReportExport } from '@/features/advance/management/report/lib/export';
+import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
@@ -39,41 +40,44 @@ interface Props {
 
 type TabKey = 'penjualan' | 'laba' | 'produk' | 'kategori';
 
-const TABS: { key: TabKey; label: string }[] = [
-    { key: 'penjualan', label: 'Laporan Penjualan' },
-    { key: 'laba', label: 'Laba Kotor' },
-    { key: 'produk', label: 'Penjualan Barang' },
-    { key: 'kategori', label: 'Kategori Penjualan' },
-];
-
 export default function Report({ filters, outlets, statement, productSales, categorySales }: Props) {
+    const { t } = useLanguage();
     const [tab, setTab] = useState<TabKey>('penjualan');
     const [compare, setCompare] = useState(true);
     const { current, previous } = statement;
 
-    const outletName = filters.outlet_id ? (outlets.find((o) => o.id === filters.outlet_id)?.name ?? 'Outlet') : 'Semua Outlet';
-    const subtitle = `Periode ${filters.label} · ${outletName}`;
+    const TABS: { key: TabKey; label: string }[] = [
+        { key: 'penjualan', label: t('dashboardAdvance.report.tabs.sales') },
+        { key: 'laba', label: t('dashboardAdvance.report.tabs.grossProfit') },
+        { key: 'produk', label: t('dashboardAdvance.report.tabs.productSales') },
+        { key: 'kategori', label: t('dashboardAdvance.report.tabs.categorySales') },
+    ];
+
+    const outletName = filters.outlet_id
+        ? (outlets.find((o) => o.id === filters.outlet_id)?.name ?? t('dashboardAdvance.report.outletFallback'))
+        : t('dashboardAdvance.report.allOutlets');
+    const subtitle = `${t('dashboardAdvance.report.periodPrefix')} ${filters.label} · ${outletName}`;
     const periodSuffix = `${filters.from}_sd_${filters.to}`;
 
     const salesLines: Line[] = [
-        { label: 'Gross Sales', current: current.grossSales, previous: previous.grossSales },
-        { label: 'Discounts', current: current.discounts, previous: previous.discounts, deduction: true },
-        { label: 'Refunds', current: current.refunds, previous: previous.refunds, deduction: true },
-        { label: 'Nett Sales', current: current.nettSales, previous: previous.nettSales, bold: true },
-        { label: 'Gratuity', current: current.gratuity, previous: previous.gratuity },
-        { label: 'Tax', current: current.tax, previous: previous.tax },
-        { label: 'Rounding', current: current.rounding, previous: previous.rounding },
-        { label: 'Total Collected', current: current.totalCollected, previous: previous.totalCollected, bold: true },
+        { label: t('dashboardAdvance.report.lines.grossSales'), current: current.grossSales, previous: previous.grossSales },
+        { label: t('dashboardAdvance.report.lines.discounts'), current: current.discounts, previous: previous.discounts, deduction: true },
+        { label: t('dashboardAdvance.report.lines.refunds'), current: current.refunds, previous: previous.refunds, deduction: true },
+        { label: t('dashboardAdvance.report.lines.nettSales'), current: current.nettSales, previous: previous.nettSales, bold: true },
+        { label: t('dashboardAdvance.report.lines.gratuity'), current: current.gratuity, previous: previous.gratuity },
+        { label: t('dashboardAdvance.report.lines.tax'), current: current.tax, previous: previous.tax },
+        { label: t('dashboardAdvance.report.lines.rounding'), current: current.rounding, previous: previous.rounding },
+        { label: t('dashboardAdvance.report.lines.totalCollected'), current: current.totalCollected, previous: previous.totalCollected, bold: true },
     ];
 
     const labaLines: Line[] = [
-        { label: 'Gross Sales', current: current.grossSales, previous: previous.grossSales },
-        { label: 'Discounts', current: current.discounts, previous: previous.discounts, deduction: true },
-        { label: 'Refunds', current: current.refunds, previous: previous.refunds, deduction: true },
-        { label: 'Nett Sales', current: current.nettSales, previous: previous.nettSales, bold: true },
-        { label: 'Cost of Goods Sold (COGS)', current: current.cogs, previous: previous.cogs, deduction: true },
-        { label: 'Laba Kotor', current: current.grossProfit, previous: previous.grossProfit, bold: true },
-        { label: 'Margin', current: current.margin, previous: previous.margin, bold: true, format: 'percent' },
+        { label: t('dashboardAdvance.report.lines.grossSales'), current: current.grossSales, previous: previous.grossSales },
+        { label: t('dashboardAdvance.report.lines.discounts'), current: current.discounts, previous: previous.discounts, deduction: true },
+        { label: t('dashboardAdvance.report.lines.refunds'), current: current.refunds, previous: previous.refunds, deduction: true },
+        { label: t('dashboardAdvance.report.lines.nettSales'), current: current.nettSales, previous: previous.nettSales, bold: true },
+        { label: t('dashboardAdvance.report.lines.cogs'), current: current.cogs, previous: previous.cogs, deduction: true },
+        { label: t('dashboardAdvance.report.lines.grossProfit'), current: current.grossProfit, previous: previous.grossProfit, bold: true },
+        { label: t('dashboardAdvance.report.lines.margin'), current: current.margin, previous: previous.margin, bold: true, format: 'percent' },
     ];
 
     const valueCell = (l: Line, v: number): Cell => (l.format === 'percent' ? pct(v) : cur(l.deduction ? -v : v));
@@ -84,14 +88,14 @@ export default function Report({ filters, outlets, statement, productSales, cate
         company: COMPANY,
         columns: compare
             ? [
-                  { header: 'Keterangan', align: 'left', width: 34 },
-                  { header: 'Periode Ini', align: 'right' },
-                  { header: 'Periode Lalu', align: 'right' },
-                  { header: 'Perubahan %', align: 'right' },
+                  { header: t('dashboardAdvance.report.exportColumns.description'), align: 'left', width: 34 },
+                  { header: t('dashboardAdvance.report.exportColumns.currentPeriod'), align: 'right' },
+                  { header: t('dashboardAdvance.report.exportColumns.previousPeriod'), align: 'right' },
+                  { header: t('dashboardAdvance.report.exportColumns.changePercent'), align: 'right' },
               ]
             : [
-                  { header: 'Keterangan', align: 'left', width: 34 },
-                  { header: 'Nilai', align: 'right' },
+                  { header: t('dashboardAdvance.report.exportColumns.description'), align: 'left', width: 34 },
+                  { header: t('dashboardAdvance.report.exportColumns.value'), align: 'right' },
               ],
         filenameBase: `${filenameBase}-${periodSuffix}`,
         boldRows: lines.flatMap((l, i) => (l.bold ? [i] : [])),
@@ -103,28 +107,28 @@ export default function Report({ filters, outlets, statement, productSales, cate
     });
 
     return (
-        <DashboardSidebarLayout title="Laporan" description="Lihat dan kelola ringkasan dari penjualan anda">
-            <Head title="Laporan" />
+        <DashboardSidebarLayout title={t('dashboardAdvance.report.layoutTitle')} description={t('dashboardAdvance.report.layoutDescription')}>
+            <Head title={t('dashboardAdvance.report.headTitle')} />
 
-            <div className="flex min-h-screen flex-col gap-6 bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
+            <div className="flex min-h-screen flex-col gap-6 bg-[var(--page-bg)] p-4 sm:p-6">
                 <SalesFilterBar routeName="dashboard.reports.index" outlets={outlets} filters={filters} showPrint={false} />
 
                 <div className="-mt-2 flex flex-wrap items-center justify-between gap-3">
-                    <p className="text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                        Periode <span className="font-medium text-[var(--subheading)] dark:text-white">{filters.label}</span>
-                        {compare ? ' · dibandingkan periode sebelumnya.' : ' · laporan periode ini.'}
+                    <p className="text-xs text-[var(--grey-text)]">
+                        {t('dashboardAdvance.report.periodPrefix')} <span className="font-medium text-[var(--subheading)]">{filters.label}</span>
+                        {compare ? t('dashboardAdvance.report.periodComparedSuffix') : t('dashboardAdvance.report.periodCurrentSuffix')}
                     </p>
                     <button
                         type="button"
                         role="switch"
                         aria-checked={compare}
                         onClick={() => setCompare((v) => !v)}
-                        className="flex cursor-pointer items-center gap-2.5 text-xs font-medium text-[var(--grey-text)] select-none dark:text-[var(--muted-foreground)]"
+                        className="flex cursor-pointer items-center gap-2.5 text-xs font-medium text-[var(--grey-text)] select-none"
                     >
-                        Bandingkan periode sebelumnya
+                        {t('dashboardAdvance.report.compareToggleLabel')}
                         <span
                             className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
-                                compare ? 'bg-[var(--surface-header)]' : 'bg-[var(--border)] dark:bg-[var(--border-strong)]'
+                                compare ? 'bg-[var(--surface-header)]' : 'bg-[var(--border-strong)]'
                             }`}
                         >
                             <span
@@ -136,17 +140,17 @@ export default function Report({ filters, outlets, statement, productSales, cate
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                     <nav className="flex flex-row flex-wrap gap-2 lg:col-span-3 lg:flex-col">
-                        {TABS.map((t) => (
+                        {TABS.map((tItem) => (
                             <button
-                                key={t.key}
-                                onClick={() => setTab(t.key)}
+                                key={tItem.key}
+                                onClick={() => setTab(tItem.key)}
                                 className={`rounded-lg px-4 py-2.5 text-left text-sm font-medium transition-colors ${
-                                    tab === t.key
+                                    tab === tItem.key
                                         ? 'bg-[var(--surface-header)] text-white'
-                                        : 'bg-[var(--neutral-white)] text-[var(--grey-text)] hover:bg-[var(--second-accent)] dark:bg-[var(--card)] dark:text-[var(--muted-foreground)] dark:hover:bg-[var(--border-strong)]'
+                                        : 'bg-[var(--card)] text-[var(--grey-text)] hover:bg-[var(--second-accent)]'
                                 }`}
                             >
-                                {t.label}
+                                {tItem.label}
                             </button>
                         ))}
                     </nav>
@@ -156,15 +160,15 @@ export default function Report({ filters, outlets, statement, productSales, cate
                             <StatementCard
                                 lines={salesLines}
                                 compare={compare}
-                                report={buildStatementExport(salesLines, 'Laporan Penjualan', 'laporan-penjualan')}
+                                report={buildStatementExport(salesLines, t('dashboardAdvance.report.tabs.sales'), 'laporan-penjualan')}
                             />
                         )}
                         {tab === 'laba' && (
                             <StatementCard
                                 lines={labaLines}
                                 compare={compare}
-                                note="Laba Kotor adalah Nett Sales dikurangi Harga Pokok Penjualan (COGS). Pastikan semua produk memiliki COGS agar laba kotor akurat."
-                                report={buildStatementExport(labaLines, 'Laba Kotor', 'laba-kotor')}
+                                note={t('dashboardAdvance.report.grossProfitNote')}
+                                report={buildStatementExport(labaLines, t('dashboardAdvance.report.tabs.grossProfit'), 'laba-kotor')}
                             />
                         )}
                         {tab === 'produk' && <ProductTable rows={productSales} subtitle={subtitle} periodSuffix={periodSuffix} company={COMPANY} />}

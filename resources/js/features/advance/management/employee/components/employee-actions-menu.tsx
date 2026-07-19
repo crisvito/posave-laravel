@@ -1,4 +1,5 @@
 import { DropdownActionMenu } from '@/components';
+import { useLanguage } from '@/hooks';
 import { Eye, Pencil, Trash2 } from 'lucide-react';
 
 export interface Employee {
@@ -22,14 +23,16 @@ interface EmployeeActionsMenuProps {
 }
 
 export function EmployeeActionsMenu({ employee, position, onClose, onView, onEdit, onDelete }: EmployeeActionsMenuProps) {
+    const { t } = useLanguage();
+
     return (
         <DropdownActionMenu
             position={position}
             onClose={onClose}
             items={[
-                { label: 'Lihat', icon: Eye, onClick: () => onView(employee) },
-                { label: 'Ubah', icon: Pencil, onClick: () => onEdit(employee) },
-                { label: 'Hapus', icon: Trash2, onClick: () => onDelete(employee.id), variant: 'danger' },
+                { label: t('dashboardAdvance.employees.actionsMenu.view'), icon: Eye, onClick: () => onView(employee) },
+                { label: t('dashboardAdvance.employees.actionsMenu.edit'), icon: Pencil, onClick: () => onEdit(employee) },
+                { label: t('dashboardAdvance.employees.actionsMenu.delete'), icon: Trash2, onClick: () => onDelete(employee.id), variant: 'danger' },
             ]}
         />
     );

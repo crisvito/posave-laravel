@@ -5,7 +5,7 @@ import {
     InventoryCategoryEditModal,
     type InventoryCategory,
 } from '@/features/advance/management/inventory/components';
-import { useConfirmAction, useDropdownMenu, useFilters } from '@/hooks';
+import { useConfirmAction, useDropdownMenu, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
 import { MoreVertical, Plus } from 'lucide-react';
@@ -24,6 +24,7 @@ interface InventoryCategoryListProps {
 }
 
 export default function InventoryCategoryList({ categories, filters, can_manage_catalog }: InventoryCategoryListProps) {
+    const { t } = useLanguage();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editCategory, setEditCategory] = useState<InventoryCategory | null>(null);
     const { search, setSearch, applyFilters, handleSearch } = useFilters('dashboard.inventory.categories.index', filters);
@@ -36,20 +37,25 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
     };
 
     const handleDelete = (id: number) => {
-        confirmAndDelete(
-            'Yakin ingin menghapus kategori ini? Barang yang terhubung tidak akan terhapus.',
-            route('dashboard.inventory.categories.destroy', id),
-        );
+        confirmAndDelete(t('dashboardAdvance.inventoryCategories.list.deleteConfirm'), route('dashboard.inventory.categories.destroy', id));
         closeMenu();
     };
     const activeMenuCategory = categories.data.find((c) => c.id === openMenuId);
 
     return (
-        <DashboardSidebarLayout title="Kategori" description="Kelola daftar kategori untuk barang-barang anda">
-            <Head title="Kategori" />
+        <DashboardSidebarLayout
+            title={t('dashboardAdvance.inventoryCategories.list.layoutTitle')}
+            description={t('dashboardAdvance.inventoryCategories.list.layoutDescription')}
+        >
+            <Head title={t('dashboardAdvance.inventoryCategories.list.headTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-                    <SearchInput value={search} onChange={setSearch} onSubmit={handleSearch} placeholder="Cari kategori..." />
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        onSubmit={handleSearch}
+                        placeholder={t('dashboardAdvance.inventoryCategories.list.searchPlaceholder')}
+                    />
 
                     <div className="flex flex-wrap items-center gap-3">
                         {can_manage_catalog && (
@@ -58,7 +64,7 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                                 className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]"
                             >
                                 <Plus className="mr-2 h-4 w-4" />
-                                Buat Kategori
+                                {t('dashboardAdvance.inventoryCategories.list.createButton')}
                             </Button>
                         )}
                     </div>
@@ -69,9 +75,17 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                         <Table className="min-w-[420px]">
                             <TableHeader className="bg-[var(--surface-header)]">
                                 <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="text-[var(--text-light)]">Nama Kategori</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Barang Terdaftar</TableHead>
-                                    {can_manage_catalog && <TableHead className="w-[60px] text-[var(--text-light)]">Aksi</TableHead>}
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryCategories.list.columnName')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryCategories.list.columnItemsCount')}
+                                    </TableHead>
+                                    {can_manage_catalog && (
+                                        <TableHead className="w-[60px] text-[var(--text-light)]">
+                                            {t('dashboardAdvance.inventoryCategories.list.columnAction')}
+                                        </TableHead>
+                                    )}
                                 </TableRow>
                             </TableHeader>
 
@@ -81,8 +95,8 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                                         colSpan={can_manage_catalog ? 3 : 2}
                                         message={
                                             filters.search
-                                                ? `Kategori "${filters.search}" tidak ditemukan`
-                                                : 'Belum ada kategori, buat kategori terlebih dahulu'
+                                                ? `${t('dashboardAdvance.inventoryCategories.list.notFoundPrefix')} "${filters.search}" ${t('dashboardAdvance.inventoryCategories.list.notFoundSuffix')}`
+                                                : t('dashboardAdvance.inventoryCategories.list.emptyState')
                                         }
                                     />
                                 ) : (
@@ -93,13 +107,15 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                                                     className="rounded-full px-3 py-1 text-xs font-medium"
                                                     style={{
                                                         backgroundColor: `${category.color ?? '#94a3b8'}1a`,
-                                                        color: category.color ?? '#64748b',
+                                                        color: category.color ?? '#94a3b8',
                                                     }}
                                                 >
                                                     {category.name}
                                                 </span>
                                             </TableCell>
-                                            <TableCell className="text-[var(--grey-text)]">{category.items_count} Barang</TableCell>
+                                            <TableCell className="text-[var(--grey-text)]">
+                                                {category.items_count} {t('dashboardAdvance.inventoryCategories.list.itemsCountSuffix')}
+                                            </TableCell>
                                             {can_manage_catalog && (
                                                 <TableCell className="relative">
                                                     <Button
@@ -126,7 +142,7 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                     from={categories.from ?? 0}
                     to={categories.to ?? 0}
                     total={categories.total}
-                    itemLabel="Kategori"
+                    itemLabel={t('dashboardAdvance.inventoryCategories.list.itemLabel')}
                     links={categories.links}
                     perPage={filters.per_page ?? '5'}
                     onPerPageChange={(v) => applyFilters({ per_page: v })}

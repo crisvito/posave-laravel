@@ -1,4 +1,5 @@
 import { Button, Input, Label } from '@/components';
+import { useLanguage } from '@/hooks';
 import { useForm } from '@inertiajs/react';
 import { ArrowRight, ChevronDown, Plus, Trash2, X } from 'lucide-react';
 import React from 'react';
@@ -22,6 +23,7 @@ interface InventoryTransferCreateModalProps {
 }
 
 export function InventoryTransferCreateModal({ inventoryItems, branches, myBranchId, isBranchManager, onClose }: InventoryTransferCreateModalProps) {
+    const { t } = useLanguage();
     const [direction, setDirection] = React.useState<'send' | 'receive'>('send');
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -64,23 +66,23 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
     };
 
     const inputClass =
-        'w-full appearance-none rounded-md border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)] dark:text-white';
+        'w-full appearance-none rounded-md border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm text-[var(--subheading)] shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)]';
     const lockedBranchName = branches.find((b) => b.id === myBranchId)?.name ?? '';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-            <div className="w-full max-w-lg rounded-2xl bg-[var(--neutral-white)] p-6 shadow-xl dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+            <div className="w-full max-w-lg rounded-2xl bg-[var(--card)] p-6 shadow-xl">
                 <div className="mb-5 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-[var(--subheading)] dark:text-white">Buat Kiriman Baru</h3>
+                    <h3 className="text-lg font-bold text-[var(--subheading)]">{t('dashboardAdvance.inventoryTransfers.createModal.title')}</h3>
                     <button
                         type="button"
                         onClick={() => {
                             reset();
                             onClose();
                         }}
-                        aria-label="Tutup"
+                        aria-label={t('dashboardAdvance.inventoryTransfers.createModal.closeAriaLabel')}
                     >
-                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)] dark:hover:text-white" />
+                        <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
                     </button>
                 </div>
 
@@ -93,27 +95,29 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                     onClick={() => handleDirectionChange('send')}
                                     className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition ${
                                         direction === 'send'
-                                            ? 'border-[var(--surface-header)] bg-[var(--second-accent)] dark:bg-[var(--second-accent)] dark:text-white'
+                                            ? 'border-[var(--surface-header)] bg-[var(--second-accent)] text-[var(--subheading)]'
                                             : 'border-[var(--border-strong)] text-[var(--grey-text)]'
                                     }`}
                                 >
-                                    Kirim ke cabang lain
+                                    {t('dashboardAdvance.inventoryTransfers.createModal.sendDirectionLabel')}
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => handleDirectionChange('receive')}
                                     className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition ${
                                         direction === 'receive'
-                                            ? 'border-[var(--surface-header)] bg-[var(--second-accent)] dark:bg-[var(--second-accent)] dark:text-white'
+                                            ? 'border-[var(--surface-header)] bg-[var(--second-accent)] text-[var(--subheading)]'
                                             : 'border-[var(--border-strong)] text-[var(--grey-text)]'
                                     }`}
                                 >
-                                    Minta dari cabang lain
+                                    {t('dashboardAdvance.inventoryTransfers.createModal.receiveDirectionLabel')}
                                 </button>
                             </div>
 
-                            <div className="flex items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2.5 text-sm dark:text-white">
-                                <span className="font-semibold text-[var(--subheading)] dark:text-white">{lockedBranchName || 'Cabang saya'}</span>
+                            <div className="flex items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2.5 text-sm text-[var(--subheading)]">
+                                <span className="font-semibold text-[var(--subheading)]">
+                                    {lockedBranchName || t('dashboardAdvance.inventoryTransfers.createModal.myBranchFallback')}
+                                </span>
                                 <ArrowRight className="h-4 w-4 text-[var(--grey-text)]" />
                                 <div className="relative flex-1">
                                     <select
@@ -123,10 +127,10 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                                 ? setData('receiver_branch_id', e.target.value)
                                                 : setData('sender_branch_id', e.target.value)
                                         }
-                                        className={`${inputClass} bg-white dark:bg-[var(--card)]`}
+                                        className={`${inputClass} bg-[var(--card)]`}
                                     >
                                         <option value="" disabled>
-                                            Pilih cabang
+                                            {t('dashboardAdvance.inventoryTransfers.createModal.branchPlaceholder')}
                                         </option>
                                         {branches
                                             .filter((b) => b.id !== myBranchId)
@@ -136,71 +140,77 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                                 </option>
                                             ))}
                                     </select>
-                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                                 </div>
                             </div>
                         </>
                     ) : (
                         <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Cabang Pengirim</label>
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
+                                    {t('dashboardAdvance.inventoryTransfers.createModal.senderBranchLabel')}
+                                </label>
                                 <div className="relative">
                                     <select
                                         value={data.sender_branch_id}
                                         onChange={(e) => setData('sender_branch_id', e.target.value)}
                                         className={`${inputClass} appearance-none`}
                                     >
-                                        <option value="" disabled className="dark:bg-[var(--card)]">
-                                            Pilih cabang
+                                        <option value="" disabled className="bg-[var(--card)]">
+                                            {t('dashboardAdvance.inventoryTransfers.createModal.branchPlaceholder')}
                                         </option>
                                         {branches.map((b) => (
-                                            <option key={b.id} value={b.id} className="dark:bg-[var(--card)]">
+                                            <option key={b.id} value={b.id} className="bg-[var(--card)]">
                                                 {b.name}
                                             </option>
                                         ))}
                                     </select>
-                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                                 </div>
                             </div>
                             <div>
-                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Cabang Penerima</label>
+                                <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
+                                    {t('dashboardAdvance.inventoryTransfers.createModal.receiverBranchLabel')}
+                                </label>
                                 <div className="relative">
                                     <select
                                         value={data.receiver_branch_id}
                                         onChange={(e) => setData('receiver_branch_id', e.target.value)}
                                         className={`${inputClass} appearance-none`}
                                     >
-                                        <option value="" disabled className="dark:bg-[var(--card)]">
-                                            Pilih cabang
+                                        <option value="" disabled className="bg-[var(--card)]">
+                                            {t('dashboardAdvance.inventoryTransfers.createModal.branchPlaceholder')}
                                         </option>
                                         {branches
                                             .filter((b) => String(b.id) !== data.sender_branch_id)
                                             .map((b) => (
-                                                <option key={b.id} value={b.id} className="dark:bg-[var(--card)]">
+                                                <option key={b.id} value={b.id} className="bg-[var(--card)]">
                                                     {b.name}
                                                 </option>
                                             ))}
                                     </select>
-                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                                 </div>
                             </div>
                         </div>
                     )}
 
                     <div>
-                        <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)] dark:text-white">Tanggal</label>
+                        <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
+                            {t('dashboardAdvance.inventoryTransfers.createModal.dateLabel')}
+                        </label>
                         <input type="date" value={data.date} onChange={(e) => setData('date', e.target.value)} className={inputClass} />
                     </div>
 
                     <div>
                         <div className="mb-2 flex items-center justify-between">
-                            <Label>Barang</Label>
+                            <Label>{t('dashboardAdvance.inventoryTransfers.createModal.itemsLabel')}</Label>
                             <button
                                 type="button"
                                 onClick={addItem}
-                                className="flex items-center gap-1 text-sm font-medium text-[var(--bright-accent)] hover:underline"
+                                className="flex items-center gap-1 text-sm font-medium text-[var(--secondary-600)] hover:underline"
                             >
-                                <Plus className="h-4 w-4" /> Tambah Barang
+                                <Plus className="h-4 w-4" /> {t('dashboardAdvance.inventoryTransfers.createModal.addItemButton')}
                             </button>
                         </div>
                         <div className="flex flex-col gap-3">
@@ -211,11 +221,11 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                         onChange={(e) => updateItem(index, 'inventory_item_id', e.target.value)}
                                         className={`${inputClass} appearance-none`}
                                     >
-                                        <option value="" disabled className="dark:bg-[var(--card)]">
-                                            Pilih barang
+                                        <option value="" disabled className="bg-[var(--card)]">
+                                            {t('dashboardAdvance.inventoryTransfers.createModal.itemPlaceholder')}
                                         </option>
                                         {inventoryItems.map((i) => (
-                                            <option key={i.id} value={i.id} className="dark:bg-[var(--card)]">
+                                            <option key={i.id} value={i.id} className="bg-[var(--card)]">
                                                 {i.name} ({i.sku})
                                             </option>
                                         ))}
@@ -225,15 +235,16 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                         min={1}
                                         value={item.quantity}
                                         onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
-                                        placeholder="Qty"
+                                        placeholder={t('dashboardAdvance.inventoryTransfers.createModal.qtyPlaceholder')}
                                     />
                                     {data.items.length > 1 && (
                                         <button
                                             type="button"
                                             onClick={() => removeItem(index)}
-                                            className="rounded-md p-1 hover:bg-red-50 dark:hover:bg-red-900/30"
+                                            aria-label={t('dashboardAdvance.inventoryTransfers.createModal.removeItemAriaLabel')}
+                                            className="rounded-md p-1 hover:bg-[var(--danger-background)]"
                                         >
-                                            <Trash2 className="h-5 w-5 text-red-500" />
+                                            <Trash2 className="h-5 w-5 text-[var(--danger)]" />
                                         </button>
                                     )}
                                 </div>
@@ -249,16 +260,17 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                 reset();
                                 onClose();
                             }}
-                            className="dark:text-white"
                         >
-                            Batal
+                            {t('dashboardAdvance.inventoryTransfers.createModal.cancel')}
                         </Button>
                         <Button
                             type="submit"
                             disabled={processing}
-                            className="bg-[var(--surface-header)] text-white hover:bg-[var(--surface-header-hover)] dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                            className="bg-[var(--surface-header)] text-white hover:bg-[var(--surface-header-hover)]"
                         >
-                            {processing ? 'Mengirim...' : 'Kirim Permintaan'}
+                            {processing
+                                ? t('dashboardAdvance.inventoryTransfers.createModal.submitting')
+                                : t('dashboardAdvance.inventoryTransfers.createModal.submitLabel')}
                         </Button>
                     </div>
                 </form>

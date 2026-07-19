@@ -21,7 +21,7 @@ import {
     type InventoryCategory,
     type InventoryItem,
 } from '@/features/advance/management/inventory/components';
-import { useConfirmAction, useDropdownMenu, useFilters } from '@/hooks';
+import { useConfirmAction, useDropdownMenu, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
 import axios from 'axios';
@@ -45,6 +45,7 @@ interface InventoryItemListProps {
 }
 
 export default function InventoryItemList({ items, categories, branches, filters, is_branch_manager, can_manage_catalog }: InventoryItemListProps) {
+    const { t } = useLanguage();
     const { openId: openMenuId, position: menuPosition, buttonRefs, toggleMenu, closeMenu } = useDropdownMenu();
     const [detailItem, setDetailItem] = useState<InventoryItem | null>(null);
     const [editItem, setEditItem] = useState<InventoryItem | null>(null);
@@ -68,7 +69,7 @@ export default function InventoryItemList({ items, categories, branches, filters
     };
 
     const handleDelete = (id: number) => {
-        confirmAndDelete('Yakin ingin menghapus barang ini?', route('dashboard.inventory.items.destroy', id));
+        confirmAndDelete(t('dashboardAdvance.inventoryItems.list.deleteConfirm'), route('dashboard.inventory.items.destroy', id));
         closeMenu();
     };
 
@@ -76,9 +77,11 @@ export default function InventoryItemList({ items, categories, branches, filters
     const activeBranchName = branches.find((b) => String(b.id) === filters.branch_id)?.name;
     const selectedBranchId = resolveBranchId({ isBranchManager: is_branch_manager, branches, filterBranchId: filters.branch_id });
     const getStockStatus = (item: InventoryItem) => {
-        if (item.current_stock === 0) return { label: 'Stok Habis', color: 'bg-[var(--danger-background)] text-[var(--danger)]' };
-        if (item.current_stock <= item.min_stock) return { label: 'Stok Rendah', color: 'bg-[var(--warning-background)] text-[var(--warning)]' };
-        return { label: 'Aman', color: 'bg-[var(--success-background)] text-[var(--success)]' };
+        if (item.current_stock === 0)
+            return { label: t('dashboardAdvance.inventoryItems.list.statusOutOfStock'), color: 'bg-[var(--danger-background)] text-[var(--danger)]' };
+        if (item.current_stock <= item.min_stock)
+            return { label: t('dashboardAdvance.inventoryItems.list.statusLowStock'), color: 'bg-[var(--warning-background)] text-[var(--warning)]' };
+        return { label: t('dashboardAdvance.inventoryItems.list.statusSafe'), color: 'bg-[var(--success-background)] text-[var(--success)]' };
     };
 
     const handleStockAdjust = async (item: InventoryItem, delta: number) => {
@@ -93,15 +96,18 @@ export default function InventoryItemList({ items, categories, branches, filters
             });
             setItemRows((prev) => prev.map((i) => (i.id === item.id ? { ...i, current_stock: res.data.current_stock } : i)));
         } catch {
-            alert('Gagal mengubah stok, coba lagi.');
+            alert(t('dashboardAdvance.inventoryItems.list.stockErrorAlert'));
         } finally {
             setPendingStockId(null);
         }
     };
 
     return (
-        <DashboardSidebarLayout title="Daftar Barang" description="kelola semua barang dan stok inventori anda">
-            <Head title="Daftar Barang" />
+        <DashboardSidebarLayout
+            title={t('dashboardAdvance.inventoryItems.list.layoutTitle')}
+            description={t('dashboardAdvance.inventoryItems.list.layoutDescription')}
+        >
+            <Head title={t('dashboardAdvance.inventoryItems.list.headTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
                 <div className="mb-5 flex flex-col items-start justify-between gap-5">
                     <div className="flex w-full justify-between">
@@ -110,29 +116,39 @@ export default function InventoryItemList({ items, categories, branches, filters
                                 <FilterDropdown
                                     value={filters.branch_id}
                                     options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
-                                    allLabel="Semua Cabang"
+                                    allLabel={t('dashboardAdvance.inventoryItems.list.allBranches')}
                                     onChange={(v) => applyFilters({ branch_id: v })}
                                     icon={<Store className="h-4 w-4" />}
                                 />
                             ) : (
                                 <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)]">
                                     <Store className="h-4 w-4" />
-                                    {branches[0]?.name ?? 'Cabang Anda'}
+                                    {branches[0]?.name ?? t('dashboardAdvance.inventoryItems.list.yourBranchFallback')}
                                 </div>
                             )}
                         </div>
                         <div className="flex items-center gap-3">
-                            {can_manage_catalog && <CreateButton label="Buat Barang" onClick={() => setShowCreateModal(true)} />}
+                            {can_manage_catalog && (
+                                <CreateButton
+                                    label={t('dashboardAdvance.inventoryItems.list.createButton')}
+                                    onClick={() => setShowCreateModal(true)}
+                                />
+                            )}
                             <PrintButton />
                         </div>
                     </div>
                     <div className="flex w-full items-center justify-between">
-                        <SearchInput value={search} onChange={setSearch} onSubmit={handleSearch} placeholder="Cari nama barang..." />
+                        <SearchInput
+                            value={search}
+                            onChange={setSearch}
+                            onSubmit={handleSearch}
+                            placeholder={t('dashboardAdvance.inventoryItems.list.searchPlaceholder')}
+                        />
 
                         <FilterDropdown
                             value={filters.category_id}
                             options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
-                            allLabel="Semua Kategori"
+                            allLabel={t('dashboardAdvance.inventoryItems.list.allCategories')}
                             onChange={(v) => applyFilters({ category_id: v })}
                         />
                     </div>
@@ -143,14 +159,27 @@ export default function InventoryItemList({ items, categories, branches, filters
                         <Table className="min-w-[840px]">
                             <TableHeader className="bg-[var(--surface-header)]">
                                 <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="text-[var(--text-light)]">Nama Barang</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Kategori</TableHead>
+                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.inventoryItems.list.columnName')}</TableHead>
                                     <TableHead className="text-[var(--text-light)]">
-                                        Stok {activeBranchName ? `(${activeBranchName})` : is_branch_manager ? '' : '(Semua Cabang)'}
+                                        {t('dashboardAdvance.inventoryItems.list.columnCategory')}
                                     </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Harga</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Status</TableHead>
-                                    <TableHead className="w-[60px] text-[var(--text-light)]">Aksi</TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryItems.list.columnStock')}{' '}
+                                        {activeBranchName
+                                            ? `(${activeBranchName})`
+                                            : is_branch_manager
+                                              ? ''
+                                              : t('dashboardAdvance.inventoryItems.list.allBranchesSuffix')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryItems.list.columnPrice')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryItems.list.columnStatus')}
+                                    </TableHead>
+                                    <TableHead className="w-[60px] text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryItems.list.columnAction')}
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
 
@@ -159,9 +188,12 @@ export default function InventoryItemList({ items, categories, branches, filters
                                     <TableEmptyState
                                         colSpan={7}
                                         icon={Package}
-                                        message="Belum ada Barang"
-                                        description="Klik tombol Untuk Buat Barang"
-                                        action={{ label: '+ Buat Barang', onClick: () => setShowCreateModal(true) }}
+                                        message={t('dashboardAdvance.inventoryItems.list.emptyTitle')}
+                                        description={t('dashboardAdvance.inventoryItems.list.emptyDescription')}
+                                        action={{
+                                            label: t('dashboardAdvance.inventoryItems.list.emptyActionLabel'),
+                                            onClick: () => setShowCreateModal(true),
+                                        }}
                                     />
                                 ) : (
                                     itemRows.map((item) => {
@@ -203,7 +235,7 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                     {canAdjustStock ? (
                                                         <div className="flex items-center gap-2">
                                                             <button
-                                                                aria-label={`Kurangi stok ${item.name}`}
+                                                                aria-label={`${t('dashboardAdvance.inventoryItems.list.decreaseStockAriaLabelPrefix')} ${item.name}`}
                                                                 disabled={isPending || item.current_stock === 0}
                                                                 onClick={() => handleStockAdjust(item, -1)}
                                                                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--border-strong)] hover:bg-[var(--second-accent)] disabled:opacity-30"
@@ -214,7 +246,7 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                                 {item.current_stock}
                                                             </span>
                                                             <button
-                                                                aria-label={`Tambah stok ${item.name}`}
+                                                                aria-label={`${t('dashboardAdvance.inventoryItems.list.increaseStockAriaLabelPrefix')} ${item.name}`}
                                                                 disabled={isPending}
                                                                 onClick={() => handleStockAdjust(item, 1)}
                                                                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--border-strong)] hover:bg-[var(--second-accent)] disabled:opacity-30"
@@ -223,7 +255,9 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                             </button>
                                                         </div>
                                                     ) : (
-                                                        <span title="Pilih cabang dulu untuk atur stok">{item.current_stock}</span>
+                                                        <span title={t('dashboardAdvance.inventoryItems.list.selectBranchTitle')}>
+                                                            {item.current_stock}
+                                                        </span>
                                                     )}
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap text-[var(--grey-text)]">
@@ -231,7 +265,9 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                 </TableCell>
                                                 <TableCell>
                                                     <div>
-                                                        <div className="text-xs text-[var(--grey-text)]">Min. {item.min_stock}</div>
+                                                        <div className="text-xs text-[var(--grey-text)]">
+                                                            {t('dashboardAdvance.inventoryItems.list.minStockPrefix')} {item.min_stock}
+                                                        </div>
                                                         <span
                                                             className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ${status.color}`}
                                                         >
@@ -253,11 +289,11 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                         </Button>
                                                     ) : (
                                                         <button
-                                                            aria-label={`Lihat detail ${item.name}`}
+                                                            aria-label={`${t('dashboardAdvance.inventoryItems.list.viewDetailAriaLabelPrefix')} ${item.name}`}
                                                             onClick={() => handleShowDetail(item)}
                                                             className="text-xs font-medium whitespace-nowrap text-[var(--secondary-600)] hover:underline"
                                                         >
-                                                            Lihat
+                                                            {t('dashboardAdvance.inventoryItems.list.viewLabel')}
                                                         </button>
                                                     )}
                                                 </TableCell>
@@ -274,7 +310,7 @@ export default function InventoryItemList({ items, categories, branches, filters
                     from={items.from ?? 0}
                     to={items.to ?? 0}
                     total={items.total}
-                    itemLabel="Barang"
+                    itemLabel={t('dashboardAdvance.inventoryItems.list.itemLabel')}
                     links={items.links}
                     perPage={filters.per_page ?? '5'}
                     onPerPageChange={(v) => applyFilters({ per_page: v })}

@@ -15,7 +15,7 @@ import {
     TableRow,
 } from '@/components';
 import { InventoryAdjustmentActionsMenu, InventoryAdjustmentCreateModal, type Adjustment } from '@/features/advance/management/inventory/components';
-import { useConfirmAction, useDropdownMenu, useFilters } from '@/hooks';
+import { useConfirmAction, useDropdownMenu, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
 import { ArrowUpDown, MoreVertical, Package, Store } from 'lucide-react';
@@ -43,19 +43,21 @@ interface InventoryAdjustmentProps {
 }
 
 export default function InventoryAdjustment({ adjustments, stats, inventoryItems, branches, is_branch_manager, filters }: InventoryAdjustmentProps) {
+    const { locale, t } = useLanguage();
     const { openId: openMenuId, position: menuPosition, buttonRefs, toggleMenu, closeMenu } = useDropdownMenu();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const { search, setSearch, applyFilters, handleSearch } = useFilters('dashboard.inventory.adjustments.index', filters);
     const currentDate = filters.date ?? new Date().toISOString().slice(0, 10);
     const { confirmAndDelete, confirmDialog } = useConfirmAction();
+    const dateLocale = locale === 'en' ? 'en-US' : 'id-ID';
 
     const handleDelete = (id: number) => {
-        confirmAndDelete('Yakin ingin menghapus riwayat ini? Stok barang akan dikembalikan.', route('dashboard.inventory.adjustments.destroy', id));
+        confirmAndDelete(t('dashboardAdvance.inventoryAdjustments.list.deleteConfirm'), route('dashboard.inventory.adjustments.destroy', id));
         closeMenu();
     };
 
     const groupedAdjustments = adjustments.data.reduce<Record<string, Adjustment[]>>((acc, row) => {
-        const dateKey = new Date(row.date).toLocaleDateString('id-ID', {
+        const dateKey = new Date(row.date).toLocaleDateString(dateLocale, {
             weekday: 'long',
             day: 'numeric',
             month: 'long',
@@ -69,15 +71,18 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
     const activeMenuAdj = adjustments.data.find((a) => a.id === openMenuId);
 
     const statusOptions = [
-        { value: 'in', label: 'Masuk' },
-        { value: 'out', label: 'Keluar' },
+        { value: 'in', label: t('dashboardAdvance.inventoryAdjustments.list.statusIn') },
+        { value: 'out', label: t('dashboardAdvance.inventoryAdjustments.list.statusOut') },
     ];
 
     const defaultBranchId = resolveBranchId({ isBranchManager: is_branch_manager, branches, filterBranchId: filters.branch_id });
 
     return (
-        <DashboardSidebarLayout title="Perubahan" description="Catat semua perubahan stok barang anda (penyesuaian)">
-            <Head title="Perubahan Stok" />
+        <DashboardSidebarLayout
+            title={t('dashboardAdvance.inventoryAdjustments.list.layoutTitle')}
+            description={t('dashboardAdvance.inventoryAdjustments.list.layoutDescription')}
+        >
+            <Head title={t('dashboardAdvance.inventoryAdjustments.list.headTitle')} />
 
             <div className="flex flex-col gap-6 p-4 sm:p-6">
                 <div className="flex flex-col gap-3">
@@ -87,14 +92,14 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                                 <FilterDropdown
                                     value={filters.branch_id}
                                     options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
-                                    allLabel="Semua Cabang"
+                                    allLabel={t('dashboardAdvance.inventoryAdjustments.list.allBranches')}
                                     onChange={(v) => applyFilters({ branch_id: v })}
                                     icon={<Store className="h-4 w-4" />}
                                 />
                             ) : (
                                 <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)]">
                                     <Store className="h-4 w-4" />
-                                    {branches[0]?.name ?? 'Cabang Anda'}
+                                    {branches[0]?.name ?? t('dashboardAdvance.inventoryAdjustments.list.yourBranchFallback')}
                                 </div>
                             )}
 
@@ -102,18 +107,26 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <CreateButton label="Perubahan" onClick={() => setShowCreateModal(true)} />
-                            <PrintButton label="Cetak" />
+                            <CreateButton
+                                label={t('dashboardAdvance.inventoryAdjustments.list.createButton')}
+                                onClick={() => setShowCreateModal(true)}
+                            />
+                            <PrintButton label={t('dashboardAdvance.inventoryAdjustments.list.printButton')} />
                         </div>
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <SearchInput value={search} onChange={setSearch} onSubmit={handleSearch} placeholder="Cari barang..." />
+                        <SearchInput
+                            value={search}
+                            onChange={setSearch}
+                            onSubmit={handleSearch}
+                            placeholder={t('dashboardAdvance.inventoryAdjustments.list.searchPlaceholder')}
+                        />
 
                         <FilterDropdown
                             value={filters.status}
                             options={statusOptions}
-                            allLabel="Semua"
+                            allLabel={t('dashboardAdvance.inventoryAdjustments.list.statusAll')}
                             onChange={(v) => applyFilters({ status: v })}
                             className="shrink-0"
                         />
@@ -127,8 +140,12 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                         </div>
                         <div className="min-w-0">
                             <p className="text-lg font-bold text-[var(--subheading)] sm:text-2xl">{stats.total_changes}</p>
-                            <p className="text-xs leading-tight font-medium text-[var(--subheading)] sm:text-sm">Perubahan</p>
-                            <p className="hidden text-[10px] leading-tight text-[var(--grey-text)] sm:block sm:text-xs">Total Transaksi Perubahan</p>
+                            <p className="text-xs leading-tight font-medium text-[var(--subheading)] sm:text-sm">
+                                {t('dashboardAdvance.inventoryAdjustments.list.statTotalChangesLabel')}
+                            </p>
+                            <p className="hidden text-[10px] leading-tight text-[var(--grey-text)] sm:block sm:text-xs">
+                                {t('dashboardAdvance.inventoryAdjustments.list.statTotalChangesDescription')}
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-3 shadow-sm sm:gap-4 sm:p-5">
@@ -137,9 +154,11 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                         </div>
                         <div className="min-w-0">
                             <p className="text-lg font-bold text-[var(--subheading)] sm:text-2xl">{stats.items_changed}</p>
-                            <p className="text-xs leading-tight font-medium text-[var(--subheading)] sm:text-sm">Item dirubah</p>
+                            <p className="text-xs leading-tight font-medium text-[var(--subheading)] sm:text-sm">
+                                {t('dashboardAdvance.inventoryAdjustments.list.statItemsChangedLabel')}
+                            </p>
                             <p className="hidden text-[10px] leading-tight text-[var(--grey-text)] sm:block sm:text-xs">
-                                Jumlah item yang disesuaikan
+                                {t('dashboardAdvance.inventoryAdjustments.list.statItemsChangedDescription')}
                             </p>
                         </div>
                     </div>
@@ -151,8 +170,12 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                             <p className="text-lg font-bold text-[var(--subheading)] sm:text-2xl">
                                 {Number(stats.total_income).toLocaleString('id-ID')}
                             </p>
-                            <p className="text-xs leading-tight font-medium text-[var(--subheading)] sm:text-sm">Total Pemasukan</p>
-                            <p className="hidden text-[10px] leading-tight text-[var(--grey-text)] sm:block sm:text-xs">Dari penyesuaian stok</p>
+                            <p className="text-xs leading-tight font-medium text-[var(--subheading)] sm:text-sm">
+                                {t('dashboardAdvance.inventoryAdjustments.list.statIncomeLabel')}
+                            </p>
+                            <p className="hidden text-[10px] leading-tight text-[var(--grey-text)] sm:block sm:text-xs">
+                                {t('dashboardAdvance.inventoryAdjustments.list.statSourceDescription')}
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-3 shadow-sm sm:gap-4 sm:p-5">
@@ -163,8 +186,12 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                             <p className="text-lg font-bold text-[var(--subheading)] sm:text-2xl">
                                 {Math.abs(Number(stats.total_expense)).toLocaleString('id-ID')}
                             </p>
-                            <p className="text-xs leading-tight font-medium text-[var(--subheading)] sm:text-sm">Total Pengeluaran</p>
-                            <p className="hidden text-[10px] leading-tight text-[var(--grey-text)] sm:block sm:text-xs">Dari penyesuaian stok</p>
+                            <p className="text-xs leading-tight font-medium text-[var(--subheading)] sm:text-sm">
+                                {t('dashboardAdvance.inventoryAdjustments.list.statExpenseLabel')}
+                            </p>
+                            <p className="hidden text-[10px] leading-tight text-[var(--grey-text)] sm:block sm:text-xs">
+                                {t('dashboardAdvance.inventoryAdjustments.list.statSourceDescription')}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -174,12 +201,24 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                         <Table className="min-w-[820px]">
                             <TableHeader className="bg-[var(--surface-header)]">
                                 <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="whitespace-nowrap text-[var(--text-light)]">Tanggal Perubahan</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Catatan</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Barang</TableHead>
-                                    <TableHead className="whitespace-nowrap text-[var(--text-light)]">Perubahan</TableHead>
-                                    <TableHead className="whitespace-nowrap text-[var(--text-light)]">Pemasukan/Pengeluaran</TableHead>
-                                    <TableHead className="w-[60px] text-center text-[var(--text-light)]">Aksi</TableHead>
+                                    <TableHead className="whitespace-nowrap text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryAdjustments.list.columnDate')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryAdjustments.list.columnNote')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryAdjustments.list.columnItem')}
+                                    </TableHead>
+                                    <TableHead className="whitespace-nowrap text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryAdjustments.list.columnChange')}
+                                    </TableHead>
+                                    <TableHead className="whitespace-nowrap text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryAdjustments.list.columnFinancial')}
+                                    </TableHead>
+                                    <TableHead className="w-[60px] text-center text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryAdjustments.list.columnAction')}
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -187,9 +226,12 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                                     <TableEmptyState
                                         colSpan={6}
                                         icon={Package}
-                                        message="Belum ada data perubahan"
-                                        description="Klik tombol Buat Perubahan untuk mencatat stok"
-                                        action={{ label: '+ Buat Perubahan', onClick: () => setShowCreateModal(true) }}
+                                        message={t('dashboardAdvance.inventoryAdjustments.list.emptyTitle')}
+                                        description={t('dashboardAdvance.inventoryAdjustments.list.emptyDescription')}
+                                        action={{
+                                            label: t('dashboardAdvance.inventoryAdjustments.list.emptyActionLabel'),
+                                            onClick: () => setShowCreateModal(true),
+                                        }}
                                     />
                                 ) : (
                                     Object.entries(groupedAdjustments).map(([dateLabel, rows]) => (
@@ -201,7 +243,7 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                                                     </div>
                                                 </TableCell>
                                                 <TableCell className="text-right text-sm font-medium whitespace-nowrap text-[var(--subheading)]">
-                                                    {rows.length} Perubahan
+                                                    {rows.length} {t('dashboardAdvance.inventoryAdjustments.list.groupCountSuffix')}
                                                 </TableCell>
                                             </TableRow>
 
@@ -209,10 +251,13 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                                                 <TableRow key={row.id}>
                                                     <TableCell className="whitespace-nowrap">
                                                         <p className="font-bold text-[var(--subheading)]">
-                                                            {new Date(row.date).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                                                            {new Date(row.date).toLocaleTimeString(dateLocale, {
+                                                                hour: '2-digit',
+                                                                minute: '2-digit',
+                                                            })}
                                                         </p>
                                                         <p className="text-xs text-[var(--grey-text)]">
-                                                            {new Date(row.date).toLocaleDateString('id-ID', {
+                                                            {new Date(row.date).toLocaleDateString(dateLocale, {
                                                                 day: 'numeric',
                                                                 month: 'long',
                                                                 year: 'numeric',
@@ -263,7 +308,7 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                     from={adjustments.from ?? 0}
                     to={adjustments.to ?? 0}
                     total={adjustments.total}
-                    itemLabel="Perubahan"
+                    itemLabel={t('dashboardAdvance.inventoryAdjustments.list.itemLabel')}
                     links={adjustments.links}
                     perPage={filters.per_page ?? '6'}
                     onPerPageChange={(v) => applyFilters({ per_page: v })}

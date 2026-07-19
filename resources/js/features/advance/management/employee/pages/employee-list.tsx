@@ -1,6 +1,6 @@
 import { Button, FilterDropdown, PaginationBar, Table, TableBody, TableCell, TableEmptyState, TableHead, TableHeader, TableRow } from '@/components';
 import { EmployeeActionsMenu, EmployeeDetailModal, EmployeeEditModal, type Employee } from '@/features/advance/management/employee/components';
-import { useConfirmAction, useDropdownMenu } from '@/hooks';
+import { useConfirmAction, useDropdownMenu, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import { MoreVertical, Plus, Printer, Store } from 'lucide-react';
@@ -28,6 +28,7 @@ interface EmployeeListProps {
 }
 
 export default function EmployeeList({ employees, branches, filters, is_branch_manager }: EmployeeListProps) {
+    const { t } = useLanguage();
     const [detailEmployee, setDetailEmployee] = useState<Employee | null>(null);
     const [editEmployee, setEditEmployee] = useState<Employee | null>(null);
     const { openId: openMenuId, position: menuPosition, buttonRefs, toggleMenu, closeMenu } = useDropdownMenu();
@@ -39,6 +40,19 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
         slot_status: '',
     });
     const { confirmAndDelete, confirmDialog } = useConfirmAction();
+
+    const roleLabel = (role: string) => {
+        if (role === 'cashier') return t('dashboardAdvance.employees.common.roleCashier');
+        if (role === 'branch_manager') return t('dashboardAdvance.employees.common.roleBranchManager');
+        if (role === 'owner') return t('dashboardAdvance.employees.common.roleOwner');
+        return role;
+    };
+
+    const slotStatusLabel = (status: string) => {
+        if (status === 'on_shift') return t('dashboardAdvance.employees.common.slotOnShift');
+        if (status === 'off') return t('dashboardAdvance.employees.common.slotOff');
+        return t('dashboardAdvance.employees.common.slotAvailable');
+    };
 
     const applyFilters = (overrides: Record<string, string | undefined>) => {
         router.get(route('dashboard.employees.index'), { ...filters, ...overrides }, { preserveState: true, preserveScroll: true, replace: true });
@@ -73,7 +87,7 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
     };
 
     const handleDelete = (id: number) => {
-        confirmAndDelete('Yakin ingin menghapus karyawan ini? Akun login karyawan juga akan terhapus.', route('dashboard.employees.destroy', id));
+        confirmAndDelete(t('dashboardAdvance.employees.list.deleteConfirm'), route('dashboard.employees.destroy', id));
         closeMenu();
     };
 
@@ -81,80 +95,80 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
     const canManage = (employee: Employee) => !is_branch_manager || employee.role === 'cashier';
 
     return (
-        <DashboardSidebarLayout title="Daftar Karyawan" description="Kelola semua daftar karyawan anda">
-            <Head title="Daftar Karyawan" />
-            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
+        <DashboardSidebarLayout
+            title={t('dashboardAdvance.employees.list.layoutTitle')}
+            description={t('dashboardAdvance.employees.list.layoutDescription')}
+        >
+            <Head title={t('dashboardAdvance.employees.list.headTitle')} />
+            <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
                     {!is_branch_manager ? (
                         <FilterDropdown
                             value={filters.branch}
                             options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
-                            allLabel="Semua Cabang"
+                            allLabel={t('dashboardAdvance.employees.list.allBranches')}
                             icon={<Store className="h-4 w-4" />}
                             onChange={(v) => applyFilters({ branch: v })}
                         />
                     ) : (
-                        <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)] dark:bg-[var(--card)] dark:text-white">
+                        <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)]">
                             <Store className="h-4 w-4" />
-                            {branches[0]?.name ?? 'Cabang Anda'}
+                            {branches[0]?.name ?? t('dashboardAdvance.employees.list.yourBranchFallback')}
                         </div>
                     )}
 
                     <div className="flex flex-wrap items-center gap-3">
-                        <span className="rounded-lg bg-[var(--surface-badge)] px-4 py-2 text-sm font-medium text-[var(--subheading)] dark:bg-[var(--card)] dark:text-white">
-                            Karyawan : {employees.total}
+                        <span className="rounded-lg bg-[var(--surface-badge)] px-4 py-2 text-sm font-medium text-[var(--subheading)]">
+                            {t('dashboardAdvance.employees.list.countPrefix')} : {employees.total}
                         </span>
                         {!is_branch_manager && (
                             <Link href={route('dashboard.employees.create')}>
                                 <Button className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]">
                                     <Plus className="mr-2 h-4 w-4" />
-                                    Tambah Karyawan
+                                    {t('dashboardAdvance.employees.list.addButton')}
                                 </Button>
                             </Link>
                         )}
-                        <Button
-                            variant="outline"
-                            className="bg-[var(--neutral-white)] dark:border-[var(--border-strong)] dark:bg-[var(--card)] dark:text-white dark:hover:bg-[var(--border-strong)]"
-                        >
+                        <Button variant="outline" className="bg-[var(--card)]">
                             <Printer className="mr-2 h-4 w-4" />
-                            Cetak
+                            {t('dashboardAdvance.employees.list.printButton')}
                         </Button>
                     </div>
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
                     <div className="overflow-x-auto">
                         <Table className="min-w-[900px]">
                             <TableHeader className="bg-[var(--surface-header)]">
                                 <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="text-white">Nama Karyawan</TableHead>
-                                    <TableHead className="text-white">Email</TableHead>
-                                    <TableHead className="text-white">Role</TableHead>
-                                    <TableHead className="text-white">Cabang</TableHead>
-                                    <TableHead className="text-white">Tanggal Aktif</TableHead>
-                                    <TableHead className="text-white">Slot Status</TableHead>
-                                    <TableHead className="w-[60px] text-white">Aksi</TableHead>
+                                    <TableHead className="text-white">{t('dashboardAdvance.employees.list.columnName')}</TableHead>
+                                    <TableHead className="text-white">{t('dashboardAdvance.employees.list.columnEmail')}</TableHead>
+                                    <TableHead className="text-white">{t('dashboardAdvance.employees.list.columnRole')}</TableHead>
+                                    <TableHead className="text-white">{t('dashboardAdvance.employees.list.columnBranch')}</TableHead>
+                                    <TableHead className="text-white">{t('dashboardAdvance.employees.list.columnActiveDate')}</TableHead>
+                                    <TableHead className="text-white">{t('dashboardAdvance.employees.list.columnSlotStatus')}</TableHead>
+                                    <TableHead className="w-[60px] text-white">{t('dashboardAdvance.employees.list.columnAction')}</TableHead>
                                 </TableRow>
                             </TableHeader>
 
                             <TableBody>
                                 {employees.data.length === 0 ? (
-                                    <TableEmptyState colSpan={7} message="Belum ada karyawan, tambah karyawan terlebih dahulu" />
+                                    <TableEmptyState colSpan={7} message={t('dashboardAdvance.employees.list.emptyState')} />
                                 ) : (
                                     employees.data.map((employee) => (
                                         <TableRow
                                             key={employee.id}
-                                            className={`${employee.role === 'branch_manager' ? 'bg-blue-50 dark:bg-blue-950/20' : ''} dark:border-[var(--border-strong)]`}
+                                            className={employee.role === 'branch_manager' ? 'bg-blue-50 dark:bg-blue-950/20' : ''}
                                         >
-                                            <TableCell className="font-medium text-[var(--subheading)] dark:text-white">{employee.name}</TableCell>
-                                            <TableCell className="text-[var(--subheading)] dark:text-white">{employee.user?.email ?? '-'}</TableCell>
+                                            <TableCell className="font-medium text-[var(--subheading)]">{employee.name}</TableCell>
+                                            <TableCell className="text-[var(--subheading)]">{employee.user?.email ?? '-'}</TableCell>
                                             <TableCell>
                                                 <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
-                                                    {employee.role}
+                                                    {roleLabel(employee.role)}
                                                 </span>
                                             </TableCell>
-                                            <TableCell className="text-[var(--subheading)] dark:text-white">{employee.branch?.name ?? '-'}</TableCell>
-                                            <TableCell className="text-[var(--subheading)] dark:text-white">{employee.active_date}</TableCell>
+                                            <TableCell className="text-[var(--subheading)]">{employee.branch?.name ?? '-'}</TableCell>
+                                            <TableCell className="text-[var(--subheading)]">{employee.active_date}</TableCell>
                                             <TableCell>
                                                 <span
                                                     className={`rounded-full px-3 py-1 text-xs font-medium ${
@@ -165,11 +179,7 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
                                                               : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
                                                     }`}
                                                 >
-                                                    {employee.slot_status === 'on_shift'
-                                                        ? 'Bertugas'
-                                                        : employee.slot_status === 'off'
-                                                          ? 'Libur'
-                                                          : 'Tersedia'}
+                                                    {slotStatusLabel(employee.slot_status)}
                                                 </span>
                                             </TableCell>
                                             <TableCell className="relative">
@@ -181,7 +191,6 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
                                                         variant="ghost"
                                                         size="icon"
                                                         onClick={() => toggleMenu(employee.id)}
-                                                        className="dark:text-white dark:hover:bg-[var(--border-strong)]"
                                                     >
                                                         <MoreVertical className="h-4 w-4" />
                                                     </Button>
@@ -190,7 +199,7 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
                                                         onClick={() => handleShowDetail(employee)}
                                                         className="text-xs font-medium text-[var(--surface-header)] hover:underline dark:text-white"
                                                     >
-                                                        Lihat
+                                                        {t('dashboardAdvance.employees.list.viewLabel')}
                                                     </button>
                                                 )}
                                             </TableCell>
@@ -206,7 +215,7 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
                     from={employees.from ?? 0}
                     to={employees.to ?? 0}
                     total={employees.total}
-                    itemLabel="Karyawan"
+                    itemLabel={t('dashboardAdvance.employees.list.itemLabel')}
                     links={employees.links}
                     perPage={filters.per_page ?? '5'}
                     onPerPageChange={(v) => applyFilters({ per_page: v })}

@@ -11,7 +11,7 @@ import {
     TableRow,
 } from '@/components';
 import { InventorySupplierCreateModal, InventorySupplierEditModal } from '@/features/advance/management/inventory/components';
-import { useConfirmAction, useFilters } from '@/hooks';
+import { useConfirmAction, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
 import { Building2, Package } from 'lucide-react';
@@ -47,6 +47,7 @@ interface InventorySupplierListProps {
 }
 
 export default function InventorySupplierList({ suppliers, categories, is_branch_manager, filters }: InventorySupplierListProps) {
+    const { t } = useLanguage();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editSupplier, setEditSupplier] = useState<Supplier | null>(null);
     const { search, setSearch, applyFilters, handleSearch } = useFilters('dashboard.inventory.suppliers.index', filters);
@@ -55,17 +56,30 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
     const canManageCatalog = !is_branch_manager;
 
     const handleDelete = (supplier: Supplier) => {
-        confirmAndDelete(`Hapus pemasok "${supplier.name}"?`, route('dashboard.inventory.suppliers.destroy', supplier.id));
+        confirmAndDelete(
+            `${t('dashboardAdvance.inventorySuppliers.list.deleteConfirmPrefix')} "${supplier.name}"?`,
+            route('dashboard.inventory.suppliers.destroy', supplier.id),
+        );
     };
 
     return (
-        <DashboardSidebarLayout title="Pemasok" description="Kelola daftar pemasok barang anda">
-            <Head title="Pemasok" />
+        <DashboardSidebarLayout
+            title={t('dashboardAdvance.inventorySuppliers.list.layoutTitle')}
+            description={t('dashboardAdvance.inventorySuppliers.list.layoutDescription')}
+        >
+            <Head title={t('dashboardAdvance.inventorySuppliers.list.headTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-                    <SearchInput value={search} onChange={setSearch} onSubmit={handleSearch} placeholder="Cari nama pemasok..." />
+                    <SearchInput
+                        value={search}
+                        onChange={setSearch}
+                        onSubmit={handleSearch}
+                        placeholder={t('dashboardAdvance.inventorySuppliers.list.searchPlaceholder')}
+                    />
 
-                    {canManageCatalog && <CreateButton label="Buat Pemasok" onClick={() => setShowCreateModal(true)} />}
+                    {canManageCatalog && (
+                        <CreateButton label={t('dashboardAdvance.inventorySuppliers.list.createButton')} onClick={() => setShowCreateModal(true)} />
+                    )}
                 </div>
 
                 <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
@@ -73,10 +87,20 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                         <Table className="min-w-[560px]">
                             <TableHeader className="bg-[var(--surface-header)]">
                                 <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="text-[var(--text-light)]">Nama Pemasok</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Kategori</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">Kontak</TableHead>
-                                    {canManageCatalog && <TableHead className="w-[80px] text-[var(--text-light)]">Aksi</TableHead>}
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventorySuppliers.list.columnName')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventorySuppliers.list.columnCategory')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventorySuppliers.list.columnContact')}
+                                    </TableHead>
+                                    {canManageCatalog && (
+                                        <TableHead className="w-[80px] text-[var(--text-light)]">
+                                            {t('dashboardAdvance.inventorySuppliers.list.columnAction')}
+                                        </TableHead>
+                                    )}
                                 </TableRow>
                             </TableHeader>
 
@@ -85,9 +109,12 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                     <TableEmptyState
                                         colSpan={7}
                                         icon={Package}
-                                        message="Belum ada Pemasok"
-                                        description="Klik tombol Untuk Buat Pemasok"
-                                        action={{ label: '+ Buat Pemasok', onClick: () => setShowCreateModal(true) }}
+                                        message={t('dashboardAdvance.inventorySuppliers.list.emptyTitle')}
+                                        description={t('dashboardAdvance.inventorySuppliers.list.emptyDescription')}
+                                        action={{
+                                            label: t('dashboardAdvance.inventorySuppliers.list.emptyActionLabel'),
+                                            onClick: () => setShowCreateModal(true),
+                                        }}
                                     />
                                 ) : (
                                     suppliers.data.map((supplier) => (
@@ -114,13 +141,15 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                                         className="rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap"
                                                         style={{
                                                             backgroundColor: `${supplier.category.color ?? '#94a3b8'}1a`,
-                                                            color: supplier.category.color ?? '#64748b',
+                                                            color: supplier.category.color ?? '#94a3b8',
                                                         }}
                                                     >
                                                         {supplier.category.name}
                                                     </span>
                                                 ) : (
-                                                    <span className="text-xs text-[var(--grey-text)]">-</span>
+                                                    <span className="text-xs text-[var(--grey-text)]">
+                                                        {t('dashboardAdvance.inventorySuppliers.list.noCategoryFallback')}
+                                                    </span>
                                                 )}
                                             </TableCell>
                                             <TableCell className="text-[var(--grey-text)]">
@@ -131,18 +160,18 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                                 <TableCell>
                                                     <div className="flex gap-2 whitespace-nowrap">
                                                         <button
-                                                            aria-label={`Ubah pemasok ${supplier.name}`}
+                                                            aria-label={`${t('dashboardAdvance.inventorySuppliers.list.editAriaLabelPrefix')} ${supplier.name}`}
                                                             onClick={() => setEditSupplier(supplier)}
                                                             className="text-xs font-medium text-[var(--secondary-600)] hover:underline"
                                                         >
-                                                            Ubah
+                                                            {t('dashboardAdvance.inventorySuppliers.list.editLabel')}
                                                         </button>
                                                         <button
-                                                            aria-label={`Hapus pemasok ${supplier.name}`}
+                                                            aria-label={`${t('dashboardAdvance.inventorySuppliers.list.deleteAriaLabelPrefix')} ${supplier.name}`}
                                                             onClick={() => handleDelete(supplier)}
                                                             className="text-xs font-medium text-[var(--danger)] hover:underline"
                                                         >
-                                                            Hapus
+                                                            {t('dashboardAdvance.inventorySuppliers.list.deleteLabel')}
                                                         </button>
                                                     </div>
                                                 </TableCell>
@@ -159,7 +188,7 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                     from={suppliers.from ?? 0}
                     to={suppliers.to ?? 0}
                     total={suppliers.total}
-                    itemLabel="Pemasok"
+                    itemLabel={t('dashboardAdvance.inventorySuppliers.list.itemLabel')}
                     links={suppliers.links}
                     perPage={filters.per_page ?? '5'}
                     onPerPageChange={(v) => applyFilters({ per_page: v })}
