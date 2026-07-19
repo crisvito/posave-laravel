@@ -19,6 +19,7 @@ import {
     type PaymentSlice,
     type PendingTransfer,
 } from '@/features/advance/management/dashboard/components';
+import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { formatNumber, formatPct, formatRupiah } from '@/lib/format';
 import { Head, Link, router } from '@inertiajs/react';
@@ -65,6 +66,7 @@ export default function Dashboard({
     pendingTransfers,
     pendingTransfersCount,
 }: Props) {
+    const { t } = useLanguage();
     const [metric, setMetric] = useState<TrendMetric>('omzet');
 
     const goToReports = () => {
@@ -78,15 +80,15 @@ export default function Dashboard({
     };
 
     return (
-        <DashboardSidebarLayout title="Dashboard" description="Kelola semua kebutuhan anda disini">
-            <Head title="Dashboard" />
+        <DashboardSidebarLayout title={t('dashboardAdvance.dashboard.layoutTitle')} description={t('dashboardAdvance.dashboard.layoutDescription')}>
+            <Head title={t('dashboardAdvance.dashboard.headTitle')} />
 
-            <div className="flex min-h-screen flex-col gap-6 bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
+            <div className="flex min-h-screen flex-col gap-6 bg-[var(--page-bg)] p-4 sm:p-6">
                 <SalesFilterBar routeName="dashboard.index" outlets={outlets} filters={filters} onPrint={goToReports} />
 
-                <p className="-mt-2 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                    Menampilkan data <span className="font-medium text-[var(--subheading)] dark:text-white">{filters.label}</span> · dibandingkan
-                    dengan periode sebelumnya.
+                <p className="-mt-2 text-xs text-[var(--grey-text)]">
+                    {t('dashboardAdvance.dashboard.periodPrefix')} <span className="font-medium text-[var(--subheading)]">{filters.label}</span> ·{' '}
+                    {t('dashboardAdvance.dashboard.periodSuffix').replace('· ', '')}
                 </p>
 
                 <PendingTransfersCard transfers={pendingTransfers} count={pendingTransfersCount} />
@@ -94,7 +96,7 @@ export default function Dashboard({
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
                     <KpiCard
                         icon={Wallet}
-                        label="Total Penjualan"
+                        label={t('dashboardAdvance.dashboard.kpis.totalSales')}
                         value={formatRupiah(kpis.totalSales.value)}
                         color="var(--success)"
                         bg="var(--success-background)"
@@ -102,7 +104,7 @@ export default function Dashboard({
                     />
                     <KpiCard
                         icon={Receipt}
-                        label="Total Transaksi"
+                        label={t('dashboardAdvance.dashboard.kpis.totalTransactions')}
                         value={formatNumber(kpis.totalTransactions.value)}
                         color="var(--income-icon-text)"
                         bg="var(--income-icon-bg)"
@@ -110,16 +112,16 @@ export default function Dashboard({
                     />
                     <KpiCard
                         icon={Boxes}
-                        label="Produk Terjual"
+                        label={t('dashboardAdvance.dashboard.kpis.productsSold')}
                         value={formatNumber(kpis.productsSold.value)}
-                        suffix="Item"
+                        suffix={t('dashboardAdvance.dashboard.kpis.productsSoldSuffix')}
                         color="var(--warning)"
                         bg="var(--warning-background)"
                         delta={kpis.productsSold.deltaPct}
                     />
                     <KpiCard
                         icon={TrendingUp}
-                        label="Rata-rata / Transaksi"
+                        label={t('dashboardAdvance.dashboard.kpis.averageSale')}
                         value={formatRupiah(kpis.averageSale.value)}
                         color="var(--category-color-1)"
                         bg="var(--category-bg-color-3)"
@@ -127,7 +129,7 @@ export default function Dashboard({
                     />
                     <KpiCard
                         icon={PiggyBank}
-                        label="Laba Kotor"
+                        label={t('dashboardAdvance.dashboard.kpis.grossProfit')}
                         value={formatRupiah(kpis.grossProfit.value)}
                         color="var(--success)"
                         bg="var(--success-background)"
@@ -135,7 +137,7 @@ export default function Dashboard({
                     />
                     <KpiCard
                         icon={Percent}
-                        label="Margin"
+                        label={t('dashboardAdvance.dashboard.kpis.margin')}
                         value={formatPct(kpis.margin.value)}
                         color="var(--income-icon-text)"
                         bg="var(--income-icon-bg)"
@@ -144,26 +146,28 @@ export default function Dashboard({
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-8 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                    <div className="rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] p-4 shadow-sm sm:p-6 lg:col-span-8">
                         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                             <div>
                                 <div className="flex items-center gap-2">
-                                    <h3 className="text-sm font-semibold text-[var(--subheading)] dark:text-white">Grafik Penjualan</h3>
+                                    <h3 className="text-sm font-semibold text-[var(--subheading)]">
+                                        {t('dashboardAdvance.dashboard.salesChart.title')}
+                                    </h3>
                                     <DeltaBadge value={kpis.totalSales.deltaPct} compact />
                                 </div>
-                                <p className="mt-1 text-2xl font-bold text-[var(--subheading)] dark:text-white">
+                                <p className="mt-1 text-2xl font-bold text-[var(--subheading)]">
                                     {metric === 'omzet'
                                         ? formatRupiah(kpis.totalSales.value)
-                                        : `${formatNumber(kpis.totalTransactions.value)} transaksi`}
+                                        : `${formatNumber(kpis.totalTransactions.value)} ${t('dashboardAdvance.dashboard.salesChart.transactionsSuffix')}`}
                                 </p>
                             </div>
                             <div className="flex items-center gap-3">
                                 <MetricToggle metric={metric} onChange={setMetric} />
                                 <Link
                                     href={route('dashboard.reports.index')}
-                                    className="flex items-center gap-1 text-xs font-medium text-[var(--secondary-700)] hover:underline dark:text-[var(--muted-foreground)] dark:hover:text-white"
+                                    className="flex items-center gap-1 text-xs font-medium text-[var(--secondary-700)] hover:underline"
                                 >
-                                    Lihat Laporan
+                                    {t('dashboardAdvance.dashboard.salesChart.viewReport')}
                                     <ArrowUpRight className="h-3.5 w-3.5" />
                                 </Link>
                             </div>
@@ -171,18 +175,22 @@ export default function Dashboard({
                         <Suspense fallback={<ChartSkeleton className="h-[260px]" />}>
                             <SalesTrendChart data={salesTrend} metric={metric} />
                         </Suspense>
-                        <div className="mt-2 flex items-center gap-4 text-[11px] text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                        <div className="mt-2 flex items-center gap-4 text-[11px] text-[var(--grey-text)]">
                             <span className="flex items-center gap-1.5">
-                                <span className="h-2 w-4 rounded-full bg-[#377ba3]" /> Periode ini
+                                <span className="h-2 w-4 rounded-full bg-[var(--secondary-700)]" />{' '}
+                                {t('dashboardAdvance.dashboard.salesChart.currentPeriod')}
                             </span>
                             <span className="flex items-center gap-1.5">
-                                <span className="h-0.5 w-4 rounded-full bg-[#cbd5e1]" /> Periode sebelumnya
+                                <span className="h-0.5 w-4 rounded-full bg-[var(--border-strong)]" />{' '}
+                                {t('dashboardAdvance.dashboard.salesChart.previousPeriod')}
                             </span>
                         </div>
                     </div>
 
-                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-4 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
-                        <h3 className="mb-4 text-sm font-semibold text-[var(--subheading)] dark:text-white">Ringkasan Kategori</h3>
+                    <div className="rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] p-4 shadow-sm sm:p-6 lg:col-span-4">
+                        <h3 className="mb-4 text-sm font-semibold text-[var(--subheading)]">
+                            {t('dashboardAdvance.dashboard.categorySummary.title')}
+                        </h3>
                         <Suspense fallback={<ChartSkeleton className="h-[240px]" />}>
                             <CategoryDonut data={categorySummary} />
                         </Suspense>
@@ -190,21 +198,21 @@ export default function Dashboard({
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-8 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                    <div className="rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] p-4 shadow-sm sm:p-6 lg:col-span-8">
                         <div className="mb-4 flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-[var(--grey-text)] dark:text-[var(--muted-foreground)]" />
-                            <h3 className="text-sm font-semibold text-[var(--subheading)] dark:text-white">Jam Ramai</h3>
-                            <span className="text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">— penjualan per jam</span>
+                            <Clock className="h-4 w-4 text-[var(--grey-text)]" />
+                            <h3 className="text-sm font-semibold text-[var(--subheading)]">{t('dashboardAdvance.dashboard.hourlyPeak.title')}</h3>
+                            <span className="text-xs text-[var(--grey-text)]">{t('dashboardAdvance.dashboard.hourlyPeak.subtitle')}</span>
                         </div>
                         <Suspense fallback={<ChartSkeleton className="h-[220px]" />}>
                             <HourlySalesChart data={hourlySales} />
                         </Suspense>
                     </div>
 
-                    <div className="rounded-2xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm sm:p-6 lg:col-span-4 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                    <div className="rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] p-4 shadow-sm sm:p-6 lg:col-span-4">
                         <div className="mb-4 flex items-center gap-2">
-                            <CreditCard className="h-4 w-4 text-[var(--grey-text)] dark:text-[var(--muted-foreground)]" />
-                            <h3 className="text-sm font-semibold text-[var(--subheading)] dark:text-white">Metode Pembayaran</h3>
+                            <CreditCard className="h-4 w-4 text-[var(--grey-text)]" />
+                            <h3 className="text-sm font-semibold text-[var(--subheading)]">{t('dashboardAdvance.dashboard.paymentMethod.title')}</h3>
                         </div>
                         <PaymentBreakdown data={paymentBreakdown} />
                     </div>

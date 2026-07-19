@@ -1,0 +1,36 @@
+const history = {
+    pageTitle: 'Order History - POSAVE',
+    searchPlaceholder: 'Search invoice...',
+    paymentFilter: {
+        aria: 'Filter payment method',
+        all: 'All Methods',
+        cash: 'Cash',
+        qris: 'QRIS',
+        debit: 'Debit',
+        transfer: 'Transfer',
+    },
+    table: {
+        order: 'ORDER',
+        time: 'TIME',
+        paymentMethod: 'PAYMENT METHOD',
+        total: 'TOTAL',
+    },
+    emptyState: 'No transactions on this date',
+    rowAriaPrefix: 'View transaction details',
+    detail: {
+        title: 'History Order Detail',
+        timeLabel: 'Time',
+        paymentMethodLabel: 'Payment Method',
+        itemHeader: 'Item',
+        qtyHeader: 'Qty',
+        priceHeader: 'Price',
+        emptySelection: 'Select a transaction to view details',
+        discountLabel: 'Discount',
+        subtotalLabel: 'Subtotal',
+        printAria: 'Print receipt',
+        printButton: 'Print',
+        emailAria: 'Send receipt via email',
+        emailButton: 'Send via Email',
+    },
+};
+export default history

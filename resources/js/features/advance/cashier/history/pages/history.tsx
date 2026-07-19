@@ -15,6 +15,7 @@ import { Separator } from '@/components/ui';
 import { CashierSidePanel } from '@/features/advance/cashier/components';
 import { STATUS_BADGE_STYLES, STATUS_LABEL, type Transaction } from '@/features/advance/cashier/history/type';
 import { useChatbot } from '@/features/chatbot';
+import { useLanguage } from '@/hooks';
 import { CashierLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import { Mail, Printer } from 'lucide-react';
@@ -27,6 +28,7 @@ interface Props {
 
 export default function HistoryPage({ transactions, filters }: Props) {
     const { open } = useChatbot();
+    const { t } = useLanguage();
     const [search, setSearch] = useState(filters.search ?? '');
     const [selectedId, setSelectedId] = useState<number | null>(null);
     const [sheetOpen, setSheetOpen] = useState(false);
@@ -67,7 +69,7 @@ export default function HistoryPage({ transactions, filters }: Props) {
     const historyDetailInner = (
         <>
             <div className="p-5">
-                <h2 className="text-base font-bold tracking-widest uppercase">History Order Detail</h2>
+                <h2 className="text-base font-bold tracking-widest uppercase">{t('cashier.history.detail.title')}</h2>
                 <div className="mt-1 flex items-center justify-between text-[11px]">
                     <span className="font-medium text-slate-300">Kopiakin Resto</span>
                     {selected && <span className="text-slate-400">{selected.dateLabel}</span>}
@@ -90,13 +92,13 @@ export default function HistoryPage({ transactions, filters }: Props) {
 
                         <div className="space-y-1.5 text-xs">
                             <div className="flex justify-between">
-                                <span className="text-slate-400">Waktu</span>
+                                <span className="text-slate-400">{t('cashier.history.detail.timeLabel')}</span>
                                 <span className="font-medium text-slate-200">
                                     {selected.date}, {selected.time}
                                 </span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-slate-400">Metode Pembayaran</span>
+                                <span className="text-slate-400">{t('cashier.history.detail.paymentMethodLabel')}</span>
                                 <span className="font-medium text-slate-200">{selected.paymentMethod.toUpperCase()}</span>
                             </div>
                         </div>
@@ -104,10 +106,10 @@ export default function HistoryPage({ transactions, filters }: Props) {
                         <Separator className="bg-white/10" />
 
                         <div className="flex justify-between text-[11px] text-slate-400">
-                            <span>Item</span>
+                            <span>{t('cashier.history.detail.itemHeader')}</span>
                             <div className="flex gap-8">
-                                <span>Qty</span>
-                                <span>Price</span>
+                                <span>{t('cashier.history.detail.qtyHeader')}</span>
+                                <span>{t('cashier.history.detail.priceHeader')}</span>
                             </div>
                         </div>
 
@@ -139,7 +141,7 @@ export default function HistoryPage({ transactions, filters }: Props) {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex h-full items-center justify-center text-xs text-slate-500">Pilih transaksi untuk melihat detail</div>
+                    <div className="flex h-full items-center justify-center text-xs text-slate-500">{t('cashier.history.detail.emptySelection')}</div>
                 )}
             </div>
 
@@ -147,27 +149,30 @@ export default function HistoryPage({ transactions, filters }: Props) {
                 <Separator className="bg-white/10" />
                 <div className="space-y-1.5 p-5">
                     <div className="flex justify-between text-xs text-slate-400">
-                        <span>Discount</span>
+                        <span>{t('cashier.history.detail.discountLabel')}</span>
                         <span>Rp. {selected ? selected.discount.toLocaleString('id-ID') : 0}</span>
                     </div>
                     <div className="flex justify-between text-sm font-bold text-white">
-                        <span>Subtotal</span>
+                        <span>{t('cashier.history.detail.subtotalLabel')}</span>
                         <span>Rp. {subtotal.toLocaleString('id-ID')}</span>
                     </div>
                 </div>
                 <Separator className="bg-white/10" />
                 <div className="space-y-2 p-5">
                     <Button
-                        aria-label="Cetak struk"
+                        aria-label={t('cashier.history.detail.printAria')}
                         variant="outline"
                         className="h-10 w-full border-white/20 bg-transparent text-xs font-semibold text-white hover:bg-white/10 hover:text-white"
                     >
                         <Printer className="h-3.5 w-3.5" />
-                        Cetak
+                        {t('cashier.history.detail.printButton')}
                     </Button>
-                    <Button aria-label="Kirim struk via email" className="h-11 w-full bg-white text-xs font-bold text-slate-900 hover:bg-slate-100">
+                    <Button
+                        aria-label={t('cashier.history.detail.emailAria')}
+                        className="h-11 w-full bg-white text-xs font-bold text-slate-900 hover:bg-slate-100"
+                    >
                         <Mail className="h-3.5 w-3.5" />
-                        Kirim via Email
+                        {t('cashier.history.detail.emailButton')}
                     </Button>
                 </div>
             </div>
@@ -176,7 +181,7 @@ export default function HistoryPage({ transactions, filters }: Props) {
 
     return (
         <CashierLayout>
-            <Head title="Riwayat Pesanan - POSAVE" />
+            <Head title={t('cashier.history.pageTitle')} />
 
             <div className="bg-background flex flex-1 flex-col overflow-hidden">
                 <div className="flex flex-wrap items-center gap-3 p-4 sm:gap-4 sm:p-6">
@@ -186,7 +191,7 @@ export default function HistoryPage({ transactions, filters }: Props) {
                             value={search}
                             onChange={setSearch}
                             onSubmit={handleSearchSubmit}
-                            placeholder="Cari invoice..."
+                            placeholder={t('cashier.history.searchPlaceholder')}
                             variant="kiosk"
                         />
                     </div>
@@ -199,17 +204,17 @@ export default function HistoryPage({ transactions, filters }: Props) {
                     <div className="ml-auto">
                         <Select value={filters.payment_method} onValueChange={handlePaymentFilter}>
                             <SelectTrigger
-                                aria-label="Filter metode pembayaran"
+                                aria-label={t('cashier.history.paymentFilter.aria')}
                                 className="h-9 w-44 border-[var(--border-strong)] bg-[var(--card)] text-sm"
                             >
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">Semua Metode</SelectItem>
-                                <SelectItem value="cash">Cash</SelectItem>
-                                <SelectItem value="qris">QRIS</SelectItem>
-                                <SelectItem value="debit">Debit</SelectItem>
-                                <SelectItem value="transfer">Transfer</SelectItem>
+                                <SelectItem value="all">{t('cashier.history.paymentFilter.all')}</SelectItem>
+                                <SelectItem value="cash">{t('cashier.history.paymentFilter.cash')}</SelectItem>
+                                <SelectItem value="qris">{t('cashier.history.paymentFilter.qris')}</SelectItem>
+                                <SelectItem value="debit">{t('cashier.history.paymentFilter.debit')}</SelectItem>
+                                <SelectItem value="transfer">{t('cashier.history.paymentFilter.transfer')}</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -219,10 +224,10 @@ export default function HistoryPage({ transactions, filters }: Props) {
                     <div className="px-4 pt-4 pb-6 sm:px-6">
                         <div className="mb-3 hidden grid-cols-[1.2fr_1fr_1fr_1fr] border-b border-[var(--border-strong)] px-4 pb-2.5 sm:grid">
                             {[
-                                { label: 'ORDER', align: 'text-left' },
-                                { label: 'WAKTU', align: 'text-left' },
-                                { label: 'METODE BAYAR', align: 'text-center' },
-                                { label: 'TOTAL', align: 'text-center' },
+                                { label: t('cashier.history.table.order'), align: 'text-left' },
+                                { label: t('cashier.history.table.time'), align: 'text-left' },
+                                { label: t('cashier.history.table.paymentMethod'), align: 'text-center' },
+                                { label: t('cashier.history.table.total'), align: 'text-center' },
                             ].map(({ label, align }) => (
                                 <span key={label} className={`text-sm font-bold tracking-wide text-[var(--subheading)] ${align}`}>
                                     {label}
@@ -232,13 +237,13 @@ export default function HistoryPage({ transactions, filters }: Props) {
 
                         {transactions.length === 0 ? (
                             <div className="flex h-64 items-center justify-center text-sm text-[var(--grey-text-muted)]">
-                                Belum ada transaksi di tanggal ini
+                                {t('cashier.history.emptyState')}
                             </div>
                         ) : (
                             <div className="space-y-3">
                                 {transactions.map((tx) => (
                                     <button
-                                        aria-label={`Lihat detail transaksi ${tx.invoice}`}
+                                        aria-label={`${t('cashier.history.rowAriaPrefix')} ${tx.invoice}`}
                                         key={tx.id}
                                         onClick={() => handleRowClick(tx.id)}
                                         className={`w-full rounded-xl border px-4 py-4 text-left transition ${

@@ -1,4 +1,6 @@
+import { useLanguage } from '@/hooks';
 import { router } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PaginationLink {
     url: string | null;
@@ -53,26 +55,48 @@ function buildCompactLinks(links: PaginationLink[]): PaginationLink[] {
 }
 
 export function Pagination({ links }: PaginationProps) {
+    const { t } = useLanguage();
+
     if (links.length <= 3) return null;
 
     const compactLinks = buildCompactLinks(links);
+    const lastIndex = compactLinks.length - 1;
 
     return (
         <div className="mt-4 flex items-center justify-center gap-1">
-            {compactLinks.map((link, i) => (
-                <button
-                    key={i}
-                    aria-label={`Navigasi halaman ${link.label.replace(/<[^>]+>/g, '')}`}
-                    disabled={!link.url}
-                    onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
-                    className={`rounded-lg px-3 py-1.5 text-sm ${
-                        link.active
-                            ? 'bg-[var(--surface-header)] font-medium text-white dark:bg-white dark:text-black'
-                            : 'bg-[var(--neutral-white)] text-[var(--grey-text)] hover:bg-[var(--surface-badge)] disabled:cursor-not-allowed disabled:opacity-40 dark:bg-transparent dark:text-[var(--muted-foreground)] dark:hover:bg-[var(--second-accent)] dark:hover:text-white'
-                    }`}
-                    dangerouslySetInnerHTML={{ __html: link.label }}
-                />
-            ))}
+            {compactLinks.map((link, i) => {
+                const isPrev = i === 0;
+                const isNext = i === lastIndex;
+
+                if (isPrev || isNext) {
+                    return (
+                        <button
+                            key={i}
+                            aria-label={isPrev ? t('shared.pagination.previous') : t('shared.pagination.next')}
+                            disabled={!link.url}
+                            onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--card)] text-[var(--grey-text)] hover:bg-[var(--second-accent)] disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                            {isPrev ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </button>
+                    );
+                }
+
+                return (
+                    <button
+                        key={i}
+                        aria-label={`${t('shared.pagination.pageAriaLabelPrefix')} ${link.label.replace(/<[^>]+>/g, '')}`}
+                        disabled={!link.url}
+                        onClick={() => link.url && router.get(link.url, {}, { preserveState: true })}
+                        className={`rounded-lg px-3 py-1.5 text-sm ${
+                            link.active
+                                ? 'bg-[var(--surface-header)] font-medium text-white'
+                                : 'bg-[var(--card)] text-[var(--grey-text)] hover:bg-[var(--second-accent)] disabled:cursor-not-allowed disabled:opacity-40'
+                        }`}
+                        dangerouslySetInnerHTML={{ __html: link.label }}
+                    />
+                );
+            })}
         </div>
     );
 }

@@ -25,7 +25,7 @@ export function KpiCard({
     delta: number;
 }) {
     return (
-        <div className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--neutral-white)] p-4 shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+        <div className="flex flex-col gap-3 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-4 shadow-sm">
             <div className="flex items-center justify-between">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor: bg, color }}>
                     <Icon className="h-5 w-5" />
@@ -33,10 +33,10 @@ export function KpiCard({
                 <DeltaBadge value={delta} compact />
             </div>
             <div className="min-w-0">
-                <p className="truncate text-xs font-medium text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">{label}</p>
+                <p className="truncate text-xs font-medium text-[var(--grey-text)]">{label}</p>
                 <div className="flex items-baseline gap-1">
-                    <h3 className="truncate text-xl font-bold text-[var(--subheading)] dark:text-white">{value}</h3>
-                    {suffix && <span className="text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">{suffix}</span>}
+                    <h3 className="truncate text-xl font-bold text-[var(--subheading)]">{value}</h3>
+                    {suffix && <span className="text-xs text-[var(--grey-text)]">{suffix}</span>}
                 </div>
             </div>
         </div>

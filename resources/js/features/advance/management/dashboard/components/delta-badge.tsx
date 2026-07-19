@@ -1,7 +1,9 @@
+import { useLanguage } from '@/hooks';
 import { formatSignedPct } from '@/lib/format';
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
 
 export function DeltaBadge({ value, invert = false, compact = false }: { value: number; invert?: boolean; compact?: boolean }) {
+    const { t } = useLanguage();
     const neutral = !value;
     const good = invert ? value < 0 : value > 0;
 
@@ -18,7 +20,7 @@ export function DeltaBadge({ value, invert = false, compact = false }: { value: 
                 backgroundColor: bg,
                 color: color,
             }}
-            title="Dibanding periode sebelumnya"
+            title={t('dashboardAdvance.dashboard.deltaBadge.tooltip')}
         >
             <Icon className={compact ? 'h-3 w-3' : 'h-3.5 w-3.5'} />
             {formatSignedPct(value)}

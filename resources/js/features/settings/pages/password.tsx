@@ -1,4 +1,5 @@
 import { InputError } from '@/components';
+import { useLanguage } from '@/hooks';
 import { DashboardLayout, SettingsLayout } from '@/layouts';
 import { type BreadcrumbItem } from '@/types';
 import { Transition } from '@headlessui/react';
@@ -7,16 +8,17 @@ import { FormEventHandler, useRef } from 'react';
 
 import { Button, HeadingSmall, Input, Label } from '@/components';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Password settings',
-        href: '/settings/password',
-    },
-];
-
 export default function Password() {
+    const { t } = useLanguage();
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: t('settings.password.breadcrumb'),
+            href: '/settings/password',
+        },
+    ];
 
     const { data, setData, errors, put, reset, processing, recentlySuccessful } = useForm({
         current_password: '',
@@ -46,15 +48,15 @@ export default function Password() {
 
     return (
         <DashboardLayout>
-            <Head title="Profile settings" />
+            <Head title={t('settings.password.pageTitle')} />
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall title="Update password" description="Ensure your account is using a long, random password to stay secure" />
+                    <HeadingSmall title={t('settings.password.heading')} description={t('settings.password.description')} />
 
                     <form onSubmit={updatePassword} className="space-y-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="current_password">Current password</Label>
+                            <Label htmlFor="current_password">{t('settings.password.currentPasswordLabel')}</Label>
 
                             <Input
                                 id="current_password"
@@ -64,14 +66,14 @@ export default function Password() {
                                 type="password"
                                 className="mt-1 block w-full"
                                 autoComplete="current-password"
-                                placeholder="Current password"
+                                placeholder={t('settings.password.currentPasswordPlaceholder')}
                             />
 
                             <InputError message={errors.current_password} />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password">New password</Label>
+                            <Label htmlFor="password">{t('settings.password.newPasswordLabel')}</Label>
 
                             <Input
                                 id="password"
@@ -81,14 +83,14 @@ export default function Password() {
                                 type="password"
                                 className="mt-1 block w-full"
                                 autoComplete="new-password"
-                                placeholder="New password"
+                                placeholder={t('settings.password.newPasswordPlaceholder')}
                             />
 
                             <InputError message={errors.password} />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">Confirm password</Label>
+                            <Label htmlFor="password_confirmation">{t('settings.password.confirmPasswordLabel')}</Label>
 
                             <Input
                                 id="password_confirmation"
@@ -97,14 +99,14 @@ export default function Password() {
                                 type="password"
                                 className="mt-1 block w-full"
                                 autoComplete="new-password"
-                                placeholder="Confirm password"
+                                placeholder={t('settings.password.confirmPasswordPlaceholder')}
                             />
 
                             <InputError message={errors.password_confirmation} />
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <Button disabled={processing}>Save password</Button>
+                            <Button disabled={processing}>{t('settings.password.submitLabel')}</Button>
 
                             <Transition
                                 show={recentlySuccessful}
@@ -113,7 +115,7 @@ export default function Password() {
                                 leave="transition ease-in-out"
                                 leaveTo="opacity-0"
                             >
-                                <p className="text-sm text-neutral-600">Saved</p>
+                                <p className="text-sm text-[var(--grey-text)]">{t('settings.password.savedLabel')}</p>
                             </Transition>
                         </div>
                     </form>

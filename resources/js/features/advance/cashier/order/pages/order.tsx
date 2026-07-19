@@ -2,6 +2,7 @@ import { AskChatbotButton, Badge, Button, SearchInput } from '@/components';
 import { Card, CardContent, Input, Separator, Sheet, SheetContent } from '@/components/ui';
 import { CartItem, CategoryOption, ItemOption } from '@/features/advance/cashier/order/type';
 import { useChatbot } from '@/features/chatbot';
+import { useLanguage } from '@/hooks';
 import { CashierLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
@@ -17,6 +18,7 @@ const QUICK_AMOUNTS = [20000, 50000, 100000, 150000];
 
 export default function OrderPage({ items, categories }: Props) {
     const { open } = useChatbot();
+    const { t, locale } = useLanguage();
     const [search, setSearch] = useState('');
     const [activeCategory, setActiveCategory] = useState<number | 'all'>('all');
     const [cart, setCart] = useState<CartItem[]>([]);
@@ -28,6 +30,7 @@ export default function OrderPage({ items, categories }: Props) {
     const [processing, setProcessing] = useState(false);
     const [successInfo, setSuccessInfo] = useState<{ invoice: string; total: number } | null>(null);
 
+    const dateLocale = locale === 'en' ? 'en-US' : 'id-ID';
     const discount = 0;
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
     const totalTagihan = subtotal - discount;
@@ -87,7 +90,7 @@ export default function OrderPage({ items, categories }: Props) {
 
             router.reload({ only: ['items'] });
         } catch (err: any) {
-            alert(err?.response?.data?.message ?? 'Gagal memproses pembayaran. Coba lagi.');
+            alert(err?.response?.data?.message ?? t('cashier.order.paymentFailedError'));
         } finally {
             setProcessing(false);
         }
@@ -96,26 +99,26 @@ export default function OrderPage({ items, categories }: Props) {
     const orderDetailInner = (
         <>
             <div className="p-5">
-                <h2 className="text-base font-bold tracking-widest uppercase">Order Detail</h2>
+                <h2 className="text-base font-bold tracking-widest uppercase">{t('cashier.order.detail.title')}</h2>
                 <div className="mt-1 flex items-center justify-between text-[11px]">
                     <span className="font-medium text-slate-300">Kopiakin Resto</span>
                     <span className="text-slate-400">
-                        {new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                        {new Date().toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                     </span>
                 </div>
             </div>
             <Separator className="bg-white/10" />
 
             <div className="flex justify-between px-5 pt-3 pb-2 text-[11px] text-slate-400">
-                <span>Item</span>
+                <span>{t('cashier.order.detail.itemHeader')}</span>
                 <div className="flex gap-8">
-                    <span>Qty</span>
-                    <span>Price</span>
+                    <span>{t('cashier.order.detail.qtyHeader')}</span>
+                    <span>{t('cashier.order.detail.priceHeader')}</span>
                 </div>
             </div>
 
             <div className="flex-1 space-y-3 overflow-y-auto px-5 pb-2">
-                {cart.length === 0 && <p className="pt-4 text-center text-xs text-slate-400">Belum ada barang dipilih</p>}
+                {cart.length === 0 && <p className="pt-4 text-center text-xs text-slate-400">{t('cashier.order.detail.emptyCart')}</p>}
                 {cart.map((item, index) => (
                     <div key={item.itemId} className="space-y-1.5">
                         <div className="flex items-center justify-between">
@@ -134,10 +137,10 @@ export default function OrderPage({ items, categories }: Props) {
                             </div>
                         </div>
                         <Input
-                            aria-label={`Catatan untuk ${item.name}`}
+                            aria-label={`${t('cashier.order.detail.noteAriaPrefix')} ${item.name}`}
                             value={item.note}
                             onChange={(e) => updateNote(index, e.target.value)}
-                            placeholder="Catatan"
+                            placeholder={t('cashier.order.detail.notePlaceholder')}
                             className="h-8 rounded-lg border-white/20 bg-white text-xs text-slate-900 placeholder:text-slate-400"
                         />
                     </div>
@@ -147,11 +150,11 @@ export default function OrderPage({ items, categories }: Props) {
             <Separator className="bg-white/10" />
             <div className="space-y-1.5 p-5">
                 <div className="flex justify-between text-xs text-slate-400">
-                    <span>Discount</span>
+                    <span>{t('cashier.order.detail.discountLabel')}</span>
                     <span>Rp. {discount}</span>
                 </div>
                 <div className="flex justify-between text-sm font-bold text-white">
-                    <span>Subtotal</span>
+                    <span>{t('cashier.order.detail.subtotalLabel')}</span>
                     <span>Rp. {subtotal.toLocaleString('id-ID')}</span>
                 </div>
             </div>
@@ -159,20 +162,20 @@ export default function OrderPage({ items, categories }: Props) {
 
             <div className="space-y-2 p-5">
                 <Button
-                    aria-label="Cetak pesanan"
+                    aria-label={t('cashier.order.detail.printAria')}
                     variant="outline"
                     className="h-10 w-full border-white/20 bg-transparent text-xs font-semibold text-white hover:bg-white/10 hover:text-white"
                 >
-                    Cetak
+                    {t('cashier.order.detail.printButton')}
                 </Button>
                 {!showPayment && (
                     <Button
-                        aria-label="Lanjut ke pembayaran"
+                        aria-label={t('cashier.order.detail.continueAria')}
                         onClick={handleLanjutPembayaran}
                         disabled={cart.length === 0}
                         className="h-11 w-full bg-white text-xs font-bold text-slate-900 hover:bg-slate-100 disabled:opacity-50"
                     >
-                        Lanjut Pembayaran
+                        {t('cashier.order.detail.continueButton')}
                     </Button>
                 )}
             </div>
@@ -182,23 +185,23 @@ export default function OrderPage({ items, categories }: Props) {
     const paymentInner = (
         <>
             <div className="p-5">
-                <h2 className="text-base font-bold">Payment</h2>
-                <p className="text-[11px] text-sky-300">2 payment methods</p>
+                <h2 className="text-base font-bold">{t('cashier.order.payment.title')}</h2>
+                <p className="text-[11px] text-sky-300">{t('cashier.order.payment.methodsCount')}</p>
             </div>
             <Separator className="bg-sky-800" />
 
             <div className="flex-1 space-y-5 overflow-y-auto p-5">
                 <div>
-                    <p className="mb-3 text-xs font-bold text-sky-200">Payment Methods</p>
+                    <p className="mb-3 text-xs font-bold text-sky-200">{t('cashier.order.payment.methodsLabel')}</p>
                     <div className="grid grid-cols-2 gap-3">
                         {(
                             [
-                                { id: 'cash', label: 'Cash', icon: <Banknote className="h-6 w-6" /> },
-                                { id: 'qris', label: 'Qris', icon: <QrCode className="h-6 w-6" /> },
+                                { id: 'cash', label: t('cashier.order.payment.cash'), icon: <Banknote className="h-6 w-6" /> },
+                                { id: 'qris', label: t('cashier.order.payment.qris'), icon: <QrCode className="h-6 w-6" /> },
                             ] as const
                         ).map((method) => (
                             <button
-                                aria-label={`Pilih metode pembayaran ${method.label}`}
+                                aria-label={`${t('cashier.order.payment.selectMethodAriaPrefix')} ${method.label}`}
                                 key={method.id}
                                 onClick={() => {
                                     setPaymentMethod(method.id);
@@ -220,17 +223,17 @@ export default function OrderPage({ items, categories }: Props) {
                 <Separator className="bg-sky-800" />
 
                 <div className="flex items-center justify-between">
-                    <span className="text-xs text-sky-200">Total Tagihan</span>
+                    <span className="text-xs text-sky-200">{t('cashier.order.payment.totalBill')}</span>
                     <span className="text-sm font-bold text-white">Rp. {totalTagihan.toLocaleString('id-ID')}</span>
                 </div>
 
                 {paymentMethod === 'cash' && (
                     <div className="space-y-3">
-                        <p className="text-xs font-bold text-sky-200">Nominal Pelanggan</p>
+                        <p className="text-xs font-bold text-sky-200">{t('cashier.order.payment.customerAmountLabel')}</p>
                         <div className="grid grid-cols-2 gap-2">
                             {QUICK_AMOUNTS.map((amount, i) => (
                                 <Button
-                                    aria-label={`Nominal cepat Rp ${amount}`}
+                                    aria-label={`${t('cashier.order.payment.quickAmountAriaPrefix')} ${amount}`}
                                     key={i}
                                     onClick={() => setCustomerMoney(amount)}
                                     className={`h-9 text-xs font-medium ${
@@ -244,15 +247,15 @@ export default function OrderPage({ items, categories }: Props) {
                             ))}
                         </div>
                         <Input
-                            aria-label="Nominal uang pelanggan"
+                            aria-label={t('cashier.order.payment.customerAmountAria')}
                             type="number"
                             value={customerMoney || ''}
                             onChange={(e) => setCustomerMoney(Number(e.target.value))}
-                            placeholder="Nominal Pelanggan"
+                            placeholder={t('cashier.order.payment.customerAmountPlaceholder')}
                             className="h-10 border-sky-700 bg-white text-slate-900 placeholder:text-slate-400"
                         />
                         <div className="flex items-center justify-between text-xs">
-                            <span className="text-sky-200">Kembalian</span>
+                            <span className="text-sky-200">{t('cashier.order.payment.change')}</span>
                             <span className="font-bold text-white">Rp. {kembalian.toLocaleString('id-ID')}</span>
                         </div>
                     </div>
@@ -263,17 +266,17 @@ export default function OrderPage({ items, categories }: Props) {
                         {showQris ? (
                             <div className="flex flex-col items-center gap-2 rounded-lg bg-white p-4 text-black">
                                 <div className="flex h-36 w-36 items-center justify-center rounded border-2 border-slate-200 bg-slate-100 text-[10px] font-bold text-slate-400">
-                                    QRIS CODE
+                                    {t('cashier.order.payment.qrisCode')}
                                 </div>
-                                <span className="text-[10px] text-slate-500">Scan untuk POSAVE</span>
+                                <span className="text-[10px] text-slate-500">{t('cashier.order.payment.qrisScanHint')}</span>
                             </div>
                         ) : (
                             <Button
-                                aria-label="Tampilkan kode QRIS"
+                                aria-label={t('cashier.order.payment.showQrisAria')}
                                 onClick={() => setShowQris(true)}
                                 className="bg-white px-8 text-xs font-bold text-slate-900 hover:bg-slate-100"
                             >
-                                Tampilkan Qris
+                                {t('cashier.order.payment.showQrisButton')}
                             </Button>
                         )}
                     </div>
@@ -283,20 +286,20 @@ export default function OrderPage({ items, categories }: Props) {
             <Separator className="bg-sky-800" />
             <div className="space-y-2 p-5">
                 <Button
-                    aria-label="Batalkan pembayaran"
+                    aria-label={t('cashier.order.payment.cancelAria')}
                     onClick={handleCancel}
                     variant="outline"
                     className="h-10 w-full border-sky-700 bg-transparent text-xs text-white hover:bg-sky-800 hover:text-white"
                 >
-                    Cancel
+                    {t('cashier.order.payment.cancelButton')}
                 </Button>
                 <Button
-                    aria-label="Konfirmasi pembayaran"
+                    aria-label={t('cashier.order.payment.confirmAria')}
                     onClick={handleConfirmPayment}
                     disabled={processing || (paymentMethod === 'cash' && customerMoney < totalTagihan)}
                     className="h-11 w-full bg-white text-xs font-bold text-slate-900 hover:bg-slate-100 disabled:opacity-50"
                 >
-                    {processing ? 'Memproses...' : 'Confirm payment'}
+                    {processing ? t('cashier.order.payment.processingButton') : t('cashier.order.payment.confirmButton')}
                 </Button>
             </div>
         </>
@@ -304,7 +307,7 @@ export default function OrderPage({ items, categories }: Props) {
 
     return (
         <CashierLayout>
-            <Head title="Kasir - POSAVE" />
+            <Head title={t('cashier.order.pageTitle')} />
 
             <div className="bg-background flex flex-1 flex-col overflow-y-auto p-4 sm:p-6">
                 <div className="mb-6 flex items-center gap-3 sm:gap-4">
@@ -312,7 +315,7 @@ export default function OrderPage({ items, categories }: Props) {
                         value={search}
                         onChange={setSearch}
                         onSubmit={(e) => e.preventDefault()}
-                        placeholder="Cari barang..."
+                        placeholder={t('cashier.order.searchPlaceholder')}
                         variant="kiosk"
                     />
                     <AskChatbotButton className="ml-auto" />
@@ -320,16 +323,17 @@ export default function OrderPage({ items, categories }: Props) {
 
                 {successInfo && (
                     <div className="mb-4 rounded-lg border border-[var(--success)] bg-[var(--success-background)] px-4 py-3 text-sm text-[var(--success)]">
-                        Pembayaran berhasil! Invoice <strong>{successInfo.invoice}</strong> · Total Rp. {successInfo.total.toLocaleString('id-ID')}
+                        {t('cashier.order.successPrefix')} <strong>{successInfo.invoice}</strong> · {t('cashier.order.successTotalLabel')} Rp.{' '}
+                        {successInfo.total.toLocaleString('id-ID')}
                     </div>
                 )}
 
                 <div className="mb-6">
                     <div className="mb-3 flex items-center justify-between">
-                        <h2 className="text-sm font-bold text-[var(--subheading)]">Kategori</h2>
+                        <h2 className="text-sm font-bold text-[var(--subheading)]">{t('cashier.order.category.title')}</h2>
                         <div className="hidden gap-1 sm:flex">
                             <Button
-                                aria-label="Geser kategori ke kiri"
+                                aria-label={t('cashier.order.category.scrollLeftAria')}
                                 variant="outline"
                                 size="icon"
                                 className="h-7 w-7 rounded-full border-[var(--border-strong)]"
@@ -337,7 +341,7 @@ export default function OrderPage({ items, categories }: Props) {
                                 <ChevronLeft className="h-3 w-3" />
                             </Button>
                             <Button
-                                aria-label="Geser kategori ke kanan"
+                                aria-label={t('cashier.order.category.scrollRightAria')}
                                 variant="outline"
                                 size="icon"
                                 className="h-7 w-7 rounded-full border-[var(--border-strong)]"
@@ -348,7 +352,7 @@ export default function OrderPage({ items, categories }: Props) {
                     </div>
                     <div className="flex gap-3 overflow-x-auto pb-2">
                         <button
-                            aria-label="Tampilkan semua kategori"
+                            aria-label={t('cashier.order.category.allAria')}
                             onClick={() => setActiveCategory('all')}
                             className={`flex min-w-[76px] shrink-0 cursor-pointer items-center justify-center rounded-full border px-4 py-2.5 transition ${
                                 activeCategory === 'all'
@@ -356,11 +360,11 @@ export default function OrderPage({ items, categories }: Props) {
                                     : 'border-[var(--border-strong)] bg-[var(--card)] text-[var(--subheading)] hover:bg-[var(--accent)]'
                             }`}
                         >
-                            <span className="text-[11px] font-semibold">Semua</span>
+                            <span className="text-[11px] font-semibold">{t('cashier.order.category.all')}</span>
                         </button>
                         {categories.map((cat) => (
                             <button
-                                aria-label={`Filter kategori ${cat.name}`}
+                                aria-label={`${t('cashier.order.category.filterAriaPrefix')} ${cat.name}`}
                                 key={cat.id}
                                 onClick={() => setActiveCategory(cat.id)}
                                 className={`flex min-w-[76px] shrink-0 cursor-pointer items-center justify-center rounded-full border px-4 py-2.5 transition ${
@@ -376,7 +380,7 @@ export default function OrderPage({ items, categories }: Props) {
                 </div>
 
                 <div>
-                    <h2 className="mb-3 text-sm font-bold text-[var(--subheading)]">Menu</h2>
+                    <h2 className="mb-3 text-sm font-bold text-[var(--subheading)]">{t('cashier.order.menu.title')}</h2>
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-4">
                         {filteredItems.map((item) => {
                             const stockLeft = remainingStock(item);
@@ -394,16 +398,16 @@ export default function OrderPage({ items, categories }: Props) {
                                         <p className="text-center text-xs leading-tight font-bold text-[var(--subheading)]">{item.name}</p>
                                         <p className="mb-1 text-center text-xs text-[var(--grey-text)]">Rp. {item.price.toLocaleString('id-ID')}</p>
                                         <p className={`mb-3 text-[10px] ${isOut ? 'text-[var(--danger)]' : 'text-[var(--grey-text-muted)]'}`}>
-                                            {isOut ? 'Stok habis' : `Sisa stok: ${stockLeft}`}
+                                            {isOut ? t('cashier.order.menu.outOfStock') : `${t('cashier.order.menu.stockLeftLabel')} ${stockLeft}`}
                                         </p>
                                         <Button
-                                            aria-label={`Tambah ${item.name} ke pesanan`}
+                                            aria-label={`${t('cashier.order.menu.addAriaPrefix')} ${item.name} ${t('cashier.order.menu.addAriaSuffix')}`}
                                             size="sm"
                                             disabled={isOut}
                                             className="w-full rounded-full bg-[var(--surface-header)] text-xs font-medium text-white hover:bg-[var(--surface-header-hover)] disabled:opacity-40"
                                             onClick={() => handleAddToCart(item)}
                                         >
-                                            Tambah
+                                            {t('cashier.order.menu.addButton')}
                                         </Button>
                                     </CardContent>
                                 </Card>
@@ -419,7 +423,7 @@ export default function OrderPage({ items, categories }: Props) {
 
             {cartCount > 0 && !sheetOpen && (
                 <button
-                    aria-label="Buka detail pesanan"
+                    aria-label={t('cashier.order.detail.continueAria')}
                     onClick={() => setSheetOpen(true)}
                     className="fixed right-4 bottom-4 z-40 flex items-center gap-2 rounded-full bg-[var(--sidebar)] px-4 py-3 text-white shadow-2xl sm:right-6 sm:bottom-6 sm:px-5 sm:py-3.5 lg:hidden"
                 >

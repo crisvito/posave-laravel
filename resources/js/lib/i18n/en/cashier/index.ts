@@ -1,5 +1,11 @@
-import sidebar from './sidebar';
+import sidebar  from './sidebar';
+import order  from './order';
+import history  from './history';
 
-const cashier = { sidebar };
+const cashier = {
+    sidebar,
+    order,
+    history,
+};
 
-export default cashier;
+export default cashier

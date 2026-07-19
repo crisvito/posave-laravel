@@ -7,6 +7,7 @@ const nav = {
     dashboard: 'Dashboard',
     logout: 'Logout',
     login: 'Sign In',
+    settings: 'Settings',
 };
 
 export default nav;

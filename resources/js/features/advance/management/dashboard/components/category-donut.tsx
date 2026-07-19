@@ -1,3 +1,4 @@
+import { useLanguage } from '@/hooks';
 import { formatRupiah } from '@/lib/format';
 import { useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
@@ -9,13 +10,14 @@ export interface CategorySlice {
 }
 
 export function CategoryDonut({ data }: { data: CategorySlice[] }) {
+    const { t } = useLanguage();
     const [active, setActive] = useState<number | null>(null);
     const total = data.reduce((sum, d) => sum + d.omzet, 0);
 
     if (total === 0) {
         return (
-            <div className="flex h-[220px] items-center justify-center text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                Belum ada data
+            <div className="flex h-[220px] items-center justify-center text-sm text-[var(--grey-text)]">
+                {t('dashboardAdvance.dashboard.donut.empty')}
             </div>
         );
     }
@@ -50,23 +52,20 @@ export function CategoryDonut({ data }: { data: CategorySlice[] }) {
                     </PieChart>
                 </ResponsiveContainer>
 
-                {/* Label tengah */}
                 <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
                     {shown ? (
                         <>
-                            <span className="flex items-center gap-1.5 text-[11px] font-medium text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                            <span className="flex items-center gap-1.5 text-[11px] font-medium text-[var(--grey-text)]">
                                 <span className="h-2 w-2 rounded-full" style={{ backgroundColor: shown.color }} />
                                 {shown.name}
                             </span>
-                            <span className="text-sm font-bold text-[var(--subheading)] dark:text-white">{formatRupiah(shown.omzet)}</span>
-                            <span className="text-[11px] text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                                {Math.round((shown.omzet / total) * 100)}%
-                            </span>
+                            <span className="text-sm font-bold text-[var(--subheading)]">{formatRupiah(shown.omzet)}</span>
+                            <span className="text-[11px] text-[var(--grey-text)]">{Math.round((shown.omzet / total) * 100)}%</span>
                         </>
                     ) : (
                         <>
-                            <span className="text-[11px] text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">Total</span>
-                            <span className="text-sm font-bold text-[var(--subheading)] dark:text-white">{formatRupiah(total)}</span>
+                            <span className="text-[11px] text-[var(--grey-text)]">{t('dashboardAdvance.dashboard.donut.total')}</span>
+                            <span className="text-sm font-bold text-[var(--subheading)]">{formatRupiah(total)}</span>
                         </>
                     )}
                 </div>
@@ -81,18 +80,16 @@ export function CategoryDonut({ data }: { data: CategorySlice[] }) {
                             onMouseEnter={() => setActive(i)}
                             onMouseLeave={() => setActive(null)}
                             className={`flex cursor-default items-center justify-between gap-2 rounded-md px-2 py-1 text-sm transition-colors ${
-                                active === i ? 'bg-[var(--second-accent)] dark:bg-[var(--border-strong)]' : ''
+                                active === i ? 'bg-[var(--second-accent)]' : ''
                             }`}
                         >
-                            <span className="flex min-w-0 items-center gap-2 text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                            <span className="flex min-w-0 items-center gap-2 text-[var(--grey-text)]">
                                 <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: slice.color }} />
                                 <span className="truncate">{slice.name}</span>
                             </span>
                             <span className="flex shrink-0 items-baseline gap-2">
-                                <span className="text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                                    {formatRupiah(slice.omzet)}
-                                </span>
-                                <span className="w-9 text-right font-semibold text-[var(--subheading)] dark:text-white">{pct}%</span>
+                                <span className="text-xs text-[var(--grey-text)]">{formatRupiah(slice.omzet)}</span>
+                                <span className="w-9 text-right font-semibold text-[var(--subheading)]">{pct}%</span>
                             </span>
                         </li>
                     );

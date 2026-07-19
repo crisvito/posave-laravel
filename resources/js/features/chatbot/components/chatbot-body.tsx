@@ -1,4 +1,5 @@
 import { useChatbot } from '@/features/chatbot';
+import { useLanguage } from '@/hooks';
 import { router } from '@inertiajs/react';
 import { Bot, ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -16,6 +17,7 @@ interface ChatBodyProps {
 }
 
 export function ChatBody({ messages, isLoadingHistory, isWaitingReply, conversationId, onFormSubmitted }: ChatBodyProps) {
+    const { t } = useLanguage();
     const { close } = useChatbot();
     const scrollRef = useRef<HTMLDivElement>(null);
     const bottomRef = useRef<HTMLDivElement>(null);
@@ -72,7 +74,7 @@ export function ChatBody({ messages, isLoadingHistory, isWaitingReply, conversat
     if (isLoadingHistory) {
         return (
             <div className="flex flex-1 items-center justify-center">
-                <p className="text-slate-400 dark:text-[var(--muted-foreground)]">Memuat percakapan...</p>
+                <p className="text-[var(--grey-text-muted)]">{t('shared.chatbot.body.loadingHistory')}</p>
             </div>
         );
     }
@@ -81,12 +83,12 @@ export function ChatBody({ messages, isLoadingHistory, isWaitingReply, conversat
         return (
             <div className="flex flex-1 items-center justify-center px-6">
                 <div className="text-center">
-                    <Bot className="mx-auto h-14 w-14 text-blue-600 sm:h-16 sm:w-16" />
-                    <h1 className="mt-6 text-2xl font-bold text-slate-900 sm:text-3xl dark:text-white">Halo 👋</h1>
-                    <p className="mt-3 text-sm text-slate-500 sm:text-base dark:text-[var(--muted-foreground)]">
-                        Saya Robot Pintar POSAVE
+                    <Bot className="mx-auto h-14 w-14 text-[var(--secondary-600)] sm:h-16 sm:w-16" />
+                    <h1 className="mt-6 text-2xl font-bold text-[var(--subheading)] sm:text-3xl">{t('shared.chatbot.body.greetingTitle')}</h1>
+                    <p className="mt-3 text-sm text-[var(--grey-text)] sm:text-base">
+                        {t('shared.chatbot.body.greetingSubtitleLine1')}
                         <br />
-                        Ada yang bisa saya bantu?
+                        {t('shared.chatbot.body.greetingSubtitleLine2')}
                     </p>
                 </div>
             </div>
@@ -100,9 +102,7 @@ export function ChatBody({ messages, isLoadingHistory, isWaitingReply, conversat
                     <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                         <div
                             className={`max-w-[85%] rounded-2xl px-4 py-2 sm:max-w-[70%] ${
-                                msg.role === 'user'
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-slate-100 text-slate-900 dark:bg-[var(--border-strong)] dark:text-white'
+                                msg.role === 'user' ? 'bg-[var(--secondary-600)] text-white' : 'bg-[var(--second-accent)] text-[var(--subheading)]'
                             }`}
                         >
                             {msg.role === 'assistant' ? (
@@ -128,8 +128,8 @@ export function ChatBody({ messages, isLoadingHistory, isWaitingReply, conversat
 
                 {isWaitingReply && (
                     <div className="flex justify-start">
-                        <div className="max-w-[85%] rounded-2xl bg-slate-100 px-4 py-2 text-slate-500 sm:max-w-[70%] dark:bg-[var(--border-strong)] dark:text-[var(--muted-foreground)]">
-                            Mengetik...
+                        <div className="max-w-[85%] rounded-2xl bg-[var(--second-accent)] px-4 py-2 text-[var(--grey-text)] sm:max-w-[70%]">
+                            {t('shared.chatbot.body.typing')}
                         </div>
                     </div>
                 )}
@@ -140,16 +140,16 @@ export function ChatBody({ messages, isLoadingHistory, isWaitingReply, conversat
             {showJumpButton && (
                 <button
                     type="button"
-                    aria-label="Ke pesan terbaru"
+                    aria-label={t('shared.chatbot.body.jumpToLatestAriaLabel')}
                     onClick={() => {
                         isAtBottomRef.current = true;
                         setShowJumpButton(false);
                         scrollToBottom('smooth');
                     }}
-                    className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-slate-800 px-3.5 py-2 text-xs font-medium text-white shadow-lg transition hover:bg-slate-900 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                    className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-[var(--secondary-600)] px-3.5 py-2 text-xs font-medium text-white shadow-lg transition hover:bg-[var(--secondary-700)]"
                 >
                     <ChevronDown className="h-3.5 w-3.5" />
-                    Pesan terbaru
+                    {t('shared.chatbot.body.jumpToLatestLabel')}
                 </button>
             )}
         </div>
@@ -162,7 +162,7 @@ function MarkdownLink(onLinkClick: (event: React.MouseEvent<HTMLAnchorElement>, 
             <a
                 href={href}
                 onClick={(event) => onLinkClick(event, href)}
-                className="font-medium text-blue-600 underline hover:text-blue-700 dark:text-blue-400"
+                className="font-medium text-[var(--secondary-600)] underline hover:text-[var(--secondary-700)]"
             >
                 {children}
             </a>

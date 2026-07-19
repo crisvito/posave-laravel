@@ -1,3 +1,4 @@
+import { useLanguage } from '@/hooks';
 import { formatCompactRupiah, formatNumber, formatRupiah } from '@/lib/format';
 import { Area, AreaChart, CartesianGrid, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
@@ -12,20 +13,24 @@ export interface TrendPoint {
 
 export type TrendMetric = 'omzet' | 'transaksi';
 
-const LINE_COLOR = '#377ba3';
-const PREV_COLOR = '#cbd5e1';
+const LINE_COLOR = 'var(--secondary-700)';
+const PREV_COLOR = 'var(--border-strong)';
 
 function TrendTooltip({ active, payload, label, metric }: any) {
+    const { t } = useLanguage();
     if (!active || !payload?.length) return null;
-    const fmt = metric === 'omzet' ? formatRupiah : (v: number) => `${formatNumber(v)} transaksi`;
+    const fmt =
+        metric === 'omzet' ? formatRupiah : (v: number) => `${formatNumber(v)} ${t('dashboardAdvance.dashboard.salesChart.transactionsSuffix')}`;
     const current = payload.find((p: any) => p.dataKey === 'current')?.value ?? 0;
     const prev = payload.find((p: any) => p.dataKey === 'previous')?.value ?? 0;
 
     return (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--neutral-white)] px-3 py-2 shadow-md">
+        <div className="rounded-lg border border-[var(--border-strong)] bg-[var(--card)] px-3 py-2 shadow-md">
             <p className="text-xs text-[var(--grey-text)]">{label}</p>
             <p className="text-sm font-semibold text-[var(--subheading)]">{fmt(current)}</p>
-            <p className="text-xs text-[var(--grey-text)]">Periode lalu: {fmt(prev)}</p>
+            <p className="text-xs text-[var(--grey-text)]">
+                {t('dashboardAdvance.dashboard.salesChart.previousValueLabel')}: {fmt(prev)}
+            </p>
         </div>
     );
 }
@@ -49,13 +54,20 @@ export function SalesTrendChart({ data, metric }: { data: TrendPoint[]; metric: 
                         <stop offset="100%" stopColor={LINE_COLOR} stopOpacity={0} />
                     </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eef2f6" vertical={false} />
-                <XAxis dataKey="label" interval={interval} tickLine={false} axisLine={false} tick={{ fontSize: 11, fill: '#94a3b8' }} dy={8} />
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                <XAxis
+                    dataKey="label"
+                    interval={interval}
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fontSize: 11, fill: 'var(--grey-text-muted)' }}
+                    dy={8}
+                />
                 <YAxis
                     tickFormatter={(v) => (isOmzet ? formatCompactRupiah(v) : formatNumber(v))}
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fontSize: 11, fill: '#94a3b8' }}
+                    tick={{ fontSize: 11, fill: 'var(--grey-text-muted)' }}
                     width={isOmzet ? 70 : 40}
                 />
                 <Tooltip content={(props) => <TrendTooltip {...props} metric={metric} />} />

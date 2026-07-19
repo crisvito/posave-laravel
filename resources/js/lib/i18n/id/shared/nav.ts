@@ -7,6 +7,7 @@ const nav = {
     dashboard: 'Dashboard',
     logout: 'Logout',
     login: 'Masuk',
+    settings: 'Pengaturan',
 };
 
 export default nav;

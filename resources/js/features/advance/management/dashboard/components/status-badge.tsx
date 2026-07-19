@@ -1,9 +1,12 @@
-/** Badge status transaksi (completed/refunded/void) dengan warna semantik. */
+import { useLanguage } from '@/hooks';
+
 export function StatusBadge({ status }: { status: string }) {
+    const { t } = useLanguage();
+
     const map: Record<string, { label: string; color: string; bg: string }> = {
-        completed: { label: 'Selesai', color: 'var(--success)', bg: 'var(--success-background)' },
-        refunded: { label: 'Refund', color: 'var(--warning)', bg: 'var(--warning-background)' },
-        void: { label: 'Batal', color: 'var(--danger)', bg: 'var(--danger-background)' },
+        completed: { label: t('dashboardAdvance.dashboard.statusBadge.completed'), color: 'var(--success)', bg: 'var(--success-background)' },
+        refunded: { label: t('dashboardAdvance.dashboard.statusBadge.refunded'), color: 'var(--warning)', bg: 'var(--warning-background)' },
+        void: { label: t('dashboardAdvance.dashboard.statusBadge.void'), color: 'var(--danger)', bg: 'var(--danger-background)' },
     };
     const s = map[status] ?? map.completed;
 

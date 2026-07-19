@@ -1,5 +1,6 @@
 import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { UserInfo } from '@/components/user/user-info';
+import { useLanguage } from '@/hooks';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { type User } from '@/types';
 import { Link } from '@inertiajs/react';
@@ -10,6 +11,7 @@ interface UserMenuContentProps {
 }
 
 export function UserMenuContent({ user }: UserMenuContentProps) {
+    const { t } = useLanguage();
     const cleanup = useMobileNavigation();
 
     return (
@@ -30,7 +32,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
                         onClick={cleanup}
                     >
                         <Settings className="mr-2" />
-                        Settings
+                        {t('shared.nav.settings')}
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -38,7 +40,7 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             <DropdownMenuItem asChild>
                 <Link className="block w-full !text-[var(--popover-foreground)]" method="post" href={route('logout')} as="button" onClick={cleanup}>
                     <LogOut className="mr-2" />
-                    Log out
+                    {t('shared.nav.logout')}
                 </Link>
             </DropdownMenuItem>
         </>
