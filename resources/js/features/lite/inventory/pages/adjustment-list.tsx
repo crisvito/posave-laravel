@@ -1,5 +1,6 @@
 import { Button, Input } from '@/components/ui';
 import { AdjustmentFormModal } from '@/features/lite/inventory/components';
+import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
@@ -29,11 +30,14 @@ interface Props {
 }
 
 export default function AdjustmentList({ adjustments: initialAdjustments, items, filters }: Props) {
+    const { t, locale } = useLanguage();
     const [adjustments, setAdjustments] = useState<AdjustmentRow[]>(initialAdjustments.data);
     const [nextPageUrl, setNextPageUrl] = useState(initialAdjustments.next_page_url);
     const [loadingMore, setLoadingMore] = useState(false);
     const [search, setSearch] = useState(filters.search ?? '');
     const [showForm, setShowForm] = useState(false);
+
+    const dateLocale = locale === 'en' ? 'en-US' : 'id-ID';
 
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -57,32 +61,37 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
     };
 
     return (
-        <DashboardSidebarLayout title="Perubahan Stok" description="Catat kalau ada barang rusak, hilang, atau ketemu lebih">
-            <Head title="Perubahan Stok" />
+        <DashboardSidebarLayout
+            title={t('dashboardLite.inventoryAdjustments.pageTitle')}
+            description={t('dashboardLite.inventoryAdjustments.pageDescription')}
+        >
+            <Head title={t('dashboardLite.inventoryAdjustments.pageTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
                     <form onSubmit={handleSearchSubmit} className="relative flex-1">
                         <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                         <Input
-                            aria-label="Cari nama barang"
+                            aria-label={t('dashboardLite.inventoryAdjustments.search.aria')}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Cari nama barang..."
+                            placeholder={t('dashboardLite.inventoryAdjustments.search.placeholder')}
                             className="h-12 rounded-md border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                         />
                     </form>
-                    <Button aria-label="Catat perubahan stok baru" onClick={() => setShowForm(true)} className="h-12">
+                    <Button aria-label={t('dashboardLite.inventoryAdjustments.createAria')} onClick={() => setShowForm(true)} className="h-12">
                         <Plus className="mr-1 h-5 w-5" />
-                        Catat Perubahan
+                        {t('dashboardLite.inventoryAdjustments.createButton')}
                     </Button>
                 </div>
 
                 {adjustments.length === 0 ? (
                     <div className="rounded-2xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
                         <ClipboardEdit className="mx-auto mb-3 h-10 w-10 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
-                        <p className="text-lg font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Belum ada catatan perubahan</p>
+                        <p className="text-lg font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            {t('dashboardLite.inventoryAdjustments.empty.title')}
+                        </p>
                         <p className="mt-1 text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
-                            Kalau ada barang rusak atau hilang, catat di sini biar stok tetap akurat.
+                            {t('dashboardLite.inventoryAdjustments.empty.hint')}
                         </p>
                     </div>
                 ) : (
@@ -100,7 +109,7 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
                                         </p>
                                         <p className="text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">{a.note}</p>
                                         <p className="mt-0.5 text-xs text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
-                                            {new Date(a.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                            {new Date(a.date).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
                                         </p>
                                     </div>
                                     <span
@@ -121,13 +130,15 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
                 {nextPageUrl && (
                     <div className="mt-6 flex justify-center">
                         <Button
-                            aria-label="Tampilkan riwayat lainnya"
+                            aria-label={t('dashboardLite.inventoryAdjustments.loadMoreAria')}
                             variant="outline"
                             onClick={handleLoadMore}
                             disabled={loadingMore}
                             className="h-12 rounded-2xl border-[var(--border-strong)] bg-[var(--neutral-white)] px-8 text-base font-semibold dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
                         >
-                            {loadingMore ? 'Memuat...' : 'Tampilkan Lebih Banyak'}
+                            {loadingMore
+                                ? t('dashboardLite.inventoryAdjustments.loadingButton')
+                                : t('dashboardLite.inventoryAdjustments.loadMoreButton')}
                         </Button>
                     </div>
                 )}

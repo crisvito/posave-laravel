@@ -1,5 +1,6 @@
 import { FilterDropdown } from '@/components';
 import { Button } from '@/components/ui';
+import { useLanguage } from '@/hooks';
 import { useForm } from '@inertiajs/react';
 import { ClipboardEdit, Minus, Plus, X } from 'lucide-react';
 
@@ -10,18 +11,19 @@ interface AdjustmentFormModalProps {
 
 type Direction = 'in' | 'out';
 
-const REASONS: Record<Direction, string[]> = {
-    out: ['Barang rusak', 'Hilang', 'Kadaluarsa'],
-    in: ['Ketemu lebih saat hitung ulang', 'Retur dari pelanggan'],
-};
-
 export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps) {
+    const { t } = useLanguage();
     const { data, setData, post, processing, errors, reset, transform } = useForm({
         inventory_item_id: '',
         direction: 'out' as Direction,
         amount: '1',
         note: '',
     });
+
+    const REASONS: Record<Direction, string[]> = {
+        out: t('dashboardLite.inventoryAdjustments.modal.reasonsOut') as unknown as string[],
+        in: t('dashboardLite.inventoryAdjustments.modal.reasonsIn') as unknown as string[],
+    };
 
     const handleDirectionChange = (direction: Direction) => {
         setData((prev) => ({ ...prev, direction, note: '' }));
@@ -56,9 +58,11 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
                         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--second-accent)] dark:bg-[var(--border-strong)]">
                             <ClipboardEdit className="h-6 w-6 text-[var(--subheading)] dark:text-[var(--neutral-white)]" />
                         </span>
-                        <h3 className="text-xl font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Catat Perubahan</h3>
+                        <h3 className="text-xl font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            {t('dashboardLite.inventoryAdjustments.modal.title')}
+                        </h3>
                     </div>
-                    <button aria-label="Tutup" onClick={onClose}>
+                    <button aria-label={t('dashboardLite.inventoryAdjustments.modal.closeAria')} onClick={onClose}>
                         <X className="h-6 w-6 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                     </button>
                 </div>
@@ -67,7 +71,7 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
                     <div>
                         <FilterDropdown
                             value={data.inventory_item_id || undefined}
-                            allLabel="Pilih kategori"
+                            allLabel={t('dashboardLite.inventoryAdjustments.modal.itemPlaceholder')}
                             options={items.map((c) => ({
                                 value: String(c.id),
                                 label: c.name,
@@ -80,42 +84,44 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
 
                     <div>
                         <label className="mb-2 block text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                            Apa yang terjadi?
+                            {t('dashboardLite.inventoryAdjustments.modal.directionLabel')}
                         </label>
                         <div className="grid grid-cols-2 gap-3">
                             <button
                                 type="button"
-                                aria-label="Stok berkurang"
+                                aria-label={t('dashboardLite.inventoryAdjustments.modal.directionOutAria')}
                                 onClick={() => handleDirectionChange('out')}
                                 className={`flex flex-col items-center gap-1.5 rounded-2xl border-2 p-4 transition ${
                                     data.direction === 'out'
-                                        ? 'border-[var(--danger)] bg-[var(--danger-background)] text-[var(--danger)] dark:border-red-400 dark:bg-red-900/30 dark:text-red-400'
+                                        ? 'border-[var(--danger)] bg-[var(--danger-background)] text-[var(--danger)]'
                                         : 'border-[var(--border-strong)] text-[var(--grey-text)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]'
                                 }`}
                             >
                                 <Minus className="h-6 w-6" />
-                                <span className="text-sm font-bold">Stok Berkurang</span>
+                                <span className="text-sm font-bold">{t('dashboardLite.inventoryAdjustments.modal.directionOutLabel')}</span>
                             </button>
                             <button
                                 type="button"
-                                aria-label="Stok bertambah"
+                                aria-label={t('dashboardLite.inventoryAdjustments.modal.directionInAria')}
                                 onClick={() => handleDirectionChange('in')}
                                 className={`flex flex-col items-center gap-1.5 rounded-2xl border-2 p-4 transition ${
                                     data.direction === 'in'
-                                        ? 'border-[var(--success)] bg-[var(--success-background)] text-[var(--success)] dark:border-green-400 dark:bg-green-900/30 dark:text-green-400'
+                                        ? 'border-[var(--success)] bg-[var(--success-background)] text-[var(--success)]'
                                         : 'border-[var(--border-strong)] text-[var(--grey-text)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]'
                                 }`}
                             >
                                 <Plus className="h-6 w-6" />
-                                <span className="text-sm font-bold">Stok Bertambah</span>
+                                <span className="text-sm font-bold">{t('dashboardLite.inventoryAdjustments.modal.directionInLabel')}</span>
                             </button>
                         </div>
                     </div>
 
                     <div>
-                        <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Jumlah</label>
+                        <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            {t('dashboardLite.inventoryAdjustments.modal.amountLabel')}
+                        </label>
                         <input
-                            aria-label="Jumlah perubahan"
+                            aria-label={t('dashboardLite.inventoryAdjustments.modal.amountAria')}
                             type="number"
                             min="1"
                             value={data.amount}
@@ -125,13 +131,15 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
                     </div>
 
                     <div>
-                        <label className="mb-2 block text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Alasan</label>
+                        <label className="mb-2 block text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            {t('dashboardLite.inventoryAdjustments.modal.reasonLabel')}
+                        </label>
                         <div className="flex flex-wrap gap-2">
                             {REASONS[data.direction].map((reason) => (
                                 <button
                                     key={reason}
                                     type="button"
-                                    aria-label={`Alasan: ${reason}`}
+                                    aria-label={`${t('dashboardLite.inventoryAdjustments.modal.reasonAriaPrefix')} ${reason}`}
                                     onClick={() => setData('note', reason)}
                                     className={`rounded-full border-2 px-3 py-1.5 text-sm font-medium transition ${
                                         data.note === reason
@@ -144,22 +152,24 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
                             ))}
                         </div>
                         <input
-                            aria-label="Alasan lainnya"
+                            aria-label={t('dashboardLite.inventoryAdjustments.modal.reasonOtherAria')}
                             value={data.note}
                             onChange={(e) => setData('note', e.target.value)}
-                            placeholder="Atau tulis alasan lain..."
+                            placeholder={t('dashboardLite.inventoryAdjustments.modal.reasonOtherPlaceholder')}
                             className="mt-2 h-12 w-full rounded-xl border border-[var(--border-strong)] bg-transparent px-3 text-base dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
                         />
                         {errors.note && <p className="mt-1 text-sm text-[var(--danger)]">{errors.note}</p>}
                     </div>
 
                     <Button
-                        aria-label="Simpan perubahan"
+                        aria-label={t('dashboardLite.inventoryAdjustments.modal.saveAria')}
                         type="submit"
                         disabled={processing}
                         className="mt-2 h-12 rounded-xl bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:opacity-90"
                     >
-                        {processing ? 'Menyimpan...' : 'Simpan'}
+                        {processing
+                            ? t('dashboardLite.inventoryAdjustments.modal.savingButton')
+                            : t('dashboardLite.inventoryAdjustments.modal.saveButton')}
                     </Button>
                 </form>
             </div>

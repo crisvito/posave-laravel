@@ -1,0 +1,27 @@
+export const profile = {
+    pageTitle: 'Profil Toko',
+    pageDescription: 'Info dasar tentang usaha kamu',
+    card: {
+        heading: 'Profil Toko',
+        subheading: 'Info dasar tentang usaha kamu',
+    },
+    form: {
+        nameLabel: 'Nama Toko',
+        nameAria: 'Nama toko',
+        namePlaceholder: 'Contoh: Warung Bu Siti',
+        phoneLabel: 'Nomor Telepon',
+        phoneAria: 'Nomor telepon toko',
+        phonePlaceholder: '08xxxxxxxxxx',
+        addressLabel: 'Alamat',
+        addressAria: 'Alamat toko',
+        addressPlaceholder: 'Jl. Contoh No. 123, Kota',
+        logoLabel: 'Logo Toko',
+        logoPreviewAlt: 'Pratinjau logo',
+        logoUploadAria: 'Unggah logo toko',
+        logoChange: 'Ganti logo',
+        logoPick: 'Tap untuk pilih logo',
+        saveAria: 'Simpan profil toko',
+        saveButton: 'Simpan Profil Toko',
+        savingButton: 'Menyimpan...',
+    },
+};

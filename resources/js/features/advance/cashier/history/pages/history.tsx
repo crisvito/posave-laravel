@@ -71,7 +71,6 @@ export default function HistoryPage({ transactions, filters }: Props) {
             <div className="p-5">
                 <h2 className="text-base font-bold tracking-widest uppercase">{t('cashier.history.detail.title')}</h2>
                 <div className="mt-1 flex items-center justify-between text-[11px]">
-                    <span className="font-medium text-slate-300">Kopiakin Resto</span>
                     {selected && <span className="text-slate-400">{selected.dateLabel}</span>}
                 </div>
             </div>

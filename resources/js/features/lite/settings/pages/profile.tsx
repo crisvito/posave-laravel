@@ -1,4 +1,5 @@
 import { Button, Input, Label, Textarea } from '@/components/ui';
+import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, useForm } from '@inertiajs/react';
 import { Store, UploadCloud } from 'lucide-react';
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function ProfileSettings({ profile }: Props) {
+    const { t } = useLanguage();
     const [preview, setPreview] = useState<string | null>(profile?.logo ? `/storage/${profile.logo}` : null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,8 +40,8 @@ export default function ProfileSettings({ profile }: Props) {
     };
 
     return (
-        <DashboardSidebarLayout title="Profil Toko" description="Info dasar tentang usaha kamu">
-            <Head title="Profil Toko" />
+        <DashboardSidebarLayout title={t('dashboardLite.profile.pageTitle')} description={t('dashboardLite.profile.pageDescription')}>
+            <Head title={t('dashboardLite.profile.pageTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <div className="mx-auto max-w-xl rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-5 shadow-sm sm:p-6 dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
                     <div className="mb-5 flex items-center gap-3">
@@ -47,66 +49,74 @@ export default function ProfileSettings({ profile }: Props) {
                             <Store className="h-5 w-5 text-[var(--subheading)] dark:text-[var(--neutral-white)]" />
                         </span>
                         <div>
-                            <h3 className="text-lg font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Profil Toko</h3>
-                            <p className="text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">Info dasar tentang usaha kamu</p>
+                            <h3 className="text-lg font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                                {t('dashboardLite.profile.card.heading')}
+                            </h3>
+                            <p className="text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
+                                {t('dashboardLite.profile.card.subheading')}
+                            </p>
                         </div>
                     </div>
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         <div>
-                            <Label>Nama Toko</Label>
+                            <Label>{t('dashboardLite.profile.form.nameLabel')}</Label>
                             <Input
-                                aria-label="Nama toko"
+                                aria-label={t('dashboardLite.profile.form.nameAria')}
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
-                                placeholder="Contoh: Warung Bu Siti"
+                                placeholder={t('dashboardLite.profile.form.namePlaceholder')}
                                 className="h-12"
                             />
                             {errors.name && <p className="mt-1 text-sm text-[var(--danger)]">{errors.name}</p>}
                         </div>
 
                         <div>
-                            <Label>Nomor Telepon</Label>
+                            <Label>{t('dashboardLite.profile.form.phoneLabel')}</Label>
                             <Input
-                                aria-label="Nomor telepon toko"
+                                aria-label={t('dashboardLite.profile.form.phoneAria')}
                                 value={data.phone}
                                 onChange={(e) => setData('phone', e.target.value)}
-                                placeholder="08xxxxxxxxxx"
+                                placeholder={t('dashboardLite.profile.form.phonePlaceholder')}
                                 className="h-12"
                             />
                         </div>
 
                         <div>
-                            <Label>Alamat</Label>
+                            <Label>{t('dashboardLite.profile.form.addressLabel')}</Label>
                             <Textarea
-                                aria-label="Alamat toko"
+                                aria-label={t('dashboardLite.profile.form.addressAria')}
                                 value={data.address}
                                 onChange={(e) => setData('address', e.target.value)}
-                                placeholder="Jl. Contoh No. 123, Kota"
+                                placeholder={t('dashboardLite.profile.form.addressPlaceholder')}
                                 rows={3}
                                 className="w-full"
                             />
                         </div>
 
                         <div>
-                            <Label>Logo Toko</Label>
+                            <Label>{t('dashboardLite.profile.form.logoLabel')}</Label>
                             <div
                                 onClick={() => fileInputRef.current?.click()}
                                 className="flex cursor-pointer items-center gap-4 rounded-xl border-2 border-dashed border-[var(--border-strong)] p-4 hover:bg-[var(--second-accent)] dark:border-[var(--border-strong)] dark:hover:bg-white/10"
                             >
                                 {preview ? (
-                                    <img src={preview} alt="Pratinjau logo" className="h-14 w-14 rounded-lg object-cover" />
+                                    <img
+                                        src={preview}
+                                        alt={t('dashboardLite.profile.form.logoPreviewAlt')}
+                                        className="h-14 w-14 rounded-lg object-cover"
+                                    />
                                 ) : (
                                     <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-[var(--second-accent)] dark:bg-[var(--border-strong)]">
                                         <UploadCloud className="h-6 w-6 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                                     </div>
                                 )}
                                 <span className="text-sm font-medium text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                                    {preview ? 'Ganti logo' : 'Tap untuk pilih logo'}
+                                    {preview ? t('dashboardLite.profile.form.logoChange') : t('dashboardLite.profile.form.logoPick')}
                                 </span>
                             </div>
                             <Input
-                                aria-label="Unggah logo toko"
+                                aria-label={t('dashboardLite.profile.form.logoUploadAria')}
                                 ref={fileInputRef}
                                 type="file"
                                 accept="image/*"
@@ -116,12 +126,12 @@ export default function ProfileSettings({ profile }: Props) {
                         </div>
 
                         <Button
-                            aria-label="Simpan profil toko"
+                            aria-label={t('dashboardLite.profile.form.saveAria')}
                             type="submit"
                             disabled={processing}
                             className="h-12 bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:text-[var(--neutral-white)] dark:hover:opacity-90"
                         >
-                            {processing ? 'Menyimpan...' : 'Simpan Profil Toko'}
+                            {processing ? t('dashboardLite.profile.form.savingButton') : t('dashboardLite.profile.form.saveButton')}
                         </Button>
                     </form>
                 </div>

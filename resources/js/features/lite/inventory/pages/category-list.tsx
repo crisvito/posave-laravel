@@ -1,7 +1,7 @@
 import { CreateButton } from '@/components';
 import { Button, Input } from '@/components/ui';
 import { InventoryCategoryFormModal } from '@/features/lite/inventory/components';
-import { useConfirmAction } from '@/hooks';
+import { useConfirmAction, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
@@ -24,6 +24,7 @@ interface Props {
 }
 
 export default function CategoryList({ categories: initialCategories, filters }: Props) {
+    const { t } = useLanguage();
     const [categories, setCategories] = useState<CategoryItem[]>(initialCategories.data);
     const [nextPageUrl, setNextPageUrl] = useState(initialCategories.next_page_url);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -55,37 +56,46 @@ export default function CategoryList({ categories: initialCategories, filters }:
     const handleDelete = (category: CategoryItem) => {
         const warning =
             category.items_count > 0
-                ? `Kategori "${category.name}" masih punya ${category.items_count} barang. Barangnya tidak akan terhapus, tapi jadi tanpa kategori. Lanjutkan?`
-                : `Hapus kategori "${category.name}"?`;
+                ? `${t('dashboardLite.inventoryCategories.deleteWarningWithItems.prefix')} "${category.name}" ${t('dashboardLite.inventoryCategories.deleteWarningWithItems.middle')} ${category.items_count} ${t('dashboardLite.inventoryCategories.deleteWarningWithItems.suffix')}`
+                : `${t('dashboardLite.inventoryCategories.deleteWarningEmptyPrefix')} "${category.name}"?`;
 
         confirmAndDelete(warning, route('lite.inventory.categories.destroy', category.id), {
             onSuccess: () => setCategories((prev) => prev.filter((c) => c.id !== category.id)),
         });
     };
     return (
-        <DashboardSidebarLayout title="Kategori Barang" description="Kelompokkan barang biar gampang dicari">
-            <Head title="Kategori" />
+        <DashboardSidebarLayout
+            title={t('dashboardLite.inventoryCategories.pageTitle')}
+            description={t('dashboardLite.inventoryCategories.pageDescription')}
+        >
+            <Head title={t('dashboardLite.inventoryCategories.headTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
                     <form onSubmit={handleSearchSubmit} className="relative flex-1">
                         <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                         <Input
-                            aria-label="Cari kategori"
+                            aria-label={t('dashboardLite.inventoryCategories.search.aria')}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Cari kategori..."
+                            placeholder={t('dashboardLite.inventoryCategories.search.placeholder')}
                             className="h-12 rounded-md border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                         />
                     </form>
-                    <CreateButton label="Tambah Kategori baru" onClick={() => setFormCategory('new')} className="h-12" />
+                    <CreateButton
+                        label={t('dashboardLite.inventoryCategories.createButton')}
+                        onClick={() => setFormCategory('new')}
+                        className="h-12"
+                    />
                 </div>
 
                 {categories.length === 0 ? (
                     <div className="rounded-2xl border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
                         <Tag className="mx-auto mb-3 h-10 w-10 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
-                        <p className="text-lg font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Belum ada kategori</p>
+                        <p className="text-lg font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            {t('dashboardLite.inventoryCategories.empty.title')}
+                        </p>
                         <p className="mt-1 text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
-                            Buat kategori dulu sebelum menambah barang.
+                            {t('dashboardLite.inventoryCategories.empty.hint')}
                         </p>
                     </div>
                 ) : (
@@ -107,17 +117,17 @@ export default function CategoryList({ categories: initialCategories, filters }:
                                             {category.name}
                                         </p>
                                         <p className="text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
-                                            {category.items_count} Barang
+                                            {category.items_count} {t('dashboardLite.inventoryCategories.itemsCountSuffix')}
                                         </p>
                                     </div>
                                 </div>
 
                                 <Button
-                                    aria-label={`Ubah kategori ${category.name}`}
+                                    aria-label={`${t('dashboardLite.inventoryCategories.editAriaPrefix')} ${category.name}`}
                                     onClick={() => setFormCategory(category)}
                                     className="h-10 rounded-xl bg-[var(--surface-header)] px-4 text-sm font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:text-[var(--neutral-white)] dark:hover:opacity-90"
                                 >
-                                    Ubah
+                                    {t('dashboardLite.inventoryCategories.editButton')}
                                 </Button>
                             </div>
                         ))}
@@ -127,13 +137,15 @@ export default function CategoryList({ categories: initialCategories, filters }:
                 {nextPageUrl && (
                     <div className="mt-6 flex justify-center">
                         <Button
-                            aria-label="Tampilkan kategori lainnya"
+                            aria-label={t('dashboardLite.inventoryCategories.loadMoreAria')}
                             variant="outline"
                             onClick={handleLoadMore}
                             disabled={loadingMore}
                             className="h-12 rounded-2xl border-[var(--border-strong)] bg-[var(--neutral-white)] px-8 text-base font-semibold dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
                         >
-                            {loadingMore ? 'Memuat...' : 'Tampilkan Lebih Banyak'}
+                            {loadingMore
+                                ? t('dashboardLite.inventoryCategories.loadingButton')
+                                : t('dashboardLite.inventoryCategories.loadMoreButton')}
                         </Button>
                     </div>
                 )}

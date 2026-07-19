@@ -1,0 +1,33 @@
+export const order = {
+    pageTitle: 'Pesanan',
+    pageDescription: 'Pilih barang, lalu catat pembayaran',
+    search: {
+        aria: 'Cari barang',
+        placeholder: 'Cari barang...',
+    },
+    category: {
+        allAria: 'Lihat semua kategori',
+        all: 'Semua',
+        filterAriaPrefix: 'Filter kategori',
+    },
+    item: {
+        outOfStock: 'Stok habis',
+        stockLeftPrefix: 'Sisa:',
+        addAriaPrefix: 'Tambah',
+        addAriaSuffix: 'ke keranjang',
+        addButton: '+ Tambah',
+    },
+    cart: {
+        title: 'Keranjang',
+        closeAria: 'Tutup keranjang',
+        empty: 'Belum ada barang dipilih',
+        decreaseAriaPrefix: 'Kurangi',
+        increaseAriaPrefix: 'Tambah',
+        total: 'Total',
+        payAria: 'Bayar sekarang',
+        payButton: 'Bayar Sekarang',
+        openAria: 'Buka keranjang',
+    },
+    successPrefix: 'Pembayaran berhasil!',
+    successCloseAria: 'Tutup notifikasi',
+};

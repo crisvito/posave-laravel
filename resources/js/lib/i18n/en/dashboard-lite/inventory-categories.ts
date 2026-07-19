@@ -1,0 +1,41 @@
+export const inventoryCategories = {
+    pageTitle: 'Item Categories',
+    pageDescription: 'Group items to make them easier to find',
+    headTitle: 'Categories',
+    search: {
+        aria: 'Search categories',
+        placeholder: 'Search categories...',
+    },
+    createButton: 'Add New Category',
+    empty: {
+        title: 'No categories yet',
+        hint: 'Create a category before adding items.',
+    },
+    itemsCountSuffix: 'Items',
+    editAriaPrefix: 'Edit category',
+    editButton: 'Edit',
+    loadMoreAria: 'Show more categories',
+    loadMoreButton: 'Show More',
+    loadingButton: 'Loading...',
+    deleteWarningWithItems: {
+        prefix: 'Category',
+        middle: 'still has',
+        suffix: "items. Those items won't be deleted, but will become uncategorized. Continue?",
+    },
+    deleteWarningEmptyPrefix: 'Delete category',
+    deleteWarningEmpty: 'Delete category "{name}"?',
+    modal: {
+        editTitle: 'Edit Category',
+        createTitle: 'Add Category',
+        closeAria: 'Close',
+        nameLabel: 'Category Name',
+        nameAria: 'Category name',
+        namePlaceholder: 'Example: Drinks, Groceries...',
+        saveAria: 'Save category',
+        saveButton: 'Save',
+        savingButton: 'Saving...',
+        deleteAria: 'Delete category',
+        deleteButton: 'Delete Category',
+    },
+    
+};

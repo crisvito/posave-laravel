@@ -9,12 +9,12 @@ const buttonVariants = cva(
     {
         variants: {
             variant: {
-                default: 'bg-primary text-primary-foreground hover:bg-primary/90 dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)] dark:text-white dark:hover:bg-[var(--second-accent)]',
-                destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+                default: 'bg-[var(--primary-900)] text-white hover:opacity-90 dark:border dark:border-[var(--border-strong)] dark:bg-[var(--card)] dark:text-white dark:hover:bg-[var(--second-accent)]',
+                destructive: 'bg-[var(--danger)] text-white hover:opacity-90',
                 outline: 'border border-[var(--border-strong)] bg-transparent text-[var(--subheading)] hover:bg-[var(--surface-badge)] dark:border-[var(--border-strong)] dark:text-white dark:hover:bg-[var(--second-accent)]',
                 secondary: 'border border-transparent bg-[var(--second-accent)] text-[var(--subheading)] shadow-sm hover:bg-[var(--surface-badge)] dark:border-[var(--border-strong)] dark:bg-[var(--card)] dark:text-white dark:hover:bg-[var(--second-accent)]',
                 ghost: 'text-[var(--subheading)] hover:bg-[var(--surface-badge)] dark:text-white dark:hover:bg-[var(--second-accent)]',
-                link: 'text-primary underline-offset-4 hover:underline dark:text-white',
+                link: 'text-[var(--secondary-600)] underline-offset-4 hover:underline',
             },
             size: {
                 default: 'h-10 px-4 py-2',

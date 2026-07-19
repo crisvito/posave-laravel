@@ -1,5 +1,6 @@
 import { Button, CATEGORY_COLOR_SWATCHES, CategoryColorPicker } from '@/components';
 import { Input } from '@/components/ui';
+import { useLanguage } from '@/hooks';
 import { useForm } from '@inertiajs/react';
 import { Tag, Trash2, X } from 'lucide-react';
 
@@ -10,6 +11,7 @@ interface InventoryCategoryFormModalProps {
 }
 
 export function InventoryCategoryFormModal({ category, onClose, onDelete }: InventoryCategoryFormModalProps) {
+    const { t } = useLanguage();
     const isEdit = !!category;
 
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -38,10 +40,12 @@ export function InventoryCategoryFormModal({ category, onClose, onDelete }: Inve
                             <Tag className="h-6 w-6 text-[var(--subheading)] dark:text-[var(--neutral-white)]" />
                         </span>
                         <h3 className="text-xl font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                            {isEdit ? 'Ubah Kategori' : 'Tambah Kategori'}
+                            {isEdit
+                                ? t('dashboardLite.inventoryCategories.modal.editTitle')
+                                : t('dashboardLite.inventoryCategories.modal.createTitle')}
                         </h3>
                     </div>
-                    <button aria-label="Tutup" onClick={onClose}>
+                    <button aria-label={t('dashboardLite.inventoryCategories.modal.closeAria')} onClick={onClose}>
                         <X className="h-6 w-6 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                     </button>
                 </div>
@@ -49,13 +53,13 @@ export function InventoryCategoryFormModal({ category, onClose, onDelete }: Inve
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-5 pb-5">
                     <div>
                         <label className="mb-1.5 block text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                            Nama Kategori
+                            {t('dashboardLite.inventoryCategories.modal.nameLabel')}
                         </label>
                         <Input
-                            aria-label="Nama kategori"
+                            aria-label={t('dashboardLite.inventoryCategories.modal.nameAria')}
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            placeholder="Contoh: Minuman, Sembako..."
+                            placeholder={t('dashboardLite.inventoryCategories.modal.namePlaceholder')}
                         />
                         {errors.name && <p className="mt-1 text-sm text-[var(--danger)]">{errors.name}</p>}
                     </div>
@@ -65,23 +69,25 @@ export function InventoryCategoryFormModal({ category, onClose, onDelete }: Inve
 
                     <div className="mt-2 flex flex-col gap-2">
                         <Button
-                            aria-label="Simpan kategori"
+                            aria-label={t('dashboardLite.inventoryCategories.modal.saveAria')}
                             type="submit"
                             disabled={processing}
                             className="h-12 rounded-xl bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:opacity-90"
                         >
-                            {processing ? 'Menyimpan...' : 'Simpan'}
+                            {processing
+                                ? t('dashboardLite.inventoryCategories.modal.savingButton')
+                                : t('dashboardLite.inventoryCategories.modal.saveButton')}
                         </Button>
                         {onDelete && (
                             <Button
-                                aria-label="Hapus kategori"
+                                aria-label={t('dashboardLite.inventoryCategories.modal.deleteAria')}
                                 type="button"
                                 variant="outline"
                                 onClick={onDelete}
-                                className="h-12 rounded-xl border-[var(--danger)] text-base font-bold text-[var(--danger)] hover:bg-[var(--danger-background)] dark:border-red-400 dark:text-red-400 dark:hover:bg-red-900/30"
+                                className="h-12 rounded-xl border-[var(--danger)] text-base font-bold text-[var(--danger)] hover:bg-[var(--danger-background)]"
                             >
                                 <Trash2 className="mr-2 h-4 w-4" />
-                                Hapus Kategori
+                                {t('dashboardLite.inventoryCategories.modal.deleteButton')}
                             </Button>
                         )}
                     </div>

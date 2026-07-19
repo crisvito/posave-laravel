@@ -1,0 +1,27 @@
+export const profile = {
+    pageTitle: 'Store Profile',
+    pageDescription: 'Basic info about your business',
+    card: {
+        heading: 'Store Profile',
+        subheading: 'Basic info about your business',
+    },
+    form: {
+        nameLabel: 'Store Name',
+        nameAria: 'Store name',
+        namePlaceholder: 'Example: Bu Siti Store',
+        phoneLabel: 'Phone Number',
+        phoneAria: 'Store phone number',
+        phonePlaceholder: '08xxxxxxxxxx',
+        addressLabel: 'Address',
+        addressAria: 'Store address',
+        addressPlaceholder: 'Jl. Contoh No. 123, City',
+        logoLabel: 'Store Logo',
+        logoPreviewAlt: 'Logo preview',
+        logoUploadAria: 'Upload store logo',
+        logoChange: 'Change logo',
+        logoPick: 'Tap to choose a logo',
+        saveAria: 'Save store profile',
+        saveButton: 'Save Store Profile',
+        savingButton: 'Saving...',
+    },
+};

@@ -101,7 +101,6 @@ export default function OrderPage({ items, categories }: Props) {
             <div className="p-5">
                 <h2 className="text-base font-bold tracking-widest uppercase">{t('cashier.order.detail.title')}</h2>
                 <div className="mt-1 flex items-center justify-between text-[11px]">
-                    <span className="font-medium text-slate-300">Kopiakin Resto</span>
                     <span className="text-slate-400">
                         {new Date().toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                     </span>

@@ -1,4 +1,5 @@
 import { Button, Input, Label, Textarea } from '@/components';
+import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, useForm } from '@inertiajs/react';
 import { Receipt, Store, UploadCloud } from 'lucide-react';
@@ -24,6 +25,7 @@ const SAMPLE_ITEMS = [
 const SAMPLE_PAID = 20000;
 
 export default function ReceiptSettings({ receipt, company_name }: Props) {
+    const { t, locale } = useLanguage();
     const [preview, setPreview] = useState<string | null>(receipt?.logo ? `/storage/${receipt.logo}` : null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -45,13 +47,14 @@ export default function ReceiptSettings({ receipt, company_name }: Props) {
         post(route('lite.settings.receipt.update'), { forceFormData: true });
     };
 
+    const dateLocale = locale === 'en' ? 'en-US' : 'id-ID';
     const subtotal = SAMPLE_ITEMS.reduce((s, i) => s + i.qty * i.price, 0);
     const change = SAMPLE_PAID - subtotal;
     const now = new Date();
 
     return (
-        <DashboardSidebarLayout title="Bukti Bayar" description="Info yang muncul di struk belanja">
-            <Head title="Bukti Bayar" />
+        <DashboardSidebarLayout title={t('dashboardLite.receipt.pageTitle')} description={t('dashboardLite.receipt.pageDescription')}>
+            <Head title={t('dashboardLite.receipt.pageTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <div className="rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-5 shadow-sm sm:p-6 dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
@@ -60,68 +63,74 @@ export default function ReceiptSettings({ receipt, company_name }: Props) {
                                 <Receipt className="h-5 w-5 text-[var(--subheading)] dark:text-[var(--neutral-white)]" />
                             </span>
                             <div>
-                                <h3 className="text-lg font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Info Struk</h3>
+                                <h3 className="text-lg font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                                    {t('dashboardLite.receipt.card.heading')}
+                                </h3>
                                 <p className="text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
-                                    Perubahan langsung terlihat di contoh sebelah kanan
+                                    {t('dashboardLite.receipt.card.subheading')}
                                 </p>
                             </div>
                         </div>
 
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                             <div>
-                                <Label>Alamat di Struk</Label>
+                                <Label>{t('dashboardLite.receipt.form.addressLabel')}</Label>
                                 <Textarea
-                                    aria-label="Alamat pada struk"
+                                    aria-label={t('dashboardLite.receipt.form.addressAria')}
                                     value={data.address}
                                     onChange={(e) => setData('address', e.target.value)}
                                     rows={2}
-                                    placeholder="Boleh sama dengan alamat toko, atau beda"
+                                    placeholder={t('dashboardLite.receipt.form.addressPlaceholder')}
                                     className="w-full border border-[var(--border-strong)] bg-transparent px-3 py-2 text-base dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
                                 />
                             </div>
 
                             <div>
-                                <Label>Telepon di Struk</Label>
+                                <Label>{t('dashboardLite.receipt.form.phoneLabel')}</Label>
                                 <Input
-                                    aria-label="Nomor telepon pada struk"
+                                    aria-label={t('dashboardLite.receipt.form.phoneAria')}
                                     value={data.phone}
                                     onChange={(e) => setData('phone', e.target.value)}
-                                    placeholder="08xxxxxxxxxx"
+                                    placeholder={t('dashboardLite.receipt.form.phonePlaceholder')}
                                     className="h-12 text-base"
                                 />
                             </div>
 
                             <div>
-                                <Label>Pesan di Bawah Struk</Label>
+                                <Label>{t('dashboardLite.receipt.form.notesLabel')}</Label>
                                 <Textarea
-                                    aria-label="Catatan pada struk"
+                                    aria-label={t('dashboardLite.receipt.form.notesAria')}
                                     value={data.notes}
                                     onChange={(e) => setData('notes', e.target.value)}
                                     rows={2}
-                                    placeholder="Contoh: Terima kasih sudah belanja!"
+                                    placeholder={t('dashboardLite.receipt.form.notesPlaceholder')}
                                     className="w-full rounded-xl border border-[var(--border-strong)] bg-transparent px-3 py-2 text-base dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
                                 />
                             </div>
 
                             <div>
-                                <Label>Logo di Struk</Label>
+                                <Label>{t('dashboardLite.receipt.form.logoLabel')}</Label>
                                 <div
                                     onClick={() => fileInputRef.current?.click()}
                                     className="flex cursor-pointer items-center gap-4 rounded-xl border-2 border-dashed border-[var(--border-strong)] p-4 hover:bg-[var(--second-accent)] dark:border-[var(--border-strong)] dark:hover:bg-white/10"
                                 >
                                     {preview ? (
-                                        <img src={preview} alt="Pratinjau logo struk" className="h-14 w-14 rounded-lg object-cover" />
+                                        <img
+                                            src={preview}
+                                            alt={t('dashboardLite.receipt.form.logoPreviewAlt')}
+                                            className="h-14 w-14 rounded-lg object-cover"
+                                        />
                                     ) : (
                                         <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-[var(--second-accent)] dark:bg-[var(--border-strong)]">
                                             <UploadCloud className="h-6 w-6 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                                         </div>
                                     )}
                                     <span className="text-sm font-medium text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                                        {preview ? 'Ganti logo' : 'Tap untuk pilih logo'}
+                                        {preview ? t('dashboardLite.receipt.form.logoChange') : t('dashboardLite.receipt.form.logoPick')}
                                     </span>
                                 </div>
                                 <input
-                                    aria-label="Unggah logo struk"
+                                    aria-label={t('dashboardLite.receipt.form.logoUploadAria')}
                                     ref={fileInputRef}
                                     type="file"
                                     accept="image/*"
@@ -131,12 +140,12 @@ export default function ReceiptSettings({ receipt, company_name }: Props) {
                             </div>
 
                             <Button
-                                aria-label="Simpan pengaturan struk"
+                                aria-label={t('dashboardLite.receipt.form.saveAria')}
                                 type="submit"
                                 disabled={processing}
                                 className="h-12 rounded-xl bg-[var(--surface-header)] text-base font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:opacity-90"
                             >
-                                {processing ? 'Menyimpan...' : 'Simpan Pengaturan Struk'}
+                                {processing ? t('dashboardLite.receipt.form.savingButton') : t('dashboardLite.receipt.form.saveButton')}
                             </Button>
                         </form>
                     </div>
@@ -144,7 +153,7 @@ export default function ReceiptSettings({ receipt, company_name }: Props) {
                     <div className="lg:sticky lg:top-6 lg:self-start">
                         <div className="rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-5 shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
                             <h3 className="mb-4 text-base font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                                Contoh Tampilan Struk
+                                {t('dashboardLite.receipt.preview.heading')}
                             </h3>
 
                             <div className="mx-auto max-w-[300px] rounded-xl border-2 border-dashed border-[var(--border-strong)] p-5 dark:border-[var(--border-strong)]">
@@ -157,7 +166,7 @@ export default function ReceiptSettings({ receipt, company_name }: Props) {
                                         </div>
                                     )}
                                     <p className="text-base font-extrabold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                                        {company_name || 'Nama Toko'}
+                                        {company_name || t('dashboardLite.receipt.preview.storeNameFallback')}
                                     </p>
                                     {data.address && (
                                         <p className="mt-1 text-xs text-[var(--grey-text)] dark:text-[var(--neutral-white)]">{data.address}</p>
@@ -168,8 +177,8 @@ export default function ReceiptSettings({ receipt, company_name }: Props) {
                                 <div className="my-3 border-t border-dashed border-[var(--border-strong)] dark:border-[var(--border-strong)]" />
 
                                 <div className="flex justify-between text-[11px] text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
-                                    <span>{now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                                    <span>{now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</span>
+                                    <span>{now.toLocaleDateString(dateLocale, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                    <span>{now.toLocaleTimeString(dateLocale, { hour: '2-digit', minute: '2-digit' })}</span>
                                 </div>
 
                                 <div className="my-3 border-t border-dashed border-[var(--border-strong)] dark:border-[var(--border-strong)]" />
@@ -192,15 +201,15 @@ export default function ReceiptSettings({ receipt, company_name }: Props) {
 
                                 <div className="flex flex-col gap-1 text-xs">
                                     <div className="flex justify-between font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                                        <span>TOTAL</span>
+                                        <span>{t('dashboardLite.receipt.preview.total')}</span>
                                         <span>Rp {subtotal.toLocaleString('id-ID')}</span>
                                     </div>
                                     <div className="flex justify-between text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
-                                        <span>Tunai</span>
+                                        <span>{t('dashboardLite.receipt.preview.cash')}</span>
                                         <span>Rp {SAMPLE_PAID.toLocaleString('id-ID')}</span>
                                     </div>
                                     <div className="flex justify-between text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
-                                        <span>Kembalian</span>
+                                        <span>{t('dashboardLite.receipt.preview.change')}</span>
                                         <span>Rp {change.toLocaleString('id-ID')}</span>
                                     </div>
                                 </div>
@@ -213,7 +222,7 @@ export default function ReceiptSettings({ receipt, company_name }: Props) {
                                 )}
 
                                 <p className="mt-3 text-center text-xs text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
-                                    Ini cuma contoh tampilan, bukan transaksi asli.
+                                    {t('dashboardLite.receipt.preview.disclaimer')}
                                 </p>
                             </div>
                         </div>

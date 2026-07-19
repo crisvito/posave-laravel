@@ -1,6 +1,6 @@
 import { Button, CreateButton, Input } from '@/components';
 import { InventoryItemFormModal } from '@/features/lite/inventory/components';
-import { useConfirmAction } from '@/hooks';
+import { useConfirmAction, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
@@ -37,27 +37,14 @@ interface Props {
 
 type StockStatus = 'all' | 'safe' | 'low' | 'out';
 
-const STATUS_CHIPS: { key: StockStatus; label: string }[] = [
-    { key: 'all', label: 'Semua' },
-    { key: 'safe', label: 'Aman' },
-    { key: 'low', label: 'Mau Habis' },
-    { key: 'out', label: 'Habis' },
-];
-
 function stockStatusOf(item: InventoryItem): StockStatus {
     if (item.current_stock === 0) return 'out';
     if (item.current_stock <= item.min_stock) return 'low';
     return 'safe';
 }
 
-const STATUS_META: Record<StockStatus, { label: string; bg: string; text: string }> = {
-    all: { label: '', bg: '', text: '' },
-    safe: { label: 'Aman', bg: 'var(--success-background)', text: 'var(--success)' },
-    low: { label: 'Mau Habis', bg: 'var(--warning-background)', text: 'var(--warning)' },
-    out: { label: 'Habis', bg: 'var(--danger-background)', text: 'var(--danger)' },
-};
-
 export default function ItemList({ items: initialItems, categories, summary, filters }: Props) {
+    const { t } = useLanguage();
     const [items, setItems] = useState<InventoryItem[]>(initialItems.data);
     const [nextPageUrl, setNextPageUrl] = useState(initialItems.next_page_url);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -67,6 +54,20 @@ export default function ItemList({ items: initialItems, categories, summary, fil
     const [pendingStockId, setPendingStockId] = useState<number | null>(null);
     const [formItem, setFormItem] = useState<InventoryItem | 'new' | null>(null);
     const { confirmAndDelete } = useConfirmAction();
+
+    const STATUS_CHIPS: { key: StockStatus; label: string }[] = [
+        { key: 'all', label: t('dashboardLite.inventoryItems.statusChips.all') },
+        { key: 'safe', label: t('dashboardLite.inventoryItems.statusChips.safe') },
+        { key: 'low', label: t('dashboardLite.inventoryItems.statusChips.low') },
+        { key: 'out', label: t('dashboardLite.inventoryItems.statusChips.out') },
+    ];
+
+    const STATUS_META: Record<StockStatus, { label: string; bg: string; text: string }> = {
+        all: { label: '', bg: '', text: '' },
+        safe: { label: t('dashboardLite.inventoryItems.statusChips.safe'), bg: 'var(--success-background)', text: 'var(--success)' },
+        low: { label: t('dashboardLite.inventoryItems.statusChips.low'), bg: 'var(--warning-background)', text: 'var(--warning)' },
+        out: { label: t('dashboardLite.inventoryItems.statusChips.out'), bg: 'var(--danger-background)', text: 'var(--danger)' },
+    };
 
     const applyFilters = (next: { search?: string; category_id?: number | 'all'; stock_status?: StockStatus }) => {
         router.get(
@@ -102,7 +103,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
             const res = await axios.patch(route('lite.inventory.items.stock', item.id), { delta });
             setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, current_stock: res.data.current_stock } : i)));
         } catch {
-            alert('Gagal mengubah stok, coba lagi.');
+            alert(t('dashboardLite.inventoryItems.stockAdjustError'));
         } finally {
             setPendingStockId(null);
         }
@@ -121,30 +122,34 @@ export default function ItemList({ items: initialItems, categories, summary, fil
     };
 
     const handleDelete = (item: InventoryItem) => {
-        confirmAndDelete(`Hapus "${item.name}" dari daftar barang?`, route('lite.inventory.items.destroy', item.id), {
-            onSuccess: () => setItems((prev) => prev.filter((i) => i.id !== item.id)),
-        });
+        confirmAndDelete(
+            `${t('dashboardLite.inventoryItems.deleteConfirmPrefix')} "${item.name}" ${t('dashboardLite.inventoryItems.deleteConfirmSuffix')}`,
+            route('lite.inventory.items.destroy', item.id),
+            {
+                onSuccess: () => setItems((prev) => prev.filter((i) => i.id !== item.id)),
+            },
+        );
     };
 
     return (
-        <DashboardSidebarLayout title="Barang Kamu" description="Kelola stok warung dengan mudah">
-            <Head title="Daftar Barang" />
+        <DashboardSidebarLayout title={t('dashboardLite.inventoryItems.pageTitle')} description={t('dashboardLite.inventoryItems.pageDescription')}>
+            <Head title={t('dashboardLite.inventoryItems.headTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <button
-                        aria-label="Lihat barang yang habis"
+                        aria-label={t('dashboardLite.inventoryItems.summary.outOfStockAria')}
                         onClick={() => handleStatusClick('out')}
                         className="flex items-center justify-between rounded-md border-2 border-[var(--danger)] bg-[var(--danger-background)] px-5 py-4 text-left transition hover:opacity-90"
                     >
-                        <span className="text-base font-bold text-[var(--danger)]">Barang Habis</span>
+                        <span className="text-base font-bold text-[var(--danger)]">{t('dashboardLite.inventoryItems.summary.outOfStockLabel')}</span>
                         <span className="text-2xl font-extrabold text-[var(--danger)]">{summary.out_of_stock}</span>
                     </button>
                     <button
-                        aria-label="Lihat barang yang mau habis"
+                        aria-label={t('dashboardLite.inventoryItems.summary.lowStockAria')}
                         onClick={() => handleStatusClick('low')}
                         className="flex items-center justify-between rounded-md border-2 border-[var(--warning)] bg-[var(--warning-background)] px-5 py-4 text-left transition hover:opacity-90"
                     >
-                        <span className="text-base font-bold text-[var(--warning)]">Stok Mau Habis</span>
+                        <span className="text-base font-bold text-[var(--warning)]">{t('dashboardLite.inventoryItems.summary.lowStockLabel')}</span>
                         <span className="text-2xl font-extrabold text-[var(--warning)]">{summary.low_stock}</span>
                     </button>
                 </div>
@@ -153,25 +158,30 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                     <form onSubmit={handleSearchSubmit} className="relative flex-1">
                         <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                         <Input
-                            aria-label="Cari nama barang"
+                            aria-label={t('dashboardLite.inventoryItems.search.aria')}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Cari nama barang..."
+                            placeholder={t('dashboardLite.inventoryItems.search.placeholder')}
                             className="h-12 rounded-md border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                         />
                     </form>
-                    <CreateButton label="Tambah Barang Baru" onClick={() => setFormItem('new')} className="h-12 rounded-md px-6" />
+                    <CreateButton
+                        label={t('dashboardLite.inventoryItems.createButton')}
+                        onClick={() => setFormItem('new')}
+                        className="h-12 rounded-md px-6"
+                    />
                 </div>
 
                 <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
                     {STATUS_CHIPS.map((chip) => (
                         <Button
-                            aria-label={`Filter status ${chip.label}`}
+                            aria-label={`${t('dashboardLite.inventoryItems.statusFilterAriaPrefix')} ${chip.label}`}
                             key={chip.key}
+                            variant="outline"
                             onClick={() => handleStatusClick(chip.key)}
-                            className={`shrink-0 border-2 px-4 py-2 text-sm font-semibold transition hover:border-[var(--surface-header)] hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
+                            className={`shrink-0 border-2 px-4 py-2 text-sm font-semibold transition hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
                                 activeStatus === chip.key
-                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white dark:border-[var(--neutral-white)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                    ? 'bg-[var(--surface-header)] text-white dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
                                     : ''
                             }`}
                         >
@@ -182,24 +192,26 @@ export default function ItemList({ items: initialItems, categories, summary, fil
 
                 <div className="mb-6 flex gap-2 overflow-x-auto pb-1">
                     <Button
-                        aria-label="Lihat semua kategori"
+                        aria-label={t('dashboardLite.inventoryItems.category.allAria')}
+                        variant="outline"
                         onClick={() => handleCategoryClick('all')}
-                        className={`flex shrink-0 items-center gap-2 border-2 px-3 py-1.5 text-sm font-semibold hover:border-[var(--surface-header)] hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
+                        className={`flex shrink-0 items-center gap-2 border-2 px-3 py-1.5 text-sm font-semibold hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
                             activeCategory === 'all'
-                                ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white dark:border-[var(--neutral-white)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                ? 'bg-[var(--surface-header)] text-white dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
                                 : ''
                         }`}
                     >
-                        Semua Kategori
+                        {t('dashboardLite.inventoryItems.category.all')}
                     </Button>
                     {categories.map((cat) => (
                         <Button
-                            aria-label={`Filter kategori ${cat.name}`}
+                            aria-label={`${t('dashboardLite.inventoryItems.category.filterAriaPrefix')} ${cat.name}`}
                             key={cat.id}
+                            variant="outline"
                             onClick={() => handleCategoryClick(cat.id)}
-                            className={`flex shrink-0 items-center gap-2 border-2 px-3 py-1.5 text-sm font-semibold hover:border-[var(--surface-header)] hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
+                            className={`flex shrink-0 items-center gap-2 border-2 px-3 py-1.5 text-sm font-semibold hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
                                 activeCategory === cat.id
-                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white dark:border-[var(--neutral-white)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                    ? 'bg-[var(--surface-header)] text-white dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
                                     : ''
                             }`}
                         >
@@ -216,9 +228,11 @@ export default function ItemList({ items: initialItems, categories, summary, fil
 
                 {items.length === 0 ? (
                     <div className="rounded-md border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
-                        <p className="text-lg font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">Belum ada barang</p>
+                        <p className="text-lg font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            {t('dashboardLite.inventoryItems.empty.title')}
+                        </p>
                         <p className="mt-1 text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
-                            Tekan "Tambah Barang" untuk mulai mencatat stok.
+                            {t('dashboardLite.inventoryItems.empty.hint')}
                         </p>
                     </div>
                 ) : (
@@ -258,7 +272,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                                     <div className="flex items-center justify-between gap-4 sm:justify-end">
                                         <div className="flex items-center gap-3">
                                             <button
-                                                aria-label={`Kurangi stok ${item.name}`}
+                                                aria-label={`${t('dashboardLite.inventoryItems.stock.decreaseAriaPrefix')} ${item.name}`}
                                                 disabled={isPending || item.current_stock === 0}
                                                 onClick={() => handleStockAdjust(item, -1)}
                                                 className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--border-strong)] text-[var(--subheading)] transition hover:bg-[var(--second-accent)] disabled:opacity-30 dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
@@ -277,7 +291,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                                                 </span>
                                             </div>
                                             <button
-                                                aria-label={`Tambah stok ${item.name}`}
+                                                aria-label={`${t('dashboardLite.inventoryItems.stock.increaseAriaPrefix')} ${item.name}`}
                                                 disabled={isPending}
                                                 onClick={() => handleStockAdjust(item, 1)}
                                                 className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--border-strong)] text-[var(--subheading)] transition hover:bg-[var(--second-accent)] disabled:opacity-30 dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
@@ -287,11 +301,11 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                                         </div>
 
                                         <Button
-                                            aria-label={`Ubah data ${item.name}`}
+                                            aria-label={`${t('dashboardLite.inventoryItems.editAriaPrefix')} ${item.name}`}
                                             onClick={() => setFormItem(item)}
                                             className="h-10 rounded-xl bg-[var(--surface-header)] px-4 text-sm font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:text-[var(--neutral-white)] dark:hover:opacity-90"
                                         >
-                                            Ubah
+                                            {t('dashboardLite.inventoryItems.editButton')}
                                         </Button>
                                     </div>
                                 </div>
@@ -303,13 +317,13 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                 {nextPageUrl && (
                     <div className="mt-6 flex justify-center">
                         <Button
-                            aria-label="Tampilkan barang lainnya"
+                            aria-label={t('dashboardLite.inventoryItems.loadMoreAria')}
                             variant="outline"
                             onClick={handleLoadMore}
                             disabled={loadingMore}
                             className="h-12 rounded-md border-[var(--border-strong)] bg-[var(--neutral-white)] px-8 text-base font-semibold dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
                         >
-                            {loadingMore ? 'Memuat...' : 'Tampilkan Lebih Banyak'}
+                            {loadingMore ? t('dashboardLite.inventoryItems.loadingButton') : t('dashboardLite.inventoryItems.loadMoreButton')}
                         </Button>
                     </div>
                 )}

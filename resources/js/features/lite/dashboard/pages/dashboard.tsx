@@ -1,4 +1,5 @@
 import { Button } from '@/components';
+import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, Link, router } from '@inertiajs/react';
 import { AlertTriangle, ArrowUpRight, Package, Receipt, TrendingUp } from 'lucide-react';
@@ -23,31 +24,34 @@ interface Props {
     recentTransactions: RecentTx[];
 }
 
-const RANGE_CHIPS = [
-    { value: 'today', label: 'Hari Ini' },
-    { value: '7d', label: 'Minggu Ini' },
-    { value: '30d', label: 'Bulan Ini' },
-];
-
 export default function LiteDashboard({ filters, kpis, stockSummary, topItems, recentTransactions }: Props) {
+    const { t } = useLanguage();
+
+    const RANGE_CHIPS = [
+        { value: 'today', label: t('dashboardLite.dashboard.rangeChips.today') },
+        { value: '7d', label: t('dashboardLite.dashboard.rangeChips.week') },
+        { value: '30d', label: t('dashboardLite.dashboard.rangeChips.month') },
+    ];
+
     const changeRange = (range: string) => {
         router.get(route('dashboard.index'), { range }, { preserveState: true, preserveScroll: true, replace: true });
     };
 
     return (
-        <DashboardSidebarLayout title="Beranda" description="Ringkasan usaha kamu">
-            <Head title="Dashboard" />
+        <DashboardSidebarLayout title={t('dashboardLite.dashboard.pageTitle')} description={t('dashboardLite.dashboard.pageDescription')}>
+            <Head title={t('dashboardLite.dashboard.headTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
                 <div className="mb-5 flex gap-2 overflow-x-auto pb-1">
                     {RANGE_CHIPS.map((chip) => (
                         <Button
-                            aria-label={`Tampilkan data ${chip.label}`}
+                            aria-label={`${t('dashboardLite.dashboard.rangeAriaPrefix')} ${chip.label}`}
                             key={chip.value}
+                            variant="outline"
                             onClick={() => changeRange(chip.value)}
-                            className={`shrink-0 border-2 px-4 py-2 text-sm font-semibold transition ${
+                            className={`shrink-0 border-2 px-4 py-2 text-sm font-semibold transition hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
                                 filters.range === chip.value
-                                    ? 'border-[var(--surface-header)] bg-[var(--surface-header)] text-white'
-                                    : 'border-[var(--border-strong)] text-[var(--grey-text)] dark:border-[var(--border-strong)] dark:text-[var(--muted-foreground)]'
+                                    ? 'bg-[var(--surface-header)] text-white dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                    : ''
                             }`}
                         >
                             {chip.label}
@@ -60,7 +64,9 @@ export default function LiteDashboard({ filters, kpis, stockSummary, topItems, r
                         <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--success-background)]">
                             <TrendingUp className="h-5 w-5 text-[var(--success)]" />
                         </div>
-                        <p className="text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">Total Penjualan</p>
+                        <p className="text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                            {t('dashboardLite.dashboard.kpi.totalSales')}
+                        </p>
                         <p className="text-2xl font-extrabold text-[var(--subheading)] dark:text-white">
                             Rp {kpis.totalSales.toLocaleString('id-ID')}
                         </p>
@@ -69,14 +75,18 @@ export default function LiteDashboard({ filters, kpis, stockSummary, topItems, r
                         <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--income-icon-bg)]">
                             <Receipt className="h-5 w-5 text-[var(--income-icon-text)]" />
                         </div>
-                        <p className="text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">Jumlah Transaksi</p>
+                        <p className="text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                            {t('dashboardLite.dashboard.kpi.totalTransactions')}
+                        </p>
                         <p className="text-2xl font-extrabold text-[var(--subheading)] dark:text-white">{kpis.totalTransactions}</p>
                     </div>
                     <div className="rounded-md border border-[var(--border-strong)] bg-[var(--neutral-white)] p-5 shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                         <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--warning-background)]">
                             <Package className="h-5 w-5 text-[var(--warning)]" />
                         </div>
-                        <p className="text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">Barang Terjual</p>
+                        <p className="text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                            {t('dashboardLite.dashboard.kpi.productsSold')}
+                        </p>
                         <p className="text-2xl font-extrabold text-[var(--subheading)] dark:text-white">{kpis.productsSold}</p>
                     </div>
                 </div>
@@ -86,11 +96,11 @@ export default function LiteDashboard({ filters, kpis, stockSummary, topItems, r
                         {stockSummary.out_of_stock > 0 && (
                             <Link
                                 href={route('lite.inventory.items.index', { stock_status: 'out' })}
-                                className="flex flex-1 items-center justify-between rounded-md border-2 border-[var(--danger)] bg-[var(--danger-background)] px-5 py-4 dark:bg-red-900/20"
+                                className="flex flex-1 items-center justify-between rounded-md border-2 border-[var(--danger)] bg-[var(--danger-background)] px-5 py-4"
                             >
                                 <span className="flex items-center gap-2 text-base font-bold text-[var(--danger)]">
                                     <AlertTriangle className="h-5 w-5" />
-                                    {stockSummary.out_of_stock} Barang Habis
+                                    {stockSummary.out_of_stock} {t('dashboardLite.dashboard.stockAlert.outOfStockSuffix')}
                                 </span>
                                 <ArrowUpRight className="h-5 w-5 text-[var(--danger)]" />
                             </Link>
@@ -98,11 +108,11 @@ export default function LiteDashboard({ filters, kpis, stockSummary, topItems, r
                         {stockSummary.low_stock > 0 && (
                             <Link
                                 href={route('lite.inventory.items.index', { stock_status: 'low' })}
-                                className="flex flex-1 items-center justify-between rounded-md border-2 border-[var(--warning)] bg-[var(--warning-background)] px-5 py-4 dark:bg-amber-900/20"
+                                className="flex flex-1 items-center justify-between rounded-md border-2 border-[var(--warning)] bg-[var(--warning-background)] px-5 py-4"
                             >
                                 <span className="flex items-center gap-2 text-base font-bold text-[var(--warning)]">
                                     <AlertTriangle className="h-5 w-5" />
-                                    {stockSummary.low_stock} Barang Mau Habis
+                                    {stockSummary.low_stock} {t('dashboardLite.dashboard.stockAlert.lowStockSuffix')}
                                 </span>
                                 <ArrowUpRight className="h-5 w-5 text-[var(--warning)]" />
                             </Link>
@@ -112,10 +122,12 @@ export default function LiteDashboard({ filters, kpis, stockSummary, topItems, r
 
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                     <div className="rounded-md border border-[var(--border-strong)] bg-[var(--neutral-white)] p-5 shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
-                        <h3 className="mb-4 text-base font-bold text-[var(--subheading)] dark:text-white">Barang Terlaris</h3>
+                        <h3 className="mb-4 text-base font-bold text-[var(--subheading)] dark:text-white">
+                            {t('dashboardLite.dashboard.topItems.title')}
+                        </h3>
                         {topItems.length === 0 ? (
                             <p className="py-6 text-center text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                                Belum ada penjualan
+                                {t('dashboardLite.dashboard.topItems.empty')}
                             </p>
                         ) : (
                             <ul className="flex flex-col gap-3">
@@ -126,7 +138,9 @@ export default function LiteDashboard({ filters, kpis, stockSummary, topItems, r
                                         </span>
                                         <div className="min-w-0 flex-1">
                                             <p className="truncate text-sm font-semibold text-[var(--subheading)] dark:text-white">{item.name}</p>
-                                            <p className="text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">{item.qty} terjual</p>
+                                            <p className="text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                                {item.qty} {t('dashboardLite.dashboard.topItems.soldSuffix')}
+                                            </p>
                                         </div>
                                         <span className="shrink-0 text-sm font-bold text-[var(--subheading)] dark:text-white">
                                             Rp {item.omzet.toLocaleString('id-ID')}
@@ -139,17 +153,19 @@ export default function LiteDashboard({ filters, kpis, stockSummary, topItems, r
 
                     <div className="rounded-md border border-[var(--border-strong)] bg-[var(--neutral-white)] p-5 shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
                         <div className="mb-4 flex items-center justify-between">
-                            <h3 className="text-base font-bold text-[var(--subheading)] dark:text-white">Transaksi Terbaru</h3>
+                            <h3 className="text-base font-bold text-[var(--subheading)] dark:text-white">
+                                {t('dashboardLite.dashboard.recentTransactions.title')}
+                            </h3>
                             <Link
                                 href={route('lite.history.index')}
                                 className="text-sm font-semibold text-[var(--surface-header)] hover:underline dark:text-white"
                             >
-                                Lihat Semua
+                                {t('dashboardLite.dashboard.recentTransactions.viewAll')}
                             </Link>
                         </div>
                         {recentTransactions.length === 0 ? (
                             <p className="py-6 text-center text-sm text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                                Belum ada transaksi
+                                {t('dashboardLite.dashboard.recentTransactions.empty')}
                             </p>
                         ) : (
                             <ul className="flex flex-col gap-3">
