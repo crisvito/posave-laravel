@@ -3,12 +3,23 @@
 namespace App\Services\Chatbot;
 
 use App\Models\User;
+use App\Services\Chatbot\Tools\CreateAdjustmentsTool;
+use App\Services\Chatbot\Tools\CreateCategoryTool;
+use App\Services\Chatbot\Tools\CreateEmployeeTool;
 use App\Services\Chatbot\Tools\CreateInventoryItemTool;
+use App\Services\Chatbot\Tools\CreatePurchaseOrderTool;
+use App\Services\Chatbot\Tools\CreateTransferTool;
+use App\Services\Chatbot\Tools\GetAdjustmentsTool;
 use App\Services\Chatbot\Tools\GetCategoriesTool;
+use App\Services\Chatbot\Tools\GetEmployeesTool;
 use App\Services\Chatbot\Tools\GetFinancialSummaryTool;
 use App\Services\Chatbot\Tools\GetInventorySummaryTool;
 use App\Services\Chatbot\Tools\GetPageLinkTool;
+use App\Services\Chatbot\Tools\GetPurchaseOrderTool;
+use App\Services\Chatbot\Tools\GetTransfersTool;
+use App\Services\Chatbot\Tools\RespondTransferTool;
 use App\Services\Chatbot\Tools\ToolInterface;
+use App\Services\Chatbot\Tools\UpdatePurchaseOrderStatusTool;
 
 class ToolRegistry
 {
@@ -19,8 +30,19 @@ class ToolRegistry
       new GetInventorySummaryTool(),
       new GetCategoriesTool(),
       new CreateInventoryItemTool(),
+      new CreateCategoryTool(),
       new GetPageLinkTool(),
       new GetFinancialSummaryTool(),
+      new CreateAdjustmentsTool(),
+      new GetAdjustmentsTool(),
+      new GetPurchaseOrderTool(),
+      new CreatePurchaseOrderTool(),
+      new UpdatePurchaseOrderStatusTool(),
+      new GetTransfersTool(),
+      new CreateTransferTool(),
+      new RespondTransferTool(),
+      new GetEmployeesTool(),
+      new CreateEmployeeTool()
     ];
   }
 

@@ -18,6 +18,7 @@ class Transfer extends Model
         'receiver_branch_id',
         'status',
         'rejection_note',
+        'requested_by_branch_id',
         'date',
     ];
     protected $appends = ['approver_branch_id'];
