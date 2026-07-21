@@ -25,8 +25,8 @@ export default function OnboardingPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center p-4 sm:p-8" style={{ background: 'var(--page-bg)' }}>
-            <div className="w-full max-w-[560px] rounded-2xl border bg-white p-6 sm:p-10" style={{ borderColor: 'var(--border)' }}>
+        <div className="flex min-h-screen items-center justify-center bg-[var(--page-bg)] p-4 sm:p-8 dark:bg-[var(--background)]">
+            <div className="w-full max-w-[560px] rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-6 sm:p-10 dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
                 <Stepper step={step} />
 
                 {step === 1 ? (

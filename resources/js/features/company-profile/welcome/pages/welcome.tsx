@@ -28,7 +28,7 @@ export default function Welcome() {
                     <TestimoniSection />
                 </div>
 
-                <section className="relative right-1/2 left-1/2 w-screen -translate-x-1/2 overflow-hidden bg-[linear-gradient(90deg,var(--second-accent)_0%,var(--primary-900)_100%)] py-18 lg:py-14">
+                <section className="relative right-1/2 left-1/2 w-screen -translate-x-1/2 overflow-hidden bg-[var(--primary-900)] py-18 lg:py-14">
                     <PartnerSection />
                 </section>
 

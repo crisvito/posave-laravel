@@ -73,7 +73,15 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                                 const isChildActive = isItemActive(child);
 
                                                 return (
-                                                    <DropdownMenuItem key={child.title} asChild className={isChildActive ? 'bg-muted' : ''}>
+                                                    <DropdownMenuItem
+                                                        key={child.title}
+                                                        asChild
+                                                        className={
+                                                            isChildActive
+                                                                ? 'cursor-pointer !bg-[var(--neutral-white)] font-medium !text-[var(--primary-900)]'
+                                                                : ''
+                                                        }
+                                                    >
                                                         <Link href={getHref(child)}>{t(child.title)}</Link>
                                                     </DropdownMenuItem>
                                                 );
@@ -108,17 +116,17 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                                     const isChildActive = isItemActive(child);
 
                                                     return (
-                                                        <Link
+                                                        <DropdownMenuItem
                                                             key={child.title}
-                                                            href={getHref(child)}
-                                                            className={`rounded-md px-3 py-2 text-sm transition ${
+                                                            asChild
+                                                            className={
                                                                 isChildActive
-                                                                    ? '!bg-[var(--neutral-white)] font-medium !text-[var(--primary-900)]'
-                                                                    : '!text-[var(--white)] hover:!bg-[var(--primary-700)]'
-                                                            }`}
+                                                                    ? 'cursor-pointer !bg-[var(--neutral-white)] font-medium !text-[var(--primary-900)]'
+                                                                    : ''
+                                                            }
                                                         >
-                                                            {t(child.title)}
-                                                        </Link>
+                                                            <Link href={getHref(child)}>{t(child.title)}</Link>
+                                                        </DropdownMenuItem>
                                                     );
                                                 })}
                                             </div>

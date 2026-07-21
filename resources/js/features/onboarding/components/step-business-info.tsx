@@ -1,3 +1,4 @@
+import { useLanguage } from '@/hooks';
 import type { FormEventHandler } from 'react';
 
 interface StepBusinessInfoProps {
@@ -23,56 +24,54 @@ export function StepBusinessInfo({
     onBack,
     onSubmit,
 }: StepBusinessInfoProps) {
+    const { t } = useLanguage();
+
     return (
         <form onSubmit={onSubmit}>
-            <h1 className="mb-1 text-xl font-medium" style={{ color: 'var(--primary-900)' }}>
-                Informasi bisnis
+            <h1 className="mb-1 text-xl font-medium text-[var(--primary-900)] dark:text-[var(--neutral-white)]">
+                {t('onboarding.businessInfo.title')}
             </h1>
-            <p className="mb-8 text-sm leading-relaxed" style={{ color: '#64748b' }}>
-                Isi nama bisnis dan cabang utama kamu. Bisa diubah kapan saja di pengaturan.
+            <p className="mb-8 text-sm leading-relaxed text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
+                {t('onboarding.businessInfo.description')}
             </p>
 
             <div className="mb-5">
-                <label className="mb-1.5 block text-sm font-medium" style={{ color: 'var(--primary-700)' }}>
-                    Nama bisnis
+                <label className="mb-1.5 block text-sm font-medium text-[var(--primary-700)] dark:text-[var(--neutral-white)]">
+                    {t('onboarding.businessInfo.companyNameLabel')}
                 </label>
                 <input
                     type="text"
                     value={companyName}
                     onChange={(e) => onCompanyNameChange(e.target.value)}
-                    placeholder="cth. Warung Bu Sari"
-                    className="w-full rounded-lg border px-3.5 py-2.5 text-sm transition-all outline-none focus:ring-2"
-                    style={{
-                        borderColor: companyNameError ? '#ef4444' : '#e2e8f0',
-                        color: 'var(--primary-900)',
-                        fontFamily: 'Poppins, sans-serif',
-                    }}
+                    placeholder={t('onboarding.businessInfo.companyNamePlaceholder')}
+                    className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-[var(--primary-900)] transition-all outline-none focus:ring-2 dark:bg-[var(--card)] dark:text-[var(--neutral-white)] ${
+                        companyNameError ? 'border-[var(--danger)]' : 'border-[var(--border-strong)] dark:border-[var(--border-strong)]'
+                    }`}
+                    style={{ fontFamily: 'Poppins, sans-serif' }}
                 />
-                {companyNameError && <p className="mt-1 text-xs text-red-500">{companyNameError}</p>}
-                <p className="mt-1 text-xs" style={{ color: '#94a3b8' }}>
-                    Nama yang ditampilkan di seluruh sistem POSave
+                {companyNameError && <p className="mt-1 text-xs text-[var(--danger)]">{companyNameError}</p>}
+                <p className="mt-1 text-xs text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">
+                    {t('onboarding.businessInfo.companyNameHint')}
                 </p>
             </div>
 
             <div className="mb-5">
-                <label className="mb-1.5 block text-sm font-medium" style={{ color: 'var(--primary-700)' }}>
-                    Nama cabang utama
+                <label className="mb-1.5 block text-sm font-medium text-[var(--primary-700)] dark:text-[var(--neutral-white)]">
+                    {t('onboarding.businessInfo.branchNameLabel')}
                 </label>
                 <input
                     type="text"
                     value={branchName}
                     onChange={(e) => onBranchNameChange(e.target.value)}
-                    placeholder="cth. Cabang Pusat"
-                    className="w-full rounded-lg border px-3.5 py-2.5 text-sm transition-all outline-none focus:ring-2"
-                    style={{
-                        borderColor: branchNameError ? '#ef4444' : '#e2e8f0',
-                        color: 'var(--primary-900)',
-                        fontFamily: 'Poppins, sans-serif',
-                    }}
+                    placeholder={t('onboarding.businessInfo.branchNamePlaceholder')}
+                    className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-[var(--primary-900)] transition-all outline-none focus:ring-2 dark:bg-[var(--card)] dark:text-[var(--neutral-white)] ${
+                        branchNameError ? 'border-[var(--danger)]' : 'border-[var(--border-strong)] dark:border-[var(--border-strong)]'
+                    }`}
+                    style={{ fontFamily: 'Poppins, sans-serif' }}
                 />
-                {branchNameError && <p className="mt-1 text-xs text-red-500">{branchNameError}</p>}
-                <p className="mt-1 text-xs" style={{ color: '#94a3b8' }}>
-                    Cabang pertama yang dibuat otomatis
+                {branchNameError && <p className="mt-1 text-xs text-[var(--danger)]">{branchNameError}</p>}
+                <p className="mt-1 text-xs text-[var(--grey-text-muted)] dark:text-[var(--muted-foreground)]">
+                    {t('onboarding.businessInfo.branchNameHint')}
                 </p>
             </div>
 
@@ -80,18 +79,16 @@ export function StepBusinessInfo({
                 <button
                     type="button"
                     onClick={onBack}
-                    className="shrink-0 rounded-lg border px-5 py-2.5 text-sm font-medium transition-all"
-                    style={{ borderColor: '#e2e8f0', color: 'var(--primary-600)', background: 'transparent' }}
+                    className="shrink-0 rounded-lg border border-[var(--border-strong)] bg-transparent px-5 py-2.5 text-sm font-medium text-[var(--primary-600)] transition-all dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
                 >
-                    Kembali
+                    {t('onboarding.businessInfo.backButton')}
                 </button>
                 <button
                     type="submit"
                     disabled={processing || !companyName.trim() || !branchName.trim()}
-                    className="flex-1 rounded-lg py-2.5 text-sm font-medium text-white transition-all disabled:opacity-50"
-                    style={{ background: 'var(--primary-900)' }}
+                    className="flex-1 rounded-lg bg-[var(--primary-900)] py-2.5 text-sm font-medium text-white transition-all disabled:opacity-50"
                 >
-                    {processing ? 'Menyimpan...' : 'Mulai gunakan POSave'}
+                    {processing ? t('onboarding.businessInfo.submittingButton') : t('onboarding.businessInfo.submitButton')}
                 </button>
             </div>
         </form>

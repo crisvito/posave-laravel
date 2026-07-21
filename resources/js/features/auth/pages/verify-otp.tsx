@@ -1,12 +1,15 @@
 import { Head, useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef, useState } from 'react';
 
+import { useLanguage } from '@/hooks';
+
 interface Props {
     email: string;
     status?: string;
 }
 
 export default function VerifyOtp({ email, status }: Props) {
+    const { t } = useLanguage();
     const [codes, setCodes] = useState(['', '', '', '', '', '']);
     const inputs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -14,14 +17,13 @@ export default function VerifyOtp({ email, status }: Props) {
     const { post: resendPost, processing: resendProcessing } = useForm({});
 
     const handleChange = (index: number, value: string) => {
-        if (!/^\d?$/.test(value)) return; // hanya angka
+        if (!/^\d?$/.test(value)) return;
 
         const newCodes = [...codes];
         newCodes[index] = value;
         setCodes(newCodes);
         setData('code', newCodes.join(''));
 
-        // Auto fokus ke kotak berikutnya
         if (value && index < 5) {
             inputs.current[index + 1]?.focus();
         }
@@ -53,22 +55,27 @@ export default function VerifyOtp({ email, status }: Props) {
 
     return (
         <>
-            <Head title="Verifikasi OTP" />
+            <Head title={t('auth.verifyOtp.headTitle')} />
 
-            <div className="flex min-h-screen items-center justify-center bg-slate-50">
-                <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+            <div className="flex min-h-screen items-center justify-center bg-[var(--page-bg)] dark:bg-[var(--background)]">
+                <div className="w-full max-w-md rounded-2xl bg-[var(--neutral-white)] p-8 shadow-lg dark:bg-[var(--card)]">
                     <div className="mb-6 text-center">
-                        <h1 className="text-2xl font-bold text-slate-900">Verifikasi Email</h1>
-                        <p className="mt-2 text-sm text-slate-500">Kami telah mengirim kode 6 digit ke</p>
-                        <p className="font-medium text-slate-700">{email}</p>
+                        <h1 className="text-2xl font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">{t('auth.verifyOtp.title')}</h1>
+                        <p className="mt-2 text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">{t('auth.verifyOtp.sentPrefix')}</p>
+                        <p className="font-medium text-[var(--subheading)] dark:text-[var(--neutral-white)]">{email}</p>
                     </div>
 
-                    {status && <div className="mb-4 rounded-lg bg-green-50 p-3 text-center text-sm text-green-700">{status}</div>}
+                    {status && (
+                        <div className="mb-4 rounded-lg bg-[var(--success-background)] p-3 text-center text-sm text-[var(--success)]">{status}</div>
+                    )}
 
-                    {errors.code && <div className="mb-4 rounded-lg bg-red-50 p-3 text-center text-sm text-red-700">{errors.code}</div>}
+                    {errors.code && (
+                        <div className="mb-4 rounded-lg bg-[var(--danger-background)] p-3 text-center text-sm text-[var(--danger)]">
+                            {errors.code}
+                        </div>
+                    )}
 
                     <form onSubmit={submit}>
-                        {/* 6 kotak input OTP */}
                         <div className="mb-6 flex justify-center gap-3">
                             {codes.map((digit, i) => (
                                 <input
@@ -83,8 +90,8 @@ export default function VerifyOtp({ email, status }: Props) {
                                     onChange={(e) => handleChange(i, e.target.value)}
                                     onKeyDown={(e) => handleKeyDown(i, e)}
                                     onPaste={handlePaste}
-                                    aria-label={`Digit ke-${i + 1}`}
-                                    className="h-12 w-12 rounded-lg border border-slate-300 text-center text-xl font-bold text-slate-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                                    aria-label={`${t('auth.verifyOtp.digitAriaPrefix')} ${i + 1}`}
+                                    className="h-12 w-12 rounded-lg border border-[var(--border-strong)] bg-transparent text-center text-xl font-bold text-[var(--subheading)] outline-none focus:border-[var(--secondary-600)] focus:ring-2 focus:ring-[var(--secondary-600)]/20 dark:text-[var(--neutral-white)]"
                                 />
                             ))}
                         </div>
@@ -92,20 +99,20 @@ export default function VerifyOtp({ email, status }: Props) {
                         <button
                             type="submit"
                             disabled={processing || data.code.length < 6}
-                            className="w-full rounded-lg bg-blue-600 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
+                            className="w-full rounded-lg bg-[var(--secondary-600)] py-3 font-medium text-white transition hover:bg-[var(--secondary-700)] disabled:opacity-50"
                         >
-                            {processing ? 'Memverifikasi...' : 'Verifikasi'}
+                            {processing ? t('auth.verifyOtp.submittingButton') : t('auth.verifyOtp.submitButton')}
                         </button>
                     </form>
 
                     <div className="mt-4 text-center">
-                        <span className="text-sm text-slate-500">Tidak menerima kode? </span>
+                        <span className="text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">{t('auth.verifyOtp.noCodeText')} </span>
                         <button
                             onClick={handleResend}
                             disabled={resendProcessing}
-                            className="text-sm font-medium text-blue-600 hover:underline disabled:opacity-50"
+                            className="text-sm font-medium text-[var(--secondary-600)] hover:underline disabled:opacity-50"
                         >
-                            Kirim ulang
+                            {t('auth.verifyOtp.resendButton')}
                         </button>
                     </div>
                 </div>

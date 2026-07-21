@@ -18,7 +18,7 @@ export function CtaSection() {
                         backgroundRepeat: 'no-repeat',
                     }}
                 >
-                    <div className="absolute inset-0 bg-[linear-gradient(to_left,var(--background)_28%,var(--background)_50%,transparent_78%)]" />
+                    <div className="absolute inset-0 bg-[linear-gradient(to_left,var(--background)_28%,var(--background)_50%,transparent_55%)]" />
 
                     <div className="relative z-10 flex h-full items-center justify-end px-16 lg:px-24">
                         <div className="max-w-[500px] text-center">

@@ -1,5 +1,6 @@
 import { Breadcrumbs } from '@/components';
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Sheet, SheetContent, SheetTrigger } from '@/components/ui';
+import { AppearanceToggle } from '@/features/company-profile/components';
 import { useInitials, useLanguage } from '@/hooks';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
@@ -42,18 +43,18 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
             <DropdownMenuTrigger asChild>
                 <Button
                     variant="ghost"
-                    className="h-10 gap-1.5 rounded-full px-3 text-sm font-medium text-[var(--grey-text)] hover:bg-[var(--secondary-600)]/10 hover:text-[var(--secondary-600)]"
+                    className="h-10 cursor-pointer gap-1.5 rounded-full px-3 text-sm font-medium text-[var(--grey-text)] hover:bg-[var(--secondary-600)]/10 hover:text-[var(--secondary-600)]"
                 >
                     <Globe className="h-4 w-4" />
                     {locale.toUpperCase()}
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-40">
-                <DropdownMenuItem onClick={() => setLocale('id')} className="flex items-center justify-between gap-2">
+                <DropdownMenuItem onClick={() => setLocale('id')} className="flex items-center justify-between gap-2 cursor-pointer">
                     {t('shared.language.id')}
                     {locale === 'id' && <Check className="h-4 w-4 text-[var(--secondary-600)]" />}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLocale('en')} className="flex items-center justify-between gap-2">
+                <DropdownMenuItem onClick={() => setLocale('en')} className="flex items-center justify-between gap-2 cursor-pointer">
                     {t('shared.language.en')}
                     {locale === 'en' && <Check className="h-4 w-4 text-[var(--secondary-600)]" />}
                 </DropdownMenuItem>
@@ -92,8 +93,9 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                             ))}
                                         </div>
 
-                                        <div className="border-t border-[var(--border-strong)] pt-4">
+                                        <div className="flex items-center gap-2 border-t border-[var(--border-strong)] pt-4">
                                             <LanguageSwitcher />
+                                            <AppearanceToggle />
                                         </div>
                                     </div>
                                 </SheetContent>
@@ -126,6 +128,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                     </div>
 
                     <div className="hidden items-center gap-3 lg:flex">
+                        <AppearanceToggle />
                         <LanguageSwitcher />
 
                         {auth?.user ? (

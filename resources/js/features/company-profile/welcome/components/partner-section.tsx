@@ -7,13 +7,11 @@ export function PartnerSection() {
         <>
             <div className="mx-auto max-w-6xl px-8 md:px-16">
                 <div className="mb-12 text-center">
-                    <h2 className="text-[42px] leading-none font-black tracking-tight text-[var(--primary-900)] dark:text-[var(--text-light)]">
+                    <h2 className="text-[42px] leading-none font-black tracking-tight text-[var(--neutral-white)]">
                         {t('companyProfile.welcome.partners.title')}
                     </h2>
 
-                    <p className="mt-4 text-[22px] font-medium text-[var(--grey-text)] dark:text-[var(--grey-text-muted)]">
-                        {t('companyProfile.welcome.partners.subtitle')}
-                    </p>
+                    <p className="mt-4 text-[22px] font-medium text-[var(--neutral-white)]">{t('companyProfile.welcome.partners.subtitle')}</p>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-center gap-16 lg:gap-28">

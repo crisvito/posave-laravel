@@ -3,6 +3,7 @@ import { Clock, Eye, LoaderCircle, Lock, Mail, Phone, PieChart, User, UserPlus }
 import { FormEventHandler, useState } from 'react';
 
 import { Button, Checkbox, Input, InputError, Label } from '@/components';
+import { useLanguage } from '@/hooks';
 import { AuthSplitLayout } from '@/layouts';
 
 interface RegisterForm {
@@ -16,6 +17,7 @@ interface RegisterForm {
 }
 
 export default function Register() {
+    const { t } = useLanguage();
     const { data, setData, post, processing, errors, reset } = useForm<RegisterForm>({
         name: '',
         email: '',
@@ -37,39 +39,39 @@ export default function Register() {
 
     const registerFeatures = [
         {
-            icon: <UserPlus className="h-5 w-5 text-[#003399]" />,
-            title: 'Akun gratis selamanya',
-            description: 'Daftar gratis dan nikmati semua fitur POSAVE.',
+            icon: <UserPlus className="h-5 w-5 text-[var(--secondary-600)]" />,
+            title: t('auth.register.features.freeTitle'),
+            description: t('auth.register.features.freeDescription'),
         },
         {
-            icon: <Clock className="h-5 w-5 text-[#003399]" />,
-            title: 'Hemat waktu dan tenaga',
-            description: 'Otomatiskan pencatatan dan kelola bisnis dengan lebih efisien.',
+            icon: <Clock className="h-5 w-5 text-[var(--secondary-600)]" />,
+            title: t('auth.register.features.timeTitle'),
+            description: t('auth.register.features.timeDescription'),
         },
         {
-            icon: <PieChart className="h-5 w-5 text-[#003399]" />,
-            title: 'Keputusan lebih cerdas',
-            description: 'Dapatkan laporan dan insight untuk kembangkan bisnis Anda.',
+            icon: <PieChart className="h-5 w-5 text-[var(--secondary-600)]" />,
+            title: t('auth.register.features.insightTitle'),
+            description: t('auth.register.features.insightDescription'),
         },
     ];
 
     return (
         <AuthSplitLayout
-            title="Buat akun baru"
-            description="Daftar untuk mulai menggunakan POSAVE"
+            title={t('auth.register.title')}
+            description={t('auth.register.description')}
             illustrationImage="/images/register-illustration.png"
             features={registerFeatures}
         >
-            <Head title="Register" />
+            <Head title={t('auth.register.headTitle')} />
 
             <form className="flex flex-col gap-5" onSubmit={submit}>
                 <div className="grid gap-1.5">
-                    <Label htmlFor="name" className="font-bold text-slate-700">
-                        Nama lengkap
+                    <Label htmlFor="name" className="font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                        {t('auth.register.form.nameLabel')}
                     </Label>
                     <div className="relative">
                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <User className="h-5 w-5 text-slate-400" />
+                            <User className="h-5 w-5 text-[var(--grey-text-muted)]" />
                         </div>
                         <Input
                             id="name"
@@ -78,7 +80,7 @@ export default function Register() {
                             autoFocus
                             value={data.name}
                             onChange={(e) => setData('name', e.target.value)}
-                            placeholder="Masukkan nama lengkap"
+                            placeholder={t('auth.register.form.namePlaceholder')}
                             className="h-12 pl-10"
                         />
                     </div>
@@ -86,12 +88,12 @@ export default function Register() {
                 </div>
 
                 <div className="grid gap-1.5">
-                    <Label htmlFor="email" className="font-bold text-slate-700">
-                        Email
+                    <Label htmlFor="email" className="font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                        {t('auth.register.form.emailLabel')}
                     </Label>
                     <div className="relative">
                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <Mail className="h-5 w-5 text-slate-400" />
+                            <Mail className="h-5 w-5 text-[var(--grey-text-muted)]" />
                         </div>
                         <Input
                             id="email"
@@ -99,7 +101,7 @@ export default function Register() {
                             required
                             value={data.email}
                             onChange={(e) => setData('email', e.target.value)}
-                            placeholder="Masukkan email Anda"
+                            placeholder={t('auth.register.form.emailPlaceholder')}
                             className="h-12 pl-10"
                         />
                     </div>
@@ -107,12 +109,12 @@ export default function Register() {
                 </div>
 
                 <div className="grid gap-1.5">
-                    <Label htmlFor="phone" className="font-bold text-slate-700">
-                        Nomor telepon
+                    <Label htmlFor="phone" className="font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                        {t('auth.register.form.phoneLabel')}
                     </Label>
                     <div className="relative">
                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <Phone className="h-5 w-5 text-slate-400" />
+                            <Phone className="h-5 w-5 text-[var(--grey-text-muted)]" />
                         </div>
                         <Input
                             id="phone"
@@ -120,7 +122,7 @@ export default function Register() {
                             required
                             value={data.phone}
                             onChange={(e) => setData('phone', e.target.value)}
-                            placeholder="Masukkan nomor telepon"
+                            placeholder={t('auth.register.form.phonePlaceholder')}
                             className="h-12 pl-10"
                         />
                     </div>
@@ -128,12 +130,12 @@ export default function Register() {
                 </div>
 
                 <div className="grid gap-1.5">
-                    <Label htmlFor="password" className="font-bold text-slate-700">
-                        Password
+                    <Label htmlFor="password" className="font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                        {t('auth.register.form.passwordLabel')}
                     </Label>
                     <div className="relative">
                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <Lock className="h-5 w-5 text-slate-400" />
+                            <Lock className="h-5 w-5 text-[var(--grey-text-muted)]" />
                         </div>
                         <Input
                             id="password"
@@ -141,28 +143,28 @@ export default function Register() {
                             required
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
-                            placeholder="Buat password"
+                            placeholder={t('auth.register.form.passwordPlaceholder')}
                             className="h-12 pr-10 pl-10"
                         />
                         <button
-                            aria-label="button"
+                            aria-label={showPassword ? t('auth.register.form.hidePasswordAria') : t('auth.register.form.showPasswordAria')}
                             type="button"
                             className="absolute inset-y-0 right-0 flex items-center pr-3"
                             onClick={() => setShowPassword(!showPassword)}
                         >
-                            <Eye className="h-5 w-5 text-slate-400 hover:text-slate-600" />
+                            <Eye className="h-5 w-5 text-[var(--grey-text-muted)] hover:text-[var(--subheading)] dark:hover:text-[var(--neutral-white)]" />
                         </button>
                     </div>
                     <InputError message={errors.password} />
                 </div>
 
                 <div className="grid gap-1.5">
-                    <Label htmlFor="password_confirmation" className="font-bold text-slate-700">
-                        Konfirmasi password
+                    <Label htmlFor="password_confirmation" className="font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                        {t('auth.register.form.confirmPasswordLabel')}
                     </Label>
                     <div className="relative">
                         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <Lock className="h-5 w-5 text-slate-400" />
+                            <Lock className="h-5 w-5 text-[var(--grey-text-muted)]" />
                         </div>
                         <Input
                             id="password_confirmation"
@@ -170,16 +172,16 @@ export default function Register() {
                             required
                             value={data.password_confirmation}
                             onChange={(e) => setData('password_confirmation', e.target.value)}
-                            placeholder="Ulangi password"
+                            placeholder={t('auth.register.form.confirmPasswordPlaceholder')}
                             className="h-12 pr-10 pl-10"
                         />
                         <button
-                            aria-label="button"
+                            aria-label={showConfirmPassword ? t('auth.register.form.hidePasswordAria') : t('auth.register.form.showPasswordAria')}
                             type="button"
                             className="absolute inset-y-0 right-0 flex items-center pr-3"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         >
-                            <Eye className="h-5 w-5 text-slate-400 hover:text-slate-600" />
+                            <Eye className="h-5 w-5 text-[var(--grey-text-muted)] hover:text-[var(--subheading)] dark:hover:text-[var(--neutral-white)]" />
                         </button>
                     </div>
                     <InputError message={errors.password_confirmation} />
@@ -193,27 +195,31 @@ export default function Register() {
                         onChange={(e) => setData('terms', (e.target as HTMLInputElement).checked)}
                         className="mt-1"
                     />
-                    <Label htmlFor="terms" className="text-sm leading-relaxed font-normal text-slate-600">
-                        Saya setuju dengan{' '}
-                        <Link href="#" className="font-semibold text-[#003399] hover:underline">
-                            Syarat & Ketentuan
+                    <Label htmlFor="terms" className="text-sm leading-relaxed font-normal text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
+                        {t('auth.register.form.termsPrefix')}{' '}
+                        <Link href="#" className="font-semibold text-[var(--secondary-600)] hover:underline">
+                            {t('auth.register.form.termsOfService')}
                         </Link>{' '}
-                        dan{' '}
-                        <Link href="#" className="font-semibold text-[#003399] hover:underline">
-                            Kebijakan Privasi
+                        {t('auth.register.form.termsAnd')}{' '}
+                        <Link href="#" className="font-semibold text-[var(--secondary-600)] hover:underline">
+                            {t('auth.register.form.privacyPolicy')}
                         </Link>
                     </Label>
                 </div>
 
-                <Button type="submit" className="text-md mt-2 h-12 w-full bg-[#003399] hover:bg-[#002266]" disabled={processing}>
+                <Button
+                    type="submit"
+                    className="text-md mt-2 h-12 w-full bg-[var(--secondary-600)] hover:bg-[var(--secondary-700)]"
+                    disabled={processing}
+                >
                     {processing && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                    Daftar
+                    {t('auth.register.form.submitButton')}
                 </Button>
 
-                <div className="mt-4 text-center text-sm text-slate-500">
-                    Sudah punya akun?{' '}
-                    <Link href={route('login')} className="font-semibold text-[#003399] hover:underline">
-                        Masuk sekarang
+                <div className="mt-4 text-center text-sm text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
+                    {t('auth.register.form.haveAccount')}{' '}
+                    <Link href={route('login')} className="font-semibold text-[var(--secondary-600)] hover:underline">
+                        {t('auth.register.form.loginLink')}
                     </Link>
                 </div>
             </form>

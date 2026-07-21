@@ -1,0 +1,36 @@
+const register = {
+    headTitle: 'Register',
+    title: 'Create a new account',
+    description: 'Sign up to start using POSAVE',
+    features: {
+        freeTitle: 'Free forever',
+        freeDescription: 'Sign up for free and enjoy all POSAVE features.',
+        timeTitle: 'Save time and effort',
+        timeDescription: 'Automate record-keeping and manage your business more efficiently.',
+        insightTitle: 'Smarter decisions',
+        insightDescription: 'Get reports and insights to grow your business.',
+    },
+    form: {
+        nameLabel: 'Full name',
+        namePlaceholder: 'Enter your full name',
+        emailLabel: 'Email',
+        emailPlaceholder: 'Enter your email',
+        phoneLabel: 'Phone number',
+        phonePlaceholder: 'Enter your phone number',
+        passwordLabel: 'Password',
+        passwordPlaceholder: 'Create a password',
+        showPasswordAria: 'Show password',
+        hidePasswordAria: 'Hide password',
+        confirmPasswordLabel: 'Confirm password',
+        confirmPasswordPlaceholder: 'Re-enter your password',
+        termsPrefix: 'I agree to the',
+        termsAnd: 'and',
+        termsOfService: 'Terms of Service',
+        privacyPolicy: 'Privacy Policy',
+        submitButton: 'Register',
+        haveAccount: 'Already have an account?',
+        loginLink: 'Log in now',
+    },
+};
+
+export default register
