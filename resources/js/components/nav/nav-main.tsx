@@ -116,17 +116,17 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                                     const isChildActive = isItemActive(child);
 
                                                     return (
-                                                        <DropdownMenuItem
+                                                        <Link
                                                             key={child.title}
-                                                            asChild
-                                                            className={
+                                                            href={getHref(child)}
+                                                            className={`block rounded-md px-3 py-2 text-sm transition ${
                                                                 isChildActive
                                                                     ? 'cursor-pointer !bg-[var(--neutral-white)] font-medium !text-[var(--primary-900)]'
-                                                                    : ''
-                                                            }
+                                                                    : '!text-[var(--white)] hover:!bg-[var(--primary-700)]'
+                                                            }`}
                                                         >
-                                                            <Link href={getHref(child)}>{t(child.title)}</Link>
-                                                        </DropdownMenuItem>
+                                                            {t(child.title)}
+                                                        </Link>
                                                     );
                                                 })}
                                             </div>

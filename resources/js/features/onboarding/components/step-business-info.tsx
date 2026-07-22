@@ -1,3 +1,4 @@
+import { Button } from '@/components';
 import { useLanguage } from '@/hooks';
 import type { FormEventHandler } from 'react';
 
@@ -76,20 +77,21 @@ export function StepBusinessInfo({
             </div>
 
             <div className="mt-8 flex gap-2.5">
-                <button
+                <Button
+                    variant="outline"
                     type="button"
                     onClick={onBack}
                     className="shrink-0 rounded-lg border border-[var(--border-strong)] bg-transparent px-5 py-2.5 text-sm font-medium text-[var(--primary-600)] transition-all dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
                 >
                     {t('onboarding.businessInfo.backButton')}
-                </button>
-                <button
+                </Button>
+                <Button
                     type="submit"
                     disabled={processing || !companyName.trim() || !branchName.trim()}
                     className="flex-1 rounded-lg bg-[var(--primary-900)] py-2.5 text-sm font-medium text-white transition-all disabled:opacity-50"
                 >
                     {processing ? t('onboarding.businessInfo.submittingButton') : t('onboarding.businessInfo.submitButton')}
-                </button>
+                </Button>
             </div>
         </form>
     );

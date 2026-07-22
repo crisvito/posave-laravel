@@ -35,6 +35,7 @@ class User extends Authenticatable
         'email',
         'password',
         'company_id',
+        'google_id',
         'branch_id',
         'role',
     ];

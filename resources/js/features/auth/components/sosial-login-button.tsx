@@ -1,21 +1,23 @@
-import { Button } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import * as React from 'react';
 
-interface SocialLoginButtonProps extends React.ComponentProps<typeof Button> {
+interface SocialLoginButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
     provider: 'google' | 'facebook';
     icon: React.ReactNode;
 }
 
 export function SocialLoginButton({ provider, icon, className, children, ...props }: SocialLoginButtonProps) {
     return (
-        <Button
-            variant="outline"
-            className={cn('flex w-full items-center justify-center gap-2 border-gray-300 font-medium text-slate-700 hover:bg-slate-50', className)}
+        <a
+            href={route(`auth.${provider}.redirect`)}
+            className={cn(
+                'flex w-full items-center justify-center gap-2 rounded-md border border-[var(--border-strong)] bg-transparent px-4 py-2 text-sm font-medium text-[var(--subheading)] transition-colors hover:bg-[var(--second-accent)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10',
+                className,
+            )}
             {...props}
         >
             {icon}
             {children}
-        </Button>
+        </a>
     );
 }

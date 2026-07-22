@@ -1,3 +1,4 @@
+import { Button } from '@/components';
 import { useLanguage } from '@/hooks';
 import { ModeCard } from './mode-card';
 
@@ -44,14 +45,14 @@ export function StepModeSelection({ selectedMode, onSelect, onNext }: StepModeSe
                 />
             </div>
 
-            <button
+            <Button
                 type="button"
                 onClick={onNext}
                 disabled={!selectedMode}
                 className="w-full rounded-lg bg-[var(--primary-900)] py-2.5 text-sm font-medium text-white transition-all disabled:opacity-50"
             >
                 {t('onboarding.modeSelection.nextButton')}
-            </button>
+            </Button>
         </div>
     );
 }

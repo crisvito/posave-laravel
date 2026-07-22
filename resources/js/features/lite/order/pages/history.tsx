@@ -1,4 +1,4 @@
-import { Button, TableEmptyState } from '@/components';
+import { Button } from '@/components';
 import { HistoryDetailModal } from '@/features/lite/order/components';
 import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
@@ -141,8 +141,11 @@ export default function HistoryPage({ transactions, filters }: Props) {
                 </div>
 
                 {transactions.length === 0 ? (
-                    <div className="flex justify-center rounded-md border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
-                        <TableEmptyState colSpan={7} icon={ClipboardList} message={t('dashboardLite.history.emptyState')} />
+                    <div className="rounded-md border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
+                        <ClipboardList className="mx-auto mb-2 h-8 w-8 text-[var(--grey-text-muted)]" />
+                        <p className="font-medium text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                            {t('dashboardLite.history.emptyState')}
+                        </p>
                     </div>
                 ) : (
                     <div className="flex flex-col gap-3">

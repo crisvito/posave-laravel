@@ -133,12 +133,9 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                    <SocialLoginButton provider="google" icon={<img src="/icons/google.svg" alt="Google" className="h-5 w-5" />}>
+                <div className="flex">
+                    <SocialLoginButton provider="google" icon={<img src="/google.svg" alt="Google" className="h-5 w-5" />}>
                         Google
-                    </SocialLoginButton>
-                    <SocialLoginButton provider="facebook" icon={<img src="/icons/facebook.svg" alt="Facebook" className="h-5 w-5" />}>
-                        Facebook
                     </SocialLoginButton>
                 </div>
 
