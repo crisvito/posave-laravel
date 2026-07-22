@@ -46,8 +46,6 @@ export default function HistoryPage({ transactions, filters }: Props) {
         { value: 'all', label: t('dashboardLite.history.paymentChips.all') },
         { value: 'cash', label: t('dashboardLite.history.paymentChips.cash') },
         { value: 'qris', label: t('dashboardLite.history.paymentChips.qris') },
-        { value: 'debit', label: t('dashboardLite.history.paymentChips.debit') },
-        { value: 'transfer', label: t('dashboardLite.history.paymentChips.transfer') },
     ];
 
     const dateLocale = locale === 'en' ? 'en-US' : 'id-ID';

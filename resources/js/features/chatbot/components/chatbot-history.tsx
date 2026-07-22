@@ -2,7 +2,6 @@ import { CreateButton } from '@/components';
 import { deleteConversation, renameConversation } from '@/features/chatbot/api';
 import { ConversationMenu } from '@/features/chatbot/components';
 import { useLanguage } from '@/hooks';
-import { MessageSquare } from 'lucide-react';
 import { useState } from 'react';
 import type { Conversation } from '../types';
 
@@ -91,8 +90,6 @@ export function ChatHistory({ conversations, activeConversationId, onSelect, onN
                                 conv.id === activeConversationId ? 'bg-[var(--surface-badge)]' : ''
                             } ${deletingId === conv.id ? 'opacity-50' : ''}`}
                         >
-                            <MessageSquare size={16} className="shrink-0 text-[var(--subheading)]" />
-
                             {isEditing ? (
                                 <input
                                     aria-label={t('shared.chatbot.history.renameAriaLabel')}

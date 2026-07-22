@@ -3,6 +3,7 @@ import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, Link, router } from '@inertiajs/react';
 import { AlertTriangle, ArrowUpRight, Package, Receipt, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
 
 interface TopItem {
     name: string;
@@ -17,7 +18,7 @@ interface RecentTx {
 }
 
 interface Props {
-    filters: { range: string; label: string };
+    filters: { range: string; label: string; from: string; to: string; days: number };
     kpis: { totalSales: number; totalTransactions: number; productsSold: number };
     stockSummary: { out_of_stock: number; low_stock: number };
     topItems: TopItem[];
@@ -26,29 +27,46 @@ interface Props {
 
 export default function LiteDashboard({ filters, kpis, stockSummary, topItems, recentTransactions }: Props) {
     const { t } = useLanguage();
+    const [showCustomPicker, setShowCustomPicker] = useState(filters.range === 'custom');
+    const [fromDate, setFromDate] = useState(filters.from);
+    const [toDate, setToDate] = useState(filters.to);
 
     const RANGE_CHIPS = [
         { value: 'today', label: t('dashboardLite.dashboard.rangeChips.today') },
         { value: '7d', label: t('dashboardLite.dashboard.rangeChips.week') },
         { value: '30d', label: t('dashboardLite.dashboard.rangeChips.month') },
+        { value: 'custom', label: filters.range === 'custom' ? filters.label : t('dashboardLite.dashboard.rangeChips.custom') },
     ];
 
     const changeRange = (range: string) => {
+        if (range === 'custom') {
+            setShowCustomPicker(true);
+            return;
+        }
+        setShowCustomPicker(false);
         router.get(route('dashboard.index'), { range }, { preserveState: true, preserveScroll: true, replace: true });
+    };
+
+    const applyCustomRange = () => {
+        router.get(
+            route('dashboard.index'),
+            { range: 'custom', from: fromDate, to: toDate },
+            { preserveState: true, preserveScroll: true, replace: true },
+        );
     };
 
     return (
         <DashboardSidebarLayout title={t('dashboardLite.dashboard.pageTitle')} description={t('dashboardLite.dashboard.pageDescription')}>
             <Head title={t('dashboardLite.dashboard.headTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6 dark:bg-[var(--background)]">
-                <div className="mb-5 flex gap-2 overflow-x-auto pb-1">
+                <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
                     {RANGE_CHIPS.map((chip) => (
                         <Button
                             aria-label={`${t('dashboardLite.dashboard.rangeAriaPrefix')} ${chip.label}`}
                             key={chip.value}
                             variant="outline"
                             onClick={() => changeRange(chip.value)}
-                            className={`shrink-0 border-2 px-4 py-2 text-sm font-semibold transition hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
+                            className={`shrink-0 border-2 px-4 py-2 text-sm font-semibold whitespace-nowrap transition hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--enutra)] ${
                                 filters.range === chip.value
                                     ? 'bg-[var(--surface-header)] text-white dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
                                     : ''
@@ -58,6 +76,42 @@ export default function LiteDashboard({ filters, kpis, stockSummary, topItems, r
                         </Button>
                     ))}
                 </div>
+
+                {showCustomPicker && (
+                    <div className="mb-5 flex flex-wrap items-end gap-3 rounded-md border border-[var(--border-strong)] bg-[var(--neutral-white)] p-4 dark:border-[var(--border-strong)] dark:bg-[var(--card)]">
+                        <div className="flex flex-col gap-1">
+                            <label className="text-xs font-medium text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                {t('dashboardLite.dashboard.customRange.fromLabel')}
+                            </label>
+                            <input
+                                type="date"
+                                value={fromDate}
+                                max={toDate}
+                                onChange={(e) => setFromDate(e.target.value)}
+                                className="h-10 rounded-md border border-[var(--border-strong)] bg-transparent px-3 text-sm text-[var(--subheading)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <label className="text-xs font-medium text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                {t('dashboardLite.dashboard.customRange.toLabel')}
+                            </label>
+                            <input
+                                type="date"
+                                value={toDate}
+                                min={fromDate}
+                                onChange={(e) => setToDate(e.target.value)}
+                                className="h-10 rounded-md border border-[var(--border-strong)] bg-transparent px-3 text-sm text-[var(--subheading)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
+                            />
+                        </div>
+                        <Button
+                            variant="outline"
+                            onClick={applyCustomRange}
+                            className="h-10 rounded-md bg-[var(--surface-header)] px-5 text-sm font-semibold text-white hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:text-[var(--neutral-white)] dark:hover:opacity-90"
+                        >
+                            {t('dashboardLite.dashboard.customRange.applyButton')}
+                        </Button>
+                    </div>
+                )}
 
                 <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <div className="rounded-md border border-[var(--border-strong)] bg-[var(--neutral-white)] p-5 shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--card)]">

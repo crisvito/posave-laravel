@@ -6,6 +6,7 @@ export const dashboard = {
         today: 'Today',
         week: 'This Week',
         month: 'This Month',
+        custom: 'Custom',
     },
     rangeAriaPrefix: 'Show data for',
     kpi: {
@@ -26,5 +27,10 @@ export const dashboard = {
         title: 'Recent Transactions',
         viewAll: 'View All',
         empty: 'No transactions yet',
+    },
+    customRange: {
+        fromLabel: 'From date',
+        toLabel: 'To date',
+        applyButton: 'Apply',
     },
 };

@@ -1,4 +1,4 @@
-import { Sheet, SheetContent } from '@/components/ui';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui';
 import type { ReactNode } from 'react';
 
 interface CashierSidePanelProps {
@@ -22,6 +22,8 @@ export function CashierSidePanel({
 
             <Sheet open={sheetOpen} onOpenChange={onSheetOpenChange}>
                 <SheetContent side="right" className={`flex w-[85vw] flex-col border-l-0 ${background} p-0 text-white sm:max-w-[400px]`}>
+                    <SheetTitle className="sr-only">Order details</SheetTitle>
+                    <SheetDescription className="sr-only">Order and payment information</SheetDescription>
                     <div className="flex flex-1 flex-col overflow-hidden">{children}</div>
                 </SheetContent>
             </Sheet>

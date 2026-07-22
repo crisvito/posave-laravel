@@ -2,7 +2,7 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { BarChart3, Cloud, LoaderCircle, ShieldCheck } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
-import { Button, Checkbox, Input, InputError, Label } from '@/components';
+import { Button, Input, InputError, Label } from '@/components';
 import { useLanguage } from '@/hooks';
 import { AuthSplitLayout } from '@/layouts';
 import { SocialLoginButton } from '../components';
@@ -54,11 +54,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
 
     return (
         <AuthSplitLayout
-            title={
-                <>
-                    {t('auth.login.welcomeTitle')} <span>👋</span>
-                </>
-            }
+            title={<>{t('auth.login.welcomeTitle')}</>}
             description={t('auth.login.welcomeDescription')}
             illustrationImage="/images/login-illustration.png"
             features={loginFeatures}
@@ -106,12 +102,12 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                     <InputError message={errors.password} />
                 </div>
 
-                <div className="mt-1 flex items-center space-x-2">
+                {/* <div className="mt-1 flex items-center space-x-2">
                     <Checkbox id="remember" name="remember" />
                     <Label htmlFor="remember" className="font-normal text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
                         {t('auth.login.form.rememberMe')}
                     </Label>
-                </div>
+                </div> */}
 
                 <Button
                     type="submit"
@@ -134,7 +130,7 @@ export default function Login({ status, canResetPassword }: LoginProps) {
                 </div>
 
                 <div className="flex">
-                    <SocialLoginButton provider="google" icon={<img src="/google.svg" alt="Google" className="h-5 w-5" />}>
+                    <SocialLoginButton provider="google" icon={<img src="icons/google.svg" alt="Google" className="h-5 w-5" />}>
                         Google
                     </SocialLoginButton>
                 </div>

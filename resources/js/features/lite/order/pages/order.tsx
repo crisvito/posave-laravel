@@ -3,7 +3,7 @@ import { PaymentModal } from '@/features/lite/order/components';
 import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
-import { Minus, Plus, Search, ShoppingCart, X } from 'lucide-react';
+import { Minus, Plus, Search, ShoppingCart, Trash2, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 interface ItemOption {
@@ -37,6 +37,7 @@ export default function OrderPage({ items, categories }: Props) {
     const [cartOpen, setCartOpen] = useState(false);
     const [showPayment, setShowPayment] = useState(false);
     const [successInfo, setSuccessInfo] = useState<{ invoice: string; total: number } | null>(null);
+    const [qtyDrafts, setQtyDrafts] = useState<Record<number, string>>({});
 
     const filteredItems = useMemo(() => {
         return items.filter((i) => {
@@ -54,6 +55,8 @@ export default function OrderPage({ items, categories }: Props) {
         return item.available_stock - (inCart?.qty ?? 0);
     };
 
+    const getStockLimit = (itemId: number) => items.find((i) => i.id === itemId)?.available_stock ?? Infinity;
+
     const handleAddToCart = (item: ItemOption) => {
         if (remainingStock(item) <= 0) return;
         setCart((prev) => {
@@ -67,7 +70,37 @@ export default function OrderPage({ items, categories }: Props) {
         setCart((prev) => prev.map((c) => (c.itemId === itemId ? { ...c, qty: c.qty - 1 } : c)).filter((c) => c.qty > 0));
     };
 
+    const handleIncrease = (itemId: number) => {
+        const limit = getStockLimit(itemId);
+        setCart((prev) => prev.map((c) => (c.itemId === itemId && c.qty < limit ? { ...c, qty: c.qty + 1 } : c)));
+    };
+
     const handleRemove = (itemId: number) => setCart((prev) => prev.filter((c) => c.itemId !== itemId));
+
+    const handleQtyDraftChange = (itemId: number, value: string) => {
+        if (value !== '' && !/^\d+$/.test(value)) return;
+        setQtyDrafts((prev) => ({ ...prev, [itemId]: value }));
+    };
+
+    const commitQtyDraft = (itemId: number) => {
+        const draft = qtyDrafts[itemId];
+        setQtyDrafts((prev) => {
+            const next = { ...prev };
+            delete next[itemId];
+            return next;
+        });
+
+        if (draft === undefined) return;
+
+        const limit = getStockLimit(itemId);
+        const parsed = draft === '' ? 0 : Number(draft);
+        const clamped = Math.max(0, Math.min(parsed, limit));
+
+        setCart((prev) => {
+            if (clamped === 0) return prev.filter((c) => c.itemId !== itemId);
+            return prev.map((c) => (c.itemId === itemId ? { ...c, qty: clamped } : c));
+        });
+    };
 
     const handlePaymentSuccess = (invoice: string, total: number) => {
         setSuccessInfo({ invoice, total });
@@ -95,32 +128,51 @@ export default function OrderPage({ items, categories }: Props) {
                         {cart.map((item) => (
                             <div
                                 key={item.itemId}
-                                className="flex items-center justify-between gap-2 rounded-xl border border-[var(--border-strong)] p-3 dark:border-[var(--border-strong)]"
+                                className="flex flex-col gap-2 rounded-xl border border-[var(--border-strong)] p-3 dark:border-[var(--border-strong)]"
                             >
-                                <div className="min-w-0 flex-1">
-                                    <p className="truncate text-sm font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                                <div className="flex items-start justify-between gap-2">
+                                    <p className="flex-1 text-sm leading-snug font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
                                         {item.name}
                                     </p>
+                                    <button
+                                        aria-label={`${t('dashboardLite.order.cart.removeAriaPrefix')} ${item.name}`}
+                                        onClick={() => handleRemove(item.itemId)}
+                                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[var(--grey-text)] hover:bg-[var(--danger-background)] hover:text-[var(--danger)] dark:text-[var(--neutral-white)]"
+                                    >
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                    </button>
+                                </div>
+                                <div className="flex items-center justify-between gap-2">
                                     <p className="text-xs text-[var(--grey-text)] dark:text-[var(--neutral-white)]">
                                         Rp {item.price.toLocaleString('id-ID')}
                                     </p>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        aria-label={`${t('dashboardLite.order.cart.decreaseAriaPrefix')} ${item.name}`}
-                                        onClick={() => handleDecrease(item.itemId)}
-                                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-strong)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
-                                    >
-                                        <Minus className="h-3.5 w-3.5" />
-                                    </button>
-                                    <span className="w-5 text-center text-sm font-bold dark:text-[var(--neutral-white)]">{item.qty}</span>
-                                    <button
-                                        aria-label={`${t('dashboardLite.order.cart.increaseAriaPrefix')} ${item.name}`}
-                                        onClick={() => handleAddToCart({ id: item.itemId, price: item.price, name: item.name } as ItemOption)}
-                                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-strong)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
-                                    >
-                                        <Plus className="h-3.5 w-3.5" />
-                                    </button>
+                                    <div className="flex shrink-0 items-center gap-1">
+                                        <button
+                                            aria-label={`${t('dashboardLite.order.cart.decreaseAriaPrefix')} ${item.name}`}
+                                            onClick={() => handleDecrease(item.itemId)}
+                                            className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-strong)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
+                                        >
+                                            <Minus className="h-3.5 w-3.5" />
+                                        </button>
+                                        <input
+                                            aria-label={`${t('dashboardLite.order.cart.qtyInputAriaPrefix')} ${item.name}`}
+                                            type="text"
+                                            inputMode="numeric"
+                                            value={qtyDrafts[item.itemId] ?? String(item.qty)}
+                                            onFocus={() => setQtyDrafts((prev) => ({ ...prev, [item.itemId]: String(item.qty) }))}
+                                            onChange={(e) => handleQtyDraftChange(item.itemId, e.target.value)}
+                                            onBlur={() => commitQtyDraft(item.itemId)}
+                                            onKeyDown={(e) => e.key === 'Enter' && e.currentTarget.blur()}
+                                            className="h-8 w-12 shrink-0 rounded-md border border-[var(--border-strong)] bg-transparent text-center text-sm font-bold text-[var(--subheading)] outline-none focus:border-[var(--secondary-600)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
+                                        />
+                                        <button
+                                            aria-label={`${t('dashboardLite.order.cart.increaseAriaPrefix')} ${item.name}`}
+                                            onClick={() => handleIncrease(item.itemId)}
+                                            className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border-strong)] dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
+                                        >
+                                            <Plus className="h-3.5 w-3.5" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ))}

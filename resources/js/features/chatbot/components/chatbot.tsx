@@ -1,4 +1,4 @@
-import { Sheet, SheetContent } from '@/components/ui';
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui';
 import { ChatBody, ChatHeader, ChatHistory, ChatInput } from '@/features/chatbot/components';
 import { useChatMessages, useChatbot } from '@/features/chatbot/hooks';
 import { useEffect, useState } from 'react';
@@ -74,6 +74,8 @@ export function Chatbot() {
 
             <Sheet open={historyOpen} onOpenChange={setHistoryOpen}>
                 <SheetContent side="left" className="w-[85vw] border-[var(--border-strong)] bg-[var(--card)] p-0 sm:max-w-[320px] lg:hidden">
+                    <SheetTitle className="sr-only">Chat history</SheetTitle>
+                    <SheetDescription className="sr-only">List of previous conversations</SheetDescription>
                     <ChatHistory
                         conversations={conversations}
                         activeConversationId={activeConversationId}

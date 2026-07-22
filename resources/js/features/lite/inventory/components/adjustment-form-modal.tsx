@@ -4,26 +4,43 @@ import { useLanguage } from '@/hooks';
 import { useForm } from '@inertiajs/react';
 import { ClipboardEdit, Minus, Plus, X } from 'lucide-react';
 
+interface AdjustmentRecord {
+    id: number;
+    inventory_item_id: number;
+    note: string;
+    qty_change: number;
+}
+
 interface AdjustmentFormModalProps {
     items: { id: number; name: string }[];
+    adjustment?: AdjustmentRecord | null;
     onClose: () => void;
 }
 
 type Direction = 'in' | 'out';
 
-export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps) {
-    const { t } = useLanguage();
-    const { data, setData, post, processing, errors, reset, transform } = useForm({
-        inventory_item_id: '',
-        direction: 'out' as Direction,
-        amount: '1',
-        note: '',
-    });
+const REASONS_BY_LOCALE: Record<'id' | 'en', Record<Direction, string[]>> = {
+    id: {
+        out: ['Barang rusak', 'Hilang', 'Kadaluarsa'],
+        in: ['Beli/restock barang baru', 'Ketemu lebih saat hitung ulang', 'Retur dari pelanggan'],
+    },
+    en: {
+        out: ['Damaged item', 'Lost', 'Expired'],
+        in: ['Restocked / bought new stock', 'Found extra during recount', 'Customer return'],
+    },
+};
 
-    const REASONS: Record<Direction, string[]> = {
-        out: t('dashboardLite.inventoryAdjustments.modal.reasonsOut') as unknown as string[],
-        in: t('dashboardLite.inventoryAdjustments.modal.reasonsIn') as unknown as string[],
-    };
+export function AdjustmentFormModal({ items, adjustment, onClose }: AdjustmentFormModalProps) {
+    const { t, locale } = useLanguage();
+    const isEdit = !!adjustment;
+    const REASONS = REASONS_BY_LOCALE[locale] ?? REASONS_BY_LOCALE.id;
+
+    const { data, setData, post, put, processing, errors, reset, transform } = useForm({
+        inventory_item_id: adjustment ? String(adjustment.inventory_item_id) : '',
+        direction: (adjustment && adjustment.qty_change < 0 ? 'out' : 'in') as Direction,
+        amount: adjustment ? String(Math.abs(adjustment.qty_change)) : '1',
+        note: adjustment?.note ?? '',
+    });
 
     const handleDirectionChange = (direction: Direction) => {
         setData((prev) => ({ ...prev, direction, note: '' }));
@@ -42,12 +59,18 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
             };
         });
 
-        post(route('lite.inventory.adjustments.store'), {
+        const options = {
             onSuccess: () => {
                 reset();
                 onClose();
             },
-        });
+        };
+
+        if (isEdit) {
+            put(route('lite.inventory.adjustments.update', adjustment!.id), options);
+        } else {
+            post(route('lite.inventory.adjustments.store'), options);
+        }
     };
 
     return (
@@ -59,7 +82,7 @@ export function AdjustmentFormModal({ items, onClose }: AdjustmentFormModalProps
                             <ClipboardEdit className="h-6 w-6 text-[var(--subheading)] dark:text-[var(--neutral-white)]" />
                         </span>
                         <h3 className="text-xl font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                            {t('dashboardLite.inventoryAdjustments.modal.title')}
+                            {isEdit ? t('dashboardLite.inventoryAdjustments.modal.editTitle') : t('dashboardLite.inventoryAdjustments.modal.title')}
                         </h3>
                     </div>
                     <button aria-label={t('dashboardLite.inventoryAdjustments.modal.closeAria')} onClick={onClose}>

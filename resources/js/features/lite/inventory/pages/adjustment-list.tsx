@@ -1,14 +1,15 @@
 import { Button, Input } from '@/components/ui';
 import { AdjustmentFormModal } from '@/features/lite/inventory/components';
-import { useLanguage } from '@/hooks';
+import { useConfirmAction, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
 import { ClipboardEdit, Plus, Search } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface AdjustmentRow {
     id: number;
+    inventory_item_id: number;
     item_name: string;
     note: string;
     qty_change: number;
@@ -35,9 +36,15 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
     const [nextPageUrl, setNextPageUrl] = useState(initialAdjustments.next_page_url);
     const [loadingMore, setLoadingMore] = useState(false);
     const [search, setSearch] = useState(filters.search ?? '');
-    const [showForm, setShowForm] = useState(false);
+    const [formAdjustment, setFormAdjustment] = useState<AdjustmentRow | 'new' | null>(null);
+    const { confirmAndDelete, confirmDialog } = useConfirmAction();
 
     const dateLocale = locale === 'en' ? 'en-US' : 'id-ID';
+
+    useEffect(() => {
+        setAdjustments(initialAdjustments.data);
+        setNextPageUrl(initialAdjustments.next_page_url);
+    }, [initialAdjustments.data, initialAdjustments.next_page_url]);
 
     const handleSearchSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -60,6 +67,16 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
         }
     };
 
+    const handleDelete = (adjustment: AdjustmentRow) => {
+        confirmAndDelete(
+            `${t('dashboardLite.inventoryAdjustments.deleteConfirmPrefix')} "${adjustment.item_name}" ${t('dashboardLite.inventoryAdjustments.deleteConfirmSuffix')}`,
+            route('lite.inventory.adjustments.destroy', adjustment.id),
+            {
+                onSuccess: () => setAdjustments((prev) => prev.filter((a) => a.id !== adjustment.id)),
+            },
+        );
+    };
+
     return (
         <DashboardSidebarLayout
             title={t('dashboardLite.inventoryAdjustments.pageTitle')}
@@ -78,7 +95,7 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
                             className="h-12 rounded-md border-[var(--border-strong)] bg-[var(--neutral-white)] pl-12 text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
                         />
                     </form>
-                    <Button aria-label={t('dashboardLite.inventoryAdjustments.createAria')} onClick={() => setShowForm(true)} className="h-12">
+                    <Button aria-label={t('dashboardLite.inventoryAdjustments.createAria')} onClick={() => setFormAdjustment('new')} className="h-12">
                         <Plus className="mr-1 h-5 w-5" />
                         {t('dashboardLite.inventoryAdjustments.createButton')}
                     </Button>
@@ -103,7 +120,7 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
                                     key={a.id}
                                     className="flex items-center justify-between gap-3 rounded-2xl border border-[var(--border-strong)] bg-[var(--neutral-white)] p-4 shadow-sm dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]"
                                 >
-                                    <div className="min-w-0">
+                                    <div className="min-w-0 flex-1">
                                         <p className="truncate text-base font-bold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
                                             {a.item_name}
                                         </p>
@@ -112,15 +129,35 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
                                             {new Date(a.date).toLocaleDateString(dateLocale, { day: 'numeric', month: 'long', year: 'numeric' })}
                                         </p>
                                     </div>
-                                    <span
-                                        className="shrink-0 rounded-full px-3 py-1.5 text-base font-extrabold"
-                                        style={{
-                                            backgroundColor: isReduction ? 'var(--danger-background)' : 'var(--success-background)',
-                                            color: isReduction ? 'var(--danger)' : 'var(--success)',
-                                        }}
-                                    >
-                                        {isReduction ? a.qty_change : `+${a.qty_change}`}
-                                    </span>
+                                    <div className="flex shrink-0 items-center gap-3">
+                                        <span
+                                            className="rounded-full px-3 py-1.5 text-base font-extrabold"
+                                            style={{
+                                                backgroundColor: isReduction ? 'var(--danger-background)' : 'var(--success-background)',
+                                                color: isReduction ? 'var(--danger)' : 'var(--success)',
+                                            }}
+                                        >
+                                            {isReduction ? a.qty_change : `+${a.qty_change}`}
+                                        </span>
+                                        <div className="flex gap-2">
+                                            <Button
+                                                aria-label={`${t('dashboardLite.inventoryAdjustments.editAriaPrefix')} ${a.item_name}`}
+                                                onClick={() => setFormAdjustment(a)}
+                                                className="h-9 rounded-xl bg-[var(--surface-header)] px-3 text-xs font-bold hover:bg-[var(--surface-header-hover)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)] dark:hover:opacity-90"
+                                            >
+                                                {t('dashboardLite.inventoryAdjustments.editButton')}
+                                            </Button>
+                                            <Button
+                                                aria-label={`${t('dashboardLite.inventoryAdjustments.deleteAriaPrefix')} ${a.item_name}`}
+                                                type="button"
+                                                variant="outline"
+                                                onClick={() => handleDelete(a)}
+                                                className="!hover:bg-[var(--danger-background)] h-9 rounded-xl !border-[var(--danger)] px-3 text-xs font-bold !text-[var(--danger)]"
+                                            >
+                                                {t('dashboardLite.inventoryAdjustments.deleteButton')}
+                                            </Button>
+                                        </div>
+                                    </div>
                                 </div>
                             );
                         })}
@@ -144,7 +181,14 @@ export default function AdjustmentList({ adjustments: initialAdjustments, items,
                 )}
             </div>
 
-            {showForm && <AdjustmentFormModal items={items} onClose={() => setShowForm(false)} />}
+            {formAdjustment && (
+                <AdjustmentFormModal
+                    items={items}
+                    adjustment={formAdjustment === 'new' ? null : formAdjustment}
+                    onClose={() => setFormAdjustment(null)}
+                />
+            )}
+            {confirmDialog}
         </DashboardSidebarLayout>
     );
 }

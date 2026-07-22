@@ -14,6 +14,12 @@ export const inventoryAdjustments = {
     loadMoreAria: 'Show more history',
     loadMoreButton: 'Show More',
     loadingButton: 'Loading...',
+    editAriaPrefix: 'Edit adjustment for',
+    editButton: 'Edit',
+    deleteAriaPrefix: 'Delete adjustment for',
+    deleteButton: 'Delete',
+    deleteConfirmPrefix: 'Delete the stock adjustment record for',
+    deleteConfirmSuffix: '?',
     modal: {
         title: 'Record Adjustment',
         closeAria: 'Close',
@@ -33,6 +39,7 @@ export const inventoryAdjustments = {
         saveButton: 'Save',
         savingButton: 'Saving...',
         reasonsOut: ['Damaged item', 'Lost', 'Expired'],
+        editTitle: 'Edit Adjustment',
         reasonsIn: ['Found extra during recount', 'Customer return'],
     },
 };

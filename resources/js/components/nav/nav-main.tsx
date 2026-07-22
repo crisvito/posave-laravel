@@ -44,7 +44,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
     return (
         <SidebarGroup>
             <SidebarGroupContent>
-                <SidebarMenu>
+                <SidebarMenu className="gap-3">
                     {items.map((item) => {
                         const isActive = isItemActive(item);
 

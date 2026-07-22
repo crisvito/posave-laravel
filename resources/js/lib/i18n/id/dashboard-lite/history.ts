@@ -20,4 +20,10 @@ export const history = {
         refunded: 'Direfund',
         void: 'Dibatalkan',
     },
+    detail: {
+        closeAria: 'Tutup',
+        statusLabel: 'Status',
+        paymentMethodLabel: 'Metode Bayar',
+        totalLabel: 'Total',
+    },
 };

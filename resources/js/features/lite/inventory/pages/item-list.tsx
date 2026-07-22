@@ -4,8 +4,8 @@ import { useConfirmAction, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
-import { Minus, Plus, Search } from 'lucide-react';
-import { useState } from 'react';
+import { Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface CategoryOption {
     id: number;
@@ -51,9 +51,13 @@ export default function ItemList({ items: initialItems, categories, summary, fil
     const [search, setSearch] = useState(filters.search ?? '');
     const [activeCategory, setActiveCategory] = useState<number | 'all'>(filters.category_id ? Number(filters.category_id) : 'all');
     const [activeStatus, setActiveStatus] = useState<StockStatus>((filters.stock_status as StockStatus) ?? 'all');
-    const [pendingStockId, setPendingStockId] = useState<number | null>(null);
     const [formItem, setFormItem] = useState<InventoryItem | 'new' | null>(null);
-    const { confirmAndDelete } = useConfirmAction();
+    const { confirmAndDelete, confirmDialog } = useConfirmAction();
+
+    useEffect(() => {
+        setItems(initialItems.data);
+        setNextPageUrl(initialItems.next_page_url);
+    }, [initialItems.data, initialItems.next_page_url]);
 
     const STATUS_CHIPS: { key: StockStatus; label: string }[] = [
         { key: 'all', label: t('dashboardLite.inventoryItems.statusChips.all') },
@@ -94,19 +98,6 @@ export default function ItemList({ items: initialItems, categories, summary, fil
     const handleStatusClick = (status: StockStatus) => {
         setActiveStatus(status);
         applyFilters({ stock_status: status });
-    };
-
-    const handleStockAdjust = async (item: InventoryItem, delta: number) => {
-        if (item.current_stock + delta < 0) return;
-        setPendingStockId(item.id);
-        try {
-            const res = await axios.patch(route('lite.inventory.items.stock', item.id), { delta });
-            setItems((prev) => prev.map((i) => (i.id === item.id ? { ...i, current_stock: res.data.current_stock } : i)));
-        } catch {
-            alert(t('dashboardLite.inventoryItems.stockAdjustError'));
-        } finally {
-            setPendingStockId(null);
-        }
     };
 
     const handleLoadMore = async () => {
@@ -240,7 +231,6 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                         {items.map((item) => {
                             const status = stockStatusOf(item);
                             const meta = STATUS_META[status];
-                            const isPending = pendingStockId === item.id;
 
                             return (
                                 <div
@@ -270,34 +260,16 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                                     </div>
 
                                     <div className="flex items-center justify-between gap-4 sm:justify-end">
-                                        <div className="flex items-center gap-3">
-                                            <button
-                                                aria-label={`${t('dashboardLite.inventoryItems.stock.decreaseAriaPrefix')} ${item.name}`}
-                                                disabled={isPending || item.current_stock === 0}
-                                                onClick={() => handleStockAdjust(item, -1)}
-                                                className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--border-strong)] text-[var(--subheading)] transition hover:bg-[var(--second-accent)] disabled:opacity-30 dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
+                                        <div className="w-16 text-center">
+                                            <p className="text-xl font-extrabold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
+                                                {item.current_stock}
+                                            </p>
+                                            <span
+                                                className="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold"
+                                                style={{ backgroundColor: meta.bg, color: meta.text }}
                                             >
-                                                <Minus className="h-4 w-4" />
-                                            </button>
-                                            <div className="w-14 text-center">
-                                                <p className="text-xl font-extrabold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                                                    {item.current_stock}
-                                                </p>
-                                                <span
-                                                    className="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold"
-                                                    style={{ backgroundColor: meta.bg, color: meta.text }}
-                                                >
-                                                    {meta.label}
-                                                </span>
-                                            </div>
-                                            <button
-                                                aria-label={`${t('dashboardLite.inventoryItems.stock.increaseAriaPrefix')} ${item.name}`}
-                                                disabled={isPending}
-                                                onClick={() => handleStockAdjust(item, 1)}
-                                                className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--border-strong)] text-[var(--subheading)] transition hover:bg-[var(--second-accent)] disabled:opacity-30 dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
-                                            >
-                                                <Plus className="h-4 w-4" />
-                                            </button>
+                                                {meta.label}
+                                            </span>
                                         </div>
 
                                         <div className="flex gap-2">
@@ -314,7 +286,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                                                 type="button"
                                                 variant="outline"
                                                 onClick={() => handleDelete(item)}
-                                                className="h-10 rounded-xl border-[var(--danger)] text-sm font-bold text-[var(--danger)] hover:bg-[var(--danger-background)]"
+                                                className="!hover:bg-[var(--danger-background)] h-10 rounded-xl !border-[var(--danger)] text-sm font-bold !text-[var(--danger)]"
                                             >
                                                 {t('dashboardLite.inventoryItems.modal.deleteButton')}
                                             </Button>
@@ -344,6 +316,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
             {formItem && (
                 <InventoryItemFormModal item={formItem === 'new' ? null : formItem} categories={categories} onClose={() => setFormItem(null)} />
             )}
+            {confirmDialog}
         </DashboardSidebarLayout>
     );
 }

@@ -33,7 +33,7 @@ export function ConfirmDialog({ message, variant = 'danger', onConfirm, onCancel
                     <Button variant="outline" onClick={onCancel}>
                         Batal
                     </Button>
-                    <Button onClick={onConfirm} className={variant === 'danger' ? 'bg-red-600 text-white hover:bg-red-700' : ''}>
+                    <Button onClick={onConfirm} className={variant === 'danger' ? 'bg-[var(--danger)] text-white hover:opacity-90' : ''}>
                         Ya, Lanjutkan
                     </Button>
                 </DialogFooter>

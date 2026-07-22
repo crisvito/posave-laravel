@@ -32,6 +32,7 @@ class AdjustmentController extends Controller
 
         $adjustments->getCollection()->transform(fn($a) => [
             'id' => $a->id,
+            'inventory_item_id' => $a->inventory_item_id,
             'item_name' => $a->item->name,
             'note' => $a->note,
             'qty_change' => $a->qty_change,
@@ -79,5 +80,70 @@ class AdjustmentController extends Controller
         });
 
         return redirect()->route('lite.inventory.adjustments.index')->with('success', 'Perubahan stok berhasil dicatat!');
+    }
+
+    public function update(Request $request, string $id)
+    {
+        /** @var User $owner */
+        $owner = Auth::user();
+
+        $adjustment = Adjustment::where('branch_id', $owner->branch_id)
+            ->whereHas('item', fn($q) => $q->where('company_id', $owner->company_id))
+            ->findOrFail($id);
+
+        $validated = $request->validate([
+            'inventory_item_id' => 'required|exists:inventory_items,id',
+            'qty_change' => 'required|integer|not_in:0',
+            'note' => 'required|string|max:255',
+        ]);
+
+        $newItem = Item::where('company_id', $owner->company_id)->findOrFail($validated['inventory_item_id']);
+
+        DB::transaction(function () use ($adjustment, $validated, $owner, $newItem) {
+            // Balikin efek lama dulu (ke barang lama, kalau-kalau barangnya diganti pas edit).
+            $oldStock = BranchStock::firstOrCreate(
+                ['branch_id' => $owner->branch_id, 'inventory_item_id' => $adjustment->inventory_item_id],
+                ['current_stock' => 0, 'min_stock' => 0],
+            );
+            $oldStock->update(['current_stock' => max(0, $oldStock->current_stock - $adjustment->qty_change)]);
+
+            // Terapin efek baru ke barang yang (mungkin) baru.
+            $newStock = BranchStock::firstOrCreate(
+                ['branch_id' => $owner->branch_id, 'inventory_item_id' => $newItem->id],
+                ['current_stock' => 0, 'min_stock' => 0],
+            );
+            $newStock->update(['current_stock' => max(0, $newStock->current_stock + $validated['qty_change'])]);
+
+            $adjustment->update([
+                'inventory_item_id' => $newItem->id,
+                'note' => $validated['note'],
+                'qty_change' => $validated['qty_change'],
+                'financial_change' => $validated['qty_change'] * (float) $newItem->cost,
+            ]);
+        });
+
+        return redirect()->route('lite.inventory.adjustments.index')->with('success', 'Perubahan stok berhasil diperbarui!');
+    }
+
+    public function destroy(string $id)
+    {
+        /** @var User $owner */
+        $owner = Auth::user();
+
+        $adjustment = Adjustment::where('branch_id', $owner->branch_id)
+            ->whereHas('item', fn($q) => $q->where('company_id', $owner->company_id))
+            ->findOrFail($id);
+
+        DB::transaction(function () use ($adjustment, $owner) {
+            $stock = BranchStock::firstOrCreate(
+                ['branch_id' => $owner->branch_id, 'inventory_item_id' => $adjustment->inventory_item_id],
+                ['current_stock' => 0, 'min_stock' => 0],
+            );
+            $stock->update(['current_stock' => max(0, $stock->current_stock - $adjustment->qty_change)]);
+
+            $adjustment->delete();
+        });
+
+        return redirect()->route('lite.inventory.adjustments.index')->with('success', 'Perubahan stok berhasil dihapus!');
     }
 }

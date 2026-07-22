@@ -10,7 +10,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ items = mainNavItems }: AppSidebarProps) {
     return (
-        <Sidebar collapsible="icon" variant="inset" className="border-r-0 bg-[var(--sidebar)] text-[var(--white)]">
+        <Sidebar collapsible="icon" variant="inset" className="bg-[var(--sidebar)] text-[var(--white)] dark:border-r-1 dark:border-(--background)">
             <SidebarHeader className="border-b-0 bg-[var(--sidebar)] text-[var(--white)]">
                 <SidebarMenu>
                     <SidebarMenuItem>

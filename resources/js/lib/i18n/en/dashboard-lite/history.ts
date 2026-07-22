@@ -20,4 +20,10 @@ export const history = {
         refunded: 'Refunded',
         void: 'Voided',
     },
+    detail: {
+        closeAria: 'Close',
+        statusLabel: 'Status',
+        paymentMethodLabel: 'Payment Method',
+        totalLabel: 'Total',
+    },
 };

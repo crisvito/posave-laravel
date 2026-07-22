@@ -1,20 +1,23 @@
-import { Button, Input, Label, Textarea } from '@/components';
+import { Button, Label, Textarea } from '@/components';
 import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, useForm } from '@inertiajs/react';
-import { Receipt, Store, UploadCloud } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { Receipt, Store } from 'lucide-react';
 
 interface ReceiptSettingData {
-    address: string | null;
-    phone: string | null;
     notes: string | null;
+}
+
+interface CompanyProfileData {
+    name: string;
+    phone: string | null;
+    address: string | null;
     logo: string | null;
 }
 
 interface Props {
     receipt: ReceiptSettingData | null;
-    company_name: string;
+    profile: CompanyProfileData | null;
 }
 
 const SAMPLE_ITEMS = [
@@ -24,33 +27,23 @@ const SAMPLE_ITEMS = [
 ];
 const SAMPLE_PAID = 20000;
 
-export default function ReceiptSettings({ receipt, company_name }: Props) {
+export default function ReceiptSettings({ receipt, profile }: Props) {
     const { t, locale } = useLanguage();
-    const [preview, setPreview] = useState<string | null>(receipt?.logo ? `/storage/${receipt.logo}` : null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const { data, setData, post, processing, errors } = useForm({
-        address: receipt?.address ?? '',
-        phone: receipt?.phone ?? '',
         notes: receipt?.notes ?? '',
-        logo: null as File | null,
     });
-
-    const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] ?? null;
-        setData('logo', file);
-        if (file) setPreview(URL.createObjectURL(file));
-    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('lite.settings.receipt.update'), { forceFormData: true });
+        post(route('lite.settings.receipt.update'));
     };
 
     const dateLocale = locale === 'en' ? 'en-US' : 'id-ID';
     const subtotal = SAMPLE_ITEMS.reduce((s, i) => s + i.qty * i.price, 0);
     const change = SAMPLE_PAID - subtotal;
     const now = new Date();
+    const logoPreview = profile?.logo ? `/storage/${profile.logo}` : null;
 
     return (
         <DashboardSidebarLayout title={t('dashboardLite.receipt.pageTitle')} description={t('dashboardLite.receipt.pageDescription')}>
@@ -74,69 +67,16 @@ export default function ReceiptSettings({ receipt, company_name }: Props) {
 
                         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                             <div>
-                                <Label>{t('dashboardLite.receipt.form.addressLabel')}</Label>
-                                <Textarea
-                                    aria-label={t('dashboardLite.receipt.form.addressAria')}
-                                    value={data.address}
-                                    onChange={(e) => setData('address', e.target.value)}
-                                    rows={2}
-                                    placeholder={t('dashboardLite.receipt.form.addressPlaceholder')}
-                                    className="w-full border border-[var(--border-strong)] bg-transparent px-3 py-2 text-base dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
-                                />
-                            </div>
-
-                            <div>
-                                <Label>{t('dashboardLite.receipt.form.phoneLabel')}</Label>
-                                <Input
-                                    aria-label={t('dashboardLite.receipt.form.phoneAria')}
-                                    value={data.phone}
-                                    onChange={(e) => setData('phone', e.target.value)}
-                                    placeholder={t('dashboardLite.receipt.form.phonePlaceholder')}
-                                    className="h-12 text-base"
-                                />
-                            </div>
-
-                            <div>
                                 <Label>{t('dashboardLite.receipt.form.notesLabel')}</Label>
                                 <Textarea
                                     aria-label={t('dashboardLite.receipt.form.notesAria')}
                                     value={data.notes}
                                     onChange={(e) => setData('notes', e.target.value)}
-                                    rows={2}
+                                    rows={3}
                                     placeholder={t('dashboardLite.receipt.form.notesPlaceholder')}
                                     className="w-full rounded-xl border border-[var(--border-strong)] bg-transparent px-3 py-2 text-base dark:border-[var(--border-strong)] dark:text-[var(--neutral-white)]"
                                 />
-                            </div>
-
-                            <div>
-                                <Label>{t('dashboardLite.receipt.form.logoLabel')}</Label>
-                                <div
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className="flex cursor-pointer items-center gap-4 rounded-xl border-2 border-dashed border-[var(--border-strong)] p-4 hover:bg-[var(--second-accent)] dark:border-[var(--border-strong)] dark:hover:bg-white/10"
-                                >
-                                    {preview ? (
-                                        <img
-                                            src={preview}
-                                            alt={t('dashboardLite.receipt.form.logoPreviewAlt')}
-                                            className="h-14 w-14 rounded-lg object-cover"
-                                        />
-                                    ) : (
-                                        <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-[var(--second-accent)] dark:bg-[var(--border-strong)]">
-                                            <UploadCloud className="h-6 w-6 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
-                                        </div>
-                                    )}
-                                    <span className="text-sm font-medium text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                                        {preview ? t('dashboardLite.receipt.form.logoChange') : t('dashboardLite.receipt.form.logoPick')}
-                                    </span>
-                                </div>
-                                <input
-                                    aria-label={t('dashboardLite.receipt.form.logoUploadAria')}
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImage}
-                                    className="hidden"
-                                />
+                                {errors.notes && <p className="mt-1 text-sm text-[var(--danger)]">{errors.notes}</p>}
                             </div>
 
                             <Button
@@ -158,20 +98,22 @@ export default function ReceiptSettings({ receipt, company_name }: Props) {
 
                             <div className="mx-auto max-w-[300px] rounded-xl border-2 border-dashed border-[var(--border-strong)] p-5 dark:border-[var(--border-strong)]">
                                 <div className="flex flex-col items-center text-center">
-                                    {preview ? (
-                                        <img src={preview} alt="Logo" className="mb-2 h-14 w-14 rounded-full object-cover" />
+                                    {logoPreview ? (
+                                        <img src={logoPreview} alt="Logo" className="mb-2 h-14 w-14 rounded-full object-cover" />
                                     ) : (
                                         <div className="mb-2 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--second-accent)] dark:bg-[var(--border-strong)]">
                                             <Store className="h-6 w-6 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                                         </div>
                                     )}
                                     <p className="text-base font-extrabold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
-                                        {company_name || t('dashboardLite.receipt.preview.storeNameFallback')}
+                                        {profile?.name || t('dashboardLite.receipt.preview.storeNameFallback')}
                                     </p>
-                                    {data.address && (
-                                        <p className="mt-1 text-xs text-[var(--grey-text)] dark:text-[var(--neutral-white)]">{data.address}</p>
+                                    {profile?.address && (
+                                        <p className="mt-1 text-xs text-[var(--grey-text)] dark:text-[var(--neutral-white)]">{profile.address}</p>
                                     )}
-                                    {data.phone && <p className="text-xs text-[var(--grey-text)] dark:text-[var(--neutral-white)]">{data.phone}</p>}
+                                    {profile?.phone && (
+                                        <p className="text-xs text-[var(--grey-text)] dark:text-[var(--neutral-white)]">{profile.phone}</p>
+                                    )}
                                 </div>
 
                                 <div className="my-3 border-t border-dashed border-[var(--border-strong)] dark:border-[var(--border-strong)]" />

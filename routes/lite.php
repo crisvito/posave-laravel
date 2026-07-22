@@ -22,6 +22,8 @@ Route::prefix('inventory')->name('lite.inventory.')->group(function () {
 
   Route::get('/adjustments', [AdjustmentController::class, 'index'])->name('adjustments.index');
   Route::post('/adjustments', [AdjustmentController::class, 'store'])->name('adjustments.store');
+  Route::put('/adjustments/{adjustment}', [AdjustmentController::class, 'update'])->name('adjustments.update');
+  Route::delete('/adjustments/{adjustment}', [AdjustmentController::class, 'destroy'])->name('adjustments.destroy');
 });
 
 Route::get('/order', [OrderController::class, 'index'])->name('lite.order.index');

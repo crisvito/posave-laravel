@@ -6,6 +6,7 @@ export const dashboard = {
         today: 'Hari Ini',
         week: 'Minggu Ini',
         month: 'Bulan Ini',
+        custom: 'Kustom',
     },
     rangeAriaPrefix: 'Tampilkan data',
     kpi: {
@@ -26,5 +27,10 @@ export const dashboard = {
         title: 'Transaksi Terbaru',
         viewAll: 'Lihat Semua',
         empty: 'Belum ada transaksi',
+    },
+    customRange: {
+        fromLabel: 'Dari tanggal',
+        toLabel: 'Sampai tanggal',
+        applyButton: 'Terapkan',
     },
 };

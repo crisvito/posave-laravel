@@ -66,33 +66,21 @@ class SettingsController extends Controller
 
         return Inertia::render('lite/settings/receipt', [
             'receipt' => $company->receiptSetting,
-            'company_name' => $company->profile?->name ?? '',
+            'profile' => $company->profile,
         ]);
     }
 
     public function updateReceipt(Request $request)
     {
         $request->validate([
-            'address' => 'nullable|string|max:500',
-            'phone' => 'nullable|string|max:20',
             'notes' => 'nullable|string|max:500',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $user = $this->getOwner();
         $company = $user->company;
         $receipt = $company->receiptSetting ?? ReceiptSetting::make(['company_id' => $company->id]);
 
-        $data = $request->only(['address', 'phone', 'notes']);
-
-        if ($request->hasFile('logo')) {
-            if ($receipt->logo) {
-                Storage::disk('public')->delete($receipt->logo);
-            }
-            $data['logo'] = $request->file('logo')->store('logos/receipt', 'public');
-        }
-
-        $receipt->fill($data);
+        $receipt->fill($request->only(['notes']));
         $receipt->company_id = $company->id;
         $receipt->save();
 

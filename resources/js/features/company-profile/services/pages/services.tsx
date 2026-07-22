@@ -23,9 +23,9 @@ export default function Services() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
 
                     <div className="relative z-10 flex flex-col items-center px-6 text-center">
-                        <span className="mb-4 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-white uppercase backdrop-blur-sm md:text-sm">
+                        {/* <span className="mb-4 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-white uppercase backdrop-blur-sm md:text-sm">
                             {t('companyProfile.services.heroEyebrow')}
-                        </span>
+                        </span> */}
 
                         <h1 className="text-3xl leading-tight font-semibold tracking-wide text-white md:text-[56px]">
                             {t('companyProfile.services.heroTitle')}

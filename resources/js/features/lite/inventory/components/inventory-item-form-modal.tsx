@@ -22,8 +22,8 @@ export function InventoryItemFormModal({ item, categories, onClose }: InventoryI
         name: item?.name ?? '',
         category_id: item ? String(item.category_id) : '',
         price: item ? String(item.price) : '',
-        current_stock: item ? String(item.current_stock) : '0',
-        min_stock: item ? String(item.min_stock) : '3',
+        current_stock: '0',
+        min_stock: '3',
         image: null as File | null,
     });
 
@@ -104,37 +104,43 @@ export function InventoryItemFormModal({ item, categories, onClose }: InventoryI
                         {errors.price && <p className="mt-1 text-sm text-[var(--danger)]">{errors.price}</p>}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <Label>
-                                {isEdit
-                                    ? t('dashboardLite.inventoryItems.modal.currentStockLabelEdit')
-                                    : t('dashboardLite.inventoryItems.modal.currentStockLabelCreate')}
-                            </Label>
-                            <Input
-                                aria-label={t('dashboardLite.inventoryItems.modal.currentStockAria')}
-                                type="number"
-                                min="0"
-                                value={data.current_stock}
-                                onChange={(e) => setData('current_stock', e.target.value)}
-                                className="h-12 rounded-xl text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
-                            />
-                        </div>
-                        <div>
-                            <Label>{t('dashboardLite.inventoryItems.modal.minStockLabel')}</Label>
-                            <Input
-                                aria-label={t('dashboardLite.inventoryItems.modal.minStockAria')}
-                                type="number"
-                                min="0"
-                                value={data.min_stock}
-                                onChange={(e) => setData('min_stock', e.target.value)}
-                                className="h-12 rounded-xl text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
-                            />
-                        </div>
-                    </div>
-                    <p className="-mt-2 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
-                        {t('dashboardLite.inventoryItems.modal.minStockHint')}
-                    </p>
+                    {!isEdit && (
+                        <>
+                            <div className="grid grid-cols-2 gap-3">
+                                <div>
+                                    <Label>{t('dashboardLite.inventoryItems.modal.currentStockLabelCreate')}</Label>
+                                    <Input
+                                        aria-label={t('dashboardLite.inventoryItems.modal.currentStockAria')}
+                                        type="number"
+                                        min="0"
+                                        value={data.current_stock}
+                                        onChange={(e) => setData('current_stock', e.target.value)}
+                                        className="h-12 rounded-xl text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
+                                    />
+                                </div>
+                                <div>
+                                    <Label>{t('dashboardLite.inventoryItems.modal.minStockLabel')}</Label>
+                                    <Input
+                                        aria-label={t('dashboardLite.inventoryItems.modal.minStockAria')}
+                                        type="number"
+                                        min="0"
+                                        value={data.min_stock}
+                                        onChange={(e) => setData('min_stock', e.target.value)}
+                                        className="h-12 rounded-xl text-base dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)]"
+                                    />
+                                </div>
+                            </div>
+                            <p className="-mt-2 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                                {t('dashboardLite.inventoryItems.modal.minStockHint')}
+                            </p>
+                        </>
+                    )}
+
+                    {isEdit && (
+                        <p className="-mt-2 text-xs text-[var(--grey-text)] dark:text-[var(--muted-foreground)]">
+                            {t('dashboardLite.inventoryItems.modal.stockEditHint')}
+                        </p>
+                    )}
 
                     <div>
                         <Label>{t('dashboardLite.inventoryItems.modal.photoLabel')}</Label>

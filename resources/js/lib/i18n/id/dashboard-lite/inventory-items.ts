@@ -42,6 +42,7 @@ export const inventoryItems = {
     deleteConfirmPrefix: 'Hapus',
     deleteConfirmSuffix: 'dari daftar barang?',
     modal: {
+        stockEditHint: 'Untuk mengubah stok barang, gunakan halaman Perubahan Stok.',
         editTitle: 'Ubah Barang',
         createTitle: 'Tambah Barang',
         closeAria: 'Tutup',

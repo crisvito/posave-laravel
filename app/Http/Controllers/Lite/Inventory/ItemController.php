@@ -129,8 +129,6 @@ class ItemController extends Controller
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:inventory_categories,id',
             'price' => 'required|numeric|min:0',
-            'current_stock' => 'required|integer|min:0',
-            'min_stock' => 'required|integer|min:0',
         ]);
 
         $item->update([
@@ -139,31 +137,7 @@ class ItemController extends Controller
             'price' => $validated['price'],
         ]);
 
-        BranchStock::updateOrCreate(
-            ['branch_id' => $owner->branch_id, 'inventory_item_id' => $item->id],
-            ['current_stock' => $validated['current_stock'], 'min_stock' => $validated['min_stock']],
-        );
-
         return redirect()->route('lite.inventory.items.index')->with('success', 'Barang berhasil diperbarui!');
-    }
-
-    public function adjustStock(Request $request, string $id)
-    {
-        /** @var User $owner */
-        $owner = Auth::user();
-        $item = Item::where('company_id', $owner->company_id)->findOrFail($id);
-
-        $validated = $request->validate(['delta' => 'required|integer']);
-
-        $stock = BranchStock::firstOrCreate(
-            ['branch_id' => $owner->branch_id, 'inventory_item_id' => $item->id],
-            ['current_stock' => 0, 'min_stock' => 0],
-        );
-
-        $newStock = max(0, $stock->current_stock + $validated['delta']);
-        $stock->update(['current_stock' => $newStock]);
-
-        return response()->json(['current_stock' => $newStock]);
     }
 
     public function destroy(string $id)

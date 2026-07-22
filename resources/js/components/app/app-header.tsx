@@ -1,5 +1,16 @@
 import { Breadcrumbs } from '@/components';
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, Sheet, SheetContent, SheetTrigger } from '@/components/ui';
+import {
+    Button,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetTitle,
+    SheetTrigger,
+} from '@/components/ui';
 import { AppearanceToggle } from '@/features/company-profile/components';
 import { useInitials, useLanguage } from '@/hooks';
 import { type BreadcrumbItem, type SharedData } from '@/types';
@@ -50,11 +61,11 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-40">
-                <DropdownMenuItem onClick={() => setLocale('id')} className="flex items-center justify-between gap-2 cursor-pointer">
+                <DropdownMenuItem onClick={() => setLocale('id')} className="flex cursor-pointer items-center justify-between gap-2">
                     {t('shared.language.id')}
                     {locale === 'id' && <Check className="h-4 w-4 text-[var(--secondary-600)]" />}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLocale('en')} className="flex items-center justify-between gap-2 cursor-pointer">
+                <DropdownMenuItem onClick={() => setLocale('en')} className="flex cursor-pointer items-center justify-between gap-2">
                     {t('shared.language.en')}
                     {locale === 'en' && <Check className="h-4 w-4 text-[var(--secondary-600)]" />}
                 </DropdownMenuItem>
@@ -76,6 +87,8 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 </SheetTrigger>
 
                                 <SheetContent side="left" className="border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground)]">
+                                    <SheetTitle className="sr-only">{t('shared.nav.home')}</SheetTitle>
+                                    <SheetDescription className="sr-only">Navigation menu</SheetDescription>
                                     <div className="z-100 mt-6 flex h-full flex-col space-y-6">
                                         <div className="flex flex-col space-y-4 text-sm">
                                             {mainNavItems.map((item) => (

@@ -42,6 +42,7 @@ export const inventoryItems = {
     deleteConfirmPrefix: 'Delete',
     deleteConfirmSuffix: 'from the item list?',
     modal: {
+        stockEditHint: 'To change item stock, use the Stock Adjustments page.',
         editTitle: 'Edit Item',
         createTitle: 'Add Item',
         closeAria: 'Close',
