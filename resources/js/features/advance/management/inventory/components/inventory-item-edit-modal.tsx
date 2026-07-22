@@ -9,12 +9,10 @@ import type { InventoryItem } from './inventory-item-actions-menu';
 interface InventoryItemEditModalProps {
     item: InventoryItem;
     categories: InventoryCategory[];
-    branches: { id: number; name: string }[];
-    selectedBranchId: number | null;
     onClose: () => void;
 }
 
-export function InventoryItemEditModal({ item, categories, branches, selectedBranchId, onClose }: InventoryItemEditModalProps) {
+export function InventoryItemEditModal({ item, categories, onClose }: InventoryItemEditModalProps) {
     const { t } = useLanguage();
     const [preview, setPreview] = useState<string | null>(item.image ? `/storage/${item.image}` : null);
 
@@ -23,21 +21,17 @@ export function InventoryItemEditModal({ item, categories, branches, selectedBra
         name: string;
         sku: string;
         category_id: string;
-        branch_id: string;
         image: File | null;
-        min_stock: string;
-        current_stock: string;
         price: string;
+        cost: string;
     }>({
         _method: 'PUT',
         name: item.name,
         sku: item.sku,
         category_id: String(item.category_id),
-        branch_id: selectedBranchId ? String(selectedBranchId) : '',
         image: null,
-        min_stock: String(item.min_stock),
-        current_stock: String(item.current_stock),
         price: String(item.price),
+        cost: String(item.cost),
     });
 
     const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,8 +55,6 @@ export function InventoryItemEditModal({ item, categories, branches, selectedBra
         reset();
         onClose();
     };
-
-    const selectedBranchName = branches.find((b) => b.id === selectedBranchId)?.name;
 
     const inputClass =
         'w-full rounded-lg border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm text-[var(--subheading)] shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)]';
@@ -143,50 +135,23 @@ export function InventoryItemEditModal({ item, categories, branches, selectedBra
                         </div>
                     </div>
 
-                    {selectedBranchId ? (
-                        <div className="grid grid-cols-2 gap-3">
-                            <div>
-                                <Label>
-                                    {t('dashboardAdvance.inventoryItems.editModal.currentStockLabelPrefix')} {selectedBranchName}
-                                </Label>
-                                <Input
-                                    aria-label={`${t('dashboardAdvance.inventoryItems.editModal.currentStockLabelPrefix')} ${selectedBranchName ?? ''}`}
-                                    type="number"
-                                    min="0"
-                                    value={data.current_stock}
-                                    onChange={(e) => setData('current_stock', e.target.value)}
-                                    className={inputClass}
-                                />
-                            </div>
-                            <div>
-                                <Label>{t('dashboardAdvance.inventoryItems.editModal.minStockLabel')}</Label>
-                                <Input
-                                    aria-label={t('dashboardAdvance.inventoryItems.editModal.minStockAriaLabel')}
-                                    type="number"
-                                    min="0"
-                                    value={data.min_stock}
-                                    onChange={(e) => setData('min_stock', e.target.value)}
-                                />
-                            </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <Label>{t('dashboardAdvance.inventoryItems.editModal.priceLabel')}</Label>
+                            <Input
+                                aria-label={t('dashboardAdvance.inventoryItems.editModal.priceAriaLabel')}
+                                type="number"
+                                min="0"
+                                value={data.price}
+                                onChange={(e) => setData('price', e.target.value)}
+                            />
+                            {errors.price && <span className="text-xs text-[var(--danger)]">{errors.price}</span>}
                         </div>
-                    ) : (
-                        <p className="rounded-lg bg-[var(--second-accent)] px-3 py-2 text-xs text-[var(--grey-text)]">
-                            {t('dashboardAdvance.inventoryItems.editModal.selectBranchNotice')}
-                        </p>
-                    )}
-
-                    <div>
-                        <Label className="mb-1 block text-sm font-medium text-[var(--subheading)]">
-                            {t('dashboardAdvance.inventoryItems.editModal.priceLabel')}
-                        </Label>
-                        <Input
-                            aria-label={t('dashboardAdvance.inventoryItems.editModal.priceAriaLabel')}
-                            type="number"
-                            min="0"
-                            value={data.price}
-                            onChange={(e) => setData('price', e.target.value)}
-                        />
                     </div>
+
+                    <p className="rounded-lg bg-[var(--second-accent)] px-3 py-2 text-xs text-[var(--grey-text)]">
+                        {t('dashboardAdvance.inventoryItems.editModal.stockEditHint')}
+                    </p>
 
                     <div className="mt-3 flex justify-end gap-2">
                         <Button type="button" variant="outline" onClick={handleClose}>

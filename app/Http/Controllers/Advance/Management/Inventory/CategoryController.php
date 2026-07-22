@@ -104,7 +104,17 @@ class CategoryController extends Controller
         $user = Auth::user();
         abort_if(!$user->isOwner(), 403);
 
-        Category::where('company_id', $user->company_id)->findOrFail($id)->delete();
+        $category = Category::where('company_id', $user->company_id)->withCount('items')->findOrFail($id);
+
+        if ($category->items_count > 0) {
+            // Masih dipakai barang lain — jangan dihapus permanen, cukup nonaktifkan.
+            $category->update(['is_active' => false]);
+
+            return redirect()->route('dashboard.inventory.categories.index')
+                ->with('success', 'Kategori dinonaktifkan karena masih dipakai oleh ' . $category->items_count . ' barang.');
+        }
+
+        $category->delete();
 
         return redirect()->route('dashboard.inventory.categories.index')->with('success', 'Kategori berhasil dihapus!');
     }

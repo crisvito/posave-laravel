@@ -4,7 +4,6 @@ import {
     DateNavigator,
     FilterDropdown,
     PaginationBar,
-    PrintButton,
     SearchInput,
     Table,
     TableBody,
@@ -19,7 +18,7 @@ import { useConfirmAction, useDropdownMenu, useFilters, useLanguage } from '@/ho
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import { MoreVertical, Package, Store } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Supplier {
     id: number;
@@ -57,6 +56,7 @@ interface InventoryPurchaseOrderListProps {
     };
     suppliers: Supplier[];
     inventoryItems: InventoryItemOption[];
+    lastPurchasePrices: Record<number, number>;
     branches: BranchOption[];
     my_branch_id: number | null;
     is_branch_manager: boolean;
@@ -67,6 +67,7 @@ export default function InventoryPurchaseOrderList({
     purchaseOrders,
     suppliers,
     inventoryItems,
+    lastPurchasePrices,
     branches,
     my_branch_id,
     is_branch_manager,
@@ -77,7 +78,12 @@ export default function InventoryPurchaseOrderList({
     const { search, setSearch, applyFilters, handleSearch } = useFilters('dashboard.inventory.purchase-orders.index', filters);
     const { openId: openMenuId, position: menuPosition, buttonRefs, toggleMenu, closeMenu } = useDropdownMenu();
     const currentDate = filters.date ?? new Date().toISOString().slice(0, 10);
-    const { confirmAndDelete } = useConfirmAction();
+    const { confirmAndDelete, confirmDialog } = useConfirmAction();
+    const [poRows, setPoRows] = useState<PurchaseOrder[]>(purchaseOrders.data);
+
+    useEffect(() => {
+        setPoRows(purchaseOrders.data);
+    }, [purchaseOrders.data]);
 
     const dateLocale = locale === 'en' ? 'en-US' : 'id-ID';
 
@@ -108,10 +114,12 @@ export default function InventoryPurchaseOrderList({
     };
 
     const handleDelete = (id: number) => {
-        confirmAndDelete(t('dashboardAdvance.inventoryPurchaseOrders.list.deleteConfirm'), route('dashboard.inventory.purchase-orders.destroy', id));
+        confirmAndDelete(t('dashboardAdvance.inventoryPurchaseOrders.list.deleteConfirm'), route('dashboard.inventory.purchase-orders.destroy', id), {
+            onSuccess: () => setPoRows((prev) => prev.filter((po) => po.id !== id)),
+        });
         closeMenu();
     };
-    const activeMenuPO = purchaseOrders.data.find((po) => po.id === openMenuId);
+    const activeMenuPO = poRows.find((po) => po.id === openMenuId);
 
     return (
         <DashboardSidebarLayout
@@ -141,11 +149,16 @@ export default function InventoryPurchaseOrderList({
                     </div>
 
                     <div className="flex items-center gap-3">
+                        <FilterDropdown
+                            value={filters.status}
+                            options={STATUS_OPTIONS}
+                            allLabel={t('dashboardAdvance.inventoryPurchaseOrders.list.allStatus')}
+                            onChange={(v) => applyFilters({ status: v })}
+                        />
                         <CreateButton
                             label={t('dashboardAdvance.inventoryPurchaseOrders.list.createButton')}
                             onClick={() => setShowCreateModal(true)}
                         />
-                        <PrintButton />
                     </div>
                 </div>
 
@@ -155,13 +168,6 @@ export default function InventoryPurchaseOrderList({
                         onChange={setSearch}
                         onSubmit={handleSearch}
                         placeholder={t('dashboardAdvance.inventoryPurchaseOrders.list.searchPlaceholder')}
-                    />
-
-                    <FilterDropdown
-                        value={filters.status}
-                        options={STATUS_OPTIONS}
-                        allLabel={t('dashboardAdvance.inventoryPurchaseOrders.list.allStatus')}
-                        onChange={(v) => applyFilters({ status: v })}
                     />
                 </div>
 
@@ -195,7 +201,7 @@ export default function InventoryPurchaseOrderList({
                             </TableHeader>
 
                             <TableBody>
-                                {purchaseOrders.data.length === 0 ? (
+                                {poRows.length === 0 ? (
                                     <TableEmptyState
                                         colSpan={7}
                                         icon={Package}
@@ -207,7 +213,7 @@ export default function InventoryPurchaseOrderList({
                                         }}
                                     />
                                 ) : (
-                                    purchaseOrders.data.map((po) => (
+                                    poRows.map((po) => (
                                         <TableRow key={po.id}>
                                             <TableCell>
                                                 <div className="font-medium whitespace-nowrap">
@@ -233,16 +239,20 @@ export default function InventoryPurchaseOrderList({
                                                 </span>
                                             </TableCell>
                                             <TableCell className="relative">
-                                                <Button
-                                                    ref={(el) => {
-                                                        buttonRefs.current[po.id] = el;
-                                                    }}
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() => toggleMenu(po.id)}
-                                                >
-                                                    <MoreVertical className="h-4 w-4" />
-                                                </Button>
+                                                {po.status !== 'success' ? (
+                                                    <Button
+                                                        ref={(el) => {
+                                                            buttonRefs.current[po.id] = el;
+                                                        }}
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => toggleMenu(po.id)}
+                                                    >
+                                                        <MoreVertical className="h-4 w-4" />
+                                                    </Button>
+                                                ) : (
+                                                    <span className="text-xs text-[var(--grey-text)]">—</span>
+                                                )}
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -277,12 +287,15 @@ export default function InventoryPurchaseOrderList({
                 <InventoryPurchaseOrderCreateModal
                     suppliers={suppliers}
                     inventoryItems={inventoryItems}
+                    lastPurchasePrices={lastPurchasePrices}
                     branches={branches}
                     myBranchId={my_branch_id}
                     isBranchManager={is_branch_manager}
                     onClose={() => setShowCreateModal(false)}
                 />
             )}
+
+            {confirmDialog}
         </DashboardSidebarLayout>
     );
 }

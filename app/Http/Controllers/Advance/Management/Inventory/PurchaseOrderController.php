@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Advance\Management\Inventory\BranchStock;
 use App\Models\Advance\Management\Inventory\Item;
 use App\Models\Advance\Management\Inventory\PurchaseOrder;
+use App\Models\Advance\Management\Inventory\PurchaseOrderItem;
 use App\Models\Advance\Management\Inventory\Supplier;
 use App\Models\Auth\Branch;
 use App\Models\User;
@@ -42,10 +43,25 @@ class PurchaseOrderController extends Controller
             ? Branch::where('id', $user->branch_id)->get(['id', 'name'])
             : Branch::where('company_id', $user->company_id)->get(['id', 'name']);
 
+        $inventoryItems = Item::where('company_id', $user->company_id)->select('id', 'name', 'sku', 'price')->get();
+
+        // Ambil harga beli PALING TERAKHIR per barang, dari riwayat PO — bukan dari Item.cost
+        // (Item tidak punya konsep harga modal statis; harga beli sepenuhnya hidup di riwayat PO).
+        $lastPurchasePrices = PurchaseOrderItem::query()
+            ->select('purchase_order_items.inventory_item_id', 'purchase_order_items.price')
+            ->join('purchase_orders', 'purchase_orders.id', '=', 'purchase_order_items.purchase_order_id')
+            ->where('purchase_orders.company_id', $user->company_id)
+            ->whereIn('purchase_order_items.inventory_item_id', $inventoryItems->pluck('id'))
+            ->orderByDesc('purchase_order_items.id')
+            ->get()
+            ->unique('inventory_item_id')
+            ->pluck('price', 'inventory_item_id');
+
         return Inertia::render('advance/management/inventory/inventory-po', [
             'purchaseOrders' => $purchaseOrders,
             'suppliers' => Supplier::where('company_id', $user->company_id)->select('id', 'name')->get(),
-            'inventoryItems' => Item::where('company_id', $user->company_id)->select('id', 'name', 'sku', 'price')->get(),
+            'inventoryItems' => $inventoryItems,
+            'lastPurchasePrices' => $lastPurchasePrices,
             'branches' => $branches,
             'my_branch_id' => $user->branch_id,
             'is_branch_manager' => $user->isBranchManager(),
@@ -155,6 +171,8 @@ class PurchaseOrderController extends Controller
         if ($user->isBranchManager()) {
             abort_if($po->branch_id !== $user->branch_id, 403);
         }
+
+        abort_if($po->status === 'success', 422, 'PO yang sudah selesai tidak bisa dihapus — stoknya sudah tercatat dan mungkin sudah terpakai. Gunakan Perubahan Stok untuk koreksi.');
 
         $po->delete();
 

@@ -64,7 +64,7 @@ export function InventoryCategoryCreateModal({ onClose }: InventoryCategoryCreat
                             type="button"
                             variant="outline"
                             onClick={handleClose}
-                            className="bg-transparent"
+                            className="!border-1 !border-[var(--danger)] bg-transparent !text-[var(--danger)]"
                         >
                             {t('dashboardAdvance.inventoryCategories.createModal.cancel')}
                         </Button>

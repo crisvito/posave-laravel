@@ -44,6 +44,11 @@ const inventoryPurchaseOrders = {
         cancel: 'Cancel',
         submitting: 'Saving...',
         submitLabel: 'Create PO',
+        itemColumnLabel: 'Item',
+        qtyColumnLabel: 'Qty',
+        priceColumnLabel: 'Cost Price',
+        subtotalPrefix: 'Subtotal:',
+        lastPricePrefix: 'Last price:',
     },
     actionsMenu: {
         markSuccess: 'Mark as Completed',

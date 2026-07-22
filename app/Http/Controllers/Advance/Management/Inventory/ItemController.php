@@ -190,10 +190,24 @@ class ItemController extends Controller
 
         $item = Item::where('company_id', $user->company_id)->findOrFail($id);
 
+        $hasHistory = $item->transactionItems()->exists()
+            || $item->adjustments()->exists()
+            || \App\Models\Advance\Management\Inventory\PurchaseOrderItem::where('inventory_item_id', $item->id)->exists()
+            || \App\Models\Advance\Management\Inventory\TransferItem::where('inventory_item_id', $item->id)->exists();
+
+        if ($hasHistory) {
+            // Barang ini sudah pernah muncul di transaksi/riwayat lain — jangan dihapus permanen
+            // (nanti riwayat lama jadi patah/kehilangan nama barangnya). Cukup nonaktifkan.
+            $item->update(['is_active' => false]);
+
+            return redirect()->route('dashboard.inventory.items.index')
+                ->with('success', 'Barang dinonaktifkan. Riwayat transaksinya tetap tersimpan, tapi barang ini tidak akan muncul lagi saat membuat transaksi baru.');
+        }
+
+        // Belum pernah dipakai sama sekali — aman dihapus permanen.
         if ($item->image) {
             Storage::disk('public')->delete($item->image);
         }
-
         $item->delete();
 
         return redirect()->route('dashboard.inventory.items.index')->with('success', 'Barang berhasil dihapus!');

@@ -21,6 +21,7 @@ class SupplierController extends Controller
         $suppliers = Supplier::with('category')
             ->where('company_id', $user->company_id)
             ->when($request->search, fn($q) => $q->where('name', 'like', '%' . $request->search . '%'))
+            ->when($request->category_id, fn($q) => $q->where('category_id', $request->category_id))
             ->paginate($request->per_page ?? 6)
             ->withQueryString();
 
@@ -28,7 +29,7 @@ class SupplierController extends Controller
             'suppliers' => $suppliers,
             'categories' => Category::where('company_id', $user->company_id)->select('id', 'name')->get(),
             'is_branch_manager' => $user->isBranchManager(),
-            'filters' => $request->only('search', 'per_page'),
+            'filters' => $request->only('search', 'per_page', 'category_id'),
         ]);
     }
 
@@ -111,7 +112,17 @@ class SupplierController extends Controller
         $user = Auth::user();
         abort_if(!$user->isOwner(), 403);
 
-        Supplier::where('company_id', $user->company_id)->findOrFail($id)->delete();
+        $supplier = Supplier::where('company_id', $user->company_id)->withCount('purchaseOrders')->findOrFail($id);
+
+        if ($supplier->purchase_orders_count > 0) {
+            // Masih punya riwayat pembelian — jangan dihapus permanen, cukup nonaktifkan.
+            $supplier->update(['is_active' => false]);
+
+            return redirect()->route('dashboard.inventory.suppliers.index')
+                ->with('success', 'Pemasok dinonaktifkan karena masih memiliki riwayat pembelian.');
+        }
+
+        $supplier->delete();
 
         return redirect()->route('dashboard.inventory.suppliers.index')->with('success', 'Pemasok berhasil dihapus!');
     }

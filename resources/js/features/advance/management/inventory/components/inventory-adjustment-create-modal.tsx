@@ -196,7 +196,7 @@ export function InventoryAdjustmentCreateModal({
                                 reset();
                                 onClose();
                             }}
-                            className="bg-transparent"
+                            className="!border-1 !border-[var(--danger)] bg-transparent !text-[var(--danger)]"
                         >
                             {t('dashboardAdvance.inventoryAdjustments.createModal.cancel')}
                         </Button>

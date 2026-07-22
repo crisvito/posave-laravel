@@ -22,16 +22,16 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
         branch_id: string;
         image: File | null;
         min_stock: string;
-        current_stock: string;
         price: string;
+        cost: string;
     }>({
         name: '',
         category_id: '',
         branch_id: '',
         image: null,
         min_stock: '0',
-        current_stock: '0',
         price: '0',
+        cost: '0',
     });
 
     const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -144,44 +144,35 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
                             </div>
                         </div>
 
-                        <div>
-                            <Label>{t('dashboardAdvance.inventoryItems.createModal.priceLabel')}</Label>
-                            <Input
-                                aria-label={t('dashboardAdvance.inventoryItems.createModal.priceAriaLabel')}
-                                type="number"
-                                min="0"
-                                value={data.price}
-                                onChange={(e) => setData('price', e.target.value)}
-                            />
-                            {errors.price && <span className="text-xs text-[var(--danger)]">{errors.price}</span>}
-                        </div>
-
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <Label>{t('dashboardAdvance.inventoryItems.createModal.initialStockLabel')}</Label>
+                                <Label>{t('dashboardAdvance.inventoryItems.createModal.priceLabel')}</Label>
                                 <Input
-                                    aria-label={t('dashboardAdvance.inventoryItems.createModal.initialStockAriaLabel')}
+                                    aria-label={t('dashboardAdvance.inventoryItems.createModal.priceAriaLabel')}
                                     type="number"
                                     min="0"
-                                    value={data.current_stock}
-                                    onChange={(e) => setData('current_stock', e.target.value)}
+                                    value={data.price}
+                                    onChange={(e) => setData('price', e.target.value)}
                                 />
-                                {errors.current_stock && <span className="text-xs text-[var(--danger)]">{errors.current_stock}</span>}
-                            </div>
-                            <div>
-                                <Label>{t('dashboardAdvance.inventoryItems.createModal.minStockLabel')}</Label>
-                                <Input
-                                    aria-label={t('dashboardAdvance.inventoryItems.createModal.minStockAriaLabel')}
-                                    type="number"
-                                    min="0"
-                                    value={data.min_stock}
-                                    onChange={(e) => setData('min_stock', e.target.value)}
-                                />
-                                <p className="mt-1 text-xs text-[var(--grey-text)]">
-                                    {t('dashboardAdvance.inventoryItems.createModal.minStockHint')}
-                                </p>
+                                {errors.price && <span className="text-xs text-[var(--danger)]">{errors.price}</span>}
                             </div>
                         </div>
+
+                        <div>
+                            <Label>{t('dashboardAdvance.inventoryItems.createModal.minStockLabel')}</Label>
+                            <Input
+                                aria-label={t('dashboardAdvance.inventoryItems.createModal.minStockAriaLabel')}
+                                type="number"
+                                min="0"
+                                value={data.min_stock}
+                                onChange={(e) => setData('min_stock', e.target.value)}
+                            />
+                            <p className="mt-1 text-xs text-[var(--grey-text)]">{t('dashboardAdvance.inventoryItems.createModal.minStockHint')}</p>
+                        </div>
+
+                        <p className="rounded-lg bg-[var(--second-accent)] px-3 py-2 text-xs text-[var(--grey-text)]">
+                            {t('dashboardAdvance.inventoryItems.createModal.noInitialStockNotice')}
+                        </p>
 
                         <div>
                             <Label>

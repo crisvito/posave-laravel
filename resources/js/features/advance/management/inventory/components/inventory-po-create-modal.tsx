@@ -1,4 +1,4 @@
-import { Button } from '@/components';
+import { Button, Input, Label } from '@/components';
 import { useLanguage } from '@/hooks';
 import { useForm } from '@inertiajs/react';
 import { ChevronDown, Plus, Trash2, X } from 'lucide-react';
@@ -22,6 +22,7 @@ interface InventoryItemOption {
 interface InventoryPurchaseOrderCreateModalProps {
     suppliers: Supplier[];
     inventoryItems: InventoryItemOption[];
+    lastPurchasePrices: Record<number, number>;
     branches: BranchOption[];
     myBranchId: number | null;
     isBranchManager: boolean;
@@ -31,6 +32,7 @@ interface InventoryPurchaseOrderCreateModalProps {
 export function InventoryPurchaseOrderCreateModal({
     suppliers,
     inventoryItems,
+    lastPurchasePrices = {},
     branches,
     myBranchId,
     isBranchManager,
@@ -60,10 +62,10 @@ export function InventoryPurchaseOrderCreateModal({
         items[index] = { ...items[index], [field]: value };
 
         if (field === 'inventory_item_id') {
-            const selected = inventoryItems.find((i) => String(i.id) === String(value));
-            if (selected) {
-                items[index].price = selected.price;
-            }
+            // Auto-isi dari harga beli TERAKHIR barang ini (riwayat PO), kalau ada — tetap bisa diubah manual
+            // di bawah kalau harga beli kali ini beda. Barang yang belum pernah dibeli via PO tetap 0.
+            const lastPrice = lastPurchasePrices[Number(value)];
+            items[index].price = lastPrice ?? 0;
         }
 
         setData('items', items);
@@ -82,8 +84,8 @@ export function InventoryPurchaseOrderCreateModal({
     };
 
     const lockedBranchName = branches.find((b) => b.id === myBranchId)?.name ?? '';
-    const inputClass =
-        'w-full rounded-md border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm text-[var(--subheading)] shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)]';
+    const selectClass =
+        'w-full appearance-none rounded-md border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm text-[var(--subheading)] shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)]';
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
@@ -105,11 +107,9 @@ export function InventoryPurchaseOrderCreateModal({
                 <form onSubmit={handleSubmit} className="-mx-1 flex max-h-[70vh] flex-col gap-4 overflow-y-auto px-1">
                     <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
-                                {t('dashboardAdvance.inventoryPurchaseOrders.createModal.branchLabel')}
-                            </label>
+                            <Label>{t('dashboardAdvance.inventoryPurchaseOrders.createModal.branchLabel')}</Label>
                             {isBranchManager ? (
-                                <div className={`${inputClass} flex items-center bg-[var(--second-accent)] text-[var(--subheading)]`}>
+                                <div className={`${selectClass} flex items-center bg-[var(--second-accent)] text-[var(--subheading)]`}>
                                     {lockedBranchName || '-'}
                                 </div>
                             ) : (
@@ -118,7 +118,7 @@ export function InventoryPurchaseOrderCreateModal({
                                         aria-label={t('dashboardAdvance.inventoryPurchaseOrders.createModal.branchAriaLabel')}
                                         value={data.branch_id}
                                         onChange={(e) => setData('branch_id', e.target.value)}
-                                        className={`${inputClass} appearance-none`}
+                                        className={selectClass}
                                     >
                                         <option value="" disabled className="bg-[var(--card)]">
                                             {t('dashboardAdvance.inventoryPurchaseOrders.createModal.branchPlaceholder')}
@@ -129,21 +129,19 @@ export function InventoryPurchaseOrderCreateModal({
                                             </option>
                                         ))}
                                     </select>
-                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
+                                    <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 !text-[var(--grey-text)]" />
                                 </div>
                             )}
                             {errors.branch_id && <span className="text-sm text-[var(--danger)]">{errors.branch_id}</span>}
                         </div>
                         <div>
-                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
-                                {t('dashboardAdvance.inventoryPurchaseOrders.createModal.supplierLabel')}
-                            </label>
+                            <Label>{t('dashboardAdvance.inventoryPurchaseOrders.createModal.supplierLabel')}</Label>
                             <div className="relative">
                                 <select
                                     aria-label={t('dashboardAdvance.inventoryPurchaseOrders.createModal.supplierAriaLabel')}
                                     value={data.supplier_id}
                                     onChange={(e) => setData('supplier_id', e.target.value)}
-                                    className={`${inputClass} appearance-none`}
+                                    className={selectClass}
                                 >
                                     <option value="" disabled className="bg-[var(--card)]">
                                         {t('dashboardAdvance.inventoryPurchaseOrders.createModal.supplierPlaceholder')}
@@ -154,25 +152,26 @@ export function InventoryPurchaseOrderCreateModal({
                                         </option>
                                     ))}
                                 </select>
-                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
+                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 !text-[var(--grey-text)]" />
                             </div>
                             {errors.supplier_id && <span className="text-sm text-[var(--danger)]">{errors.supplier_id}</span>}
                         </div>
                     </div>
 
                     <div>
-                        <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
-                            {t('dashboardAdvance.inventoryPurchaseOrders.createModal.dateLabel')}
-                        </label>
-                        <input type="date" value={data.date} onChange={(e) => setData('date', e.target.value)} className={inputClass} />
+                        <Label>{t('dashboardAdvance.inventoryPurchaseOrders.createModal.dateLabel')}</Label>
+                        <Input
+                            aria-label={t('dashboardAdvance.inventoryPurchaseOrders.createModal.dateLabel')}
+                            type="date"
+                            value={data.date}
+                            onChange={(e) => setData('date', e.target.value)}
+                        />
                         {errors.date && <span className="text-sm text-[var(--danger)]">{errors.date}</span>}
                     </div>
 
                     <div>
                         <div className="mb-2 flex items-center justify-between">
-                            <label className="text-sm font-medium text-[var(--subheading)]">
-                                {t('dashboardAdvance.inventoryPurchaseOrders.createModal.itemsLabel')}
-                            </label>
+                            <Label className="mb-0">{t('dashboardAdvance.inventoryPurchaseOrders.createModal.itemsLabel')}</Label>
                             <button
                                 type="button"
                                 onClick={addItem}
@@ -181,51 +180,89 @@ export function InventoryPurchaseOrderCreateModal({
                                 <Plus className="h-4 w-4" /> {t('dashboardAdvance.inventoryPurchaseOrders.createModal.addItemButton')}
                             </button>
                         </div>
-                        <div className="flex flex-col gap-3">
-                            {data.items.map((item, index) => (
-                                <div key={index} className="flex items-center gap-2">
-                                    <select
-                                        value={item.inventory_item_id}
-                                        onChange={(e) => updateItem(index, 'inventory_item_id', e.target.value)}
-                                        className={`${inputClass} appearance-none`}
-                                    >
-                                        <option value="" disabled className="bg-[var(--card)]">
-                                            {t('dashboardAdvance.inventoryPurchaseOrders.createModal.itemPlaceholder')}
-                                        </option>
-                                        {inventoryItems.map((i) => (
-                                            <option key={i.id} value={i.id} className="bg-[var(--card)]">
-                                                {i.name} ({i.sku})
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <input
-                                        type="number"
-                                        min={1}
-                                        value={item.quantity}
-                                        onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
-                                        className={`${inputClass} w-20`}
-                                        placeholder={t('dashboardAdvance.inventoryPurchaseOrders.createModal.qtyPlaceholder')}
-                                    />
-                                    <input
-                                        type="number"
-                                        min={0}
-                                        value={item.price}
-                                        onChange={(e) => updateItem(index, 'price', Number(e.target.value))}
-                                        className={`${inputClass} w-28`}
-                                        placeholder={t('dashboardAdvance.inventoryPurchaseOrders.createModal.pricePlaceholder')}
-                                    />
-                                    {data.items.length > 1 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => removeItem(index)}
-                                            aria-label={t('dashboardAdvance.inventoryPurchaseOrders.createModal.removeItemAriaLabel')}
-                                            className="rounded-md p-1 hover:bg-[var(--danger-background)]"
-                                        >
-                                            <Trash2 className="h-5 w-5 text-[var(--danger)]" />
-                                        </button>
-                                    )}
-                                </div>
-                            ))}
+
+                        <div className="grid grid-cols-[1fr_72px_200px] gap-2 px-0.5">
+                            <span className="text-xs font-medium text-[var(--grey-text)]">
+                                {t('dashboardAdvance.inventoryPurchaseOrders.createModal.itemColumnLabel')}
+                            </span>
+                            <span className="text-xs font-medium text-[var(--grey-text)]">
+                                {t('dashboardAdvance.inventoryPurchaseOrders.createModal.qtyColumnLabel')}
+                            </span>
+                            <span className="text-xs font-medium text-[var(--grey-text)]">
+                                {t('dashboardAdvance.inventoryPurchaseOrders.createModal.priceColumnLabel')}
+                            </span>
+                            <span />
+                        </div>
+
+                        <div className="flex w-full flex-col gap-2">
+                            {data.items.map((item, index) => {
+                                const subtotal = item.quantity * item.price;
+                                const hasLastPrice = item.inventory_item_id && lastPurchasePrices[Number(item.inventory_item_id)] !== undefined;
+                                return (
+                                    <div key={index} className="flex w-full flex-col gap-1">
+                                        <div className="grid w-full grid-cols-[1fr_72px_200px] items-center gap-2">
+                                            <div className="relative">
+                                                <select
+                                                    aria-label={t('dashboardAdvance.inventoryPurchaseOrders.createModal.itemColumnLabel')}
+                                                    value={item.inventory_item_id}
+                                                    onChange={(e) => updateItem(index, 'inventory_item_id', e.target.value)}
+                                                    className={selectClass}
+                                                >
+                                                    <option value="" disabled className="bg-[var(--card)]">
+                                                        {t('dashboardAdvance.inventoryPurchaseOrders.createModal.itemPlaceholder')}
+                                                    </option>
+                                                    {inventoryItems.map((i) => (
+                                                        <option key={i.id} value={i.id} className="bg-[var(--card)]">
+                                                            {i.name} ({i.sku})
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 !text-[var(--grey-text)]" />
+                                            </div>
+                                            <Input
+                                                aria-label={t('dashboardAdvance.inventoryPurchaseOrders.createModal.qtyColumnLabel')}
+                                                type="number"
+                                                min={1}
+                                                value={item.quantity}
+                                                onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
+                                                className="w-full"
+                                            />
+                                            <Input
+                                                aria-label={t('dashboardAdvance.inventoryPurchaseOrders.createModal.priceColumnLabel')}
+                                                type="number"
+                                                min={0}
+                                                value={item.price}
+                                                onChange={(e) => updateItem(index, 'price', Number(e.target.value))}
+                                                className="w-full"
+                                            />
+                                            {data.items.length > 1 ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeItem(index)}
+                                                    aria-label={t('dashboardAdvance.inventoryPurchaseOrders.createModal.removeItemAriaLabel')}
+                                                    className="flex h-8 w-7 items-center justify-center rounded-md border border-[var(--danger)]/30 text-[var(--danger)] hover:bg-[var(--danger-background)]"
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </button>
+                                            ) : (
+                                                <div />
+                                            )}
+                                        </div>
+                                        <div className="grid grid-cols-[1fr_72px_200px] gap-2">
+                                            <p className="col-span-2 text-xs text-[var(--grey-text)]">
+                                                {hasLastPrice
+                                                    ? `${t('dashboardAdvance.inventoryPurchaseOrders.createModal.lastPricePrefix')} Rp ${lastPurchasePrices[Number(item.inventory_item_id)].toLocaleString('id-ID')}`
+                                                    : ''}
+                                            </p>
+                                            <p className="text-right text-xs text-[var(--grey-text)]">
+                                                {t('dashboardAdvance.inventoryPurchaseOrders.createModal.subtotalPrefix')} Rp{' '}
+                                                {subtotal.toLocaleString('id-ID')}
+                                            </p>
+                                            <span />
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                         {errors.items && <span className="text-sm text-[var(--danger)]">{errors.items}</span>}
                     </div>

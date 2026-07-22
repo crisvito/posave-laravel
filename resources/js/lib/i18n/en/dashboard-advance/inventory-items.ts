@@ -60,6 +60,9 @@ const inventoryItems = {
         cancel: 'Cancel',
         submitting: 'Saving...',
         submitLabel: 'Save Item',
+        costLabel: 'Cost Price',
+        costAriaLabel: 'Item cost price',
+        noInitialStockNotice: 'Initial stock is not set here. Once the item is created, add stock through a Purchase Order.',
     },
     detailModal: {
         title: 'Item Details',
@@ -71,8 +74,12 @@ const inventoryItems = {
         minStockLabel: 'Minimum Stock',
         priceLabel: 'Price',
         closeButton: 'Close',
+        costLabel: 'Cost Price',
     },
     editModal: {
+        costLabel: 'Cost Price',
+        costAriaLabel: 'Item cost price',
+        stockEditHint: 'To change stock, use the Stock Adjustments page. To add stock, create a Purchase Order.',
         title: 'Edit Item',
         closeAriaLabel: 'Close edit item modal',
         imageLabel: 'Image',

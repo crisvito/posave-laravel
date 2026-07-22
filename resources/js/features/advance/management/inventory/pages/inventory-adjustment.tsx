@@ -4,7 +4,6 @@ import {
     DateNavigator,
     FilterDropdown,
     PaginationBar,
-    PrintButton,
     SearchInput,
     Table,
     TableBody,
@@ -19,7 +18,7 @@ import { useConfirmAction, useDropdownMenu, useFilters, useLanguage } from '@/ho
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
 import { ArrowUpDown, MoreVertical, Package, Store } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { resolveBranchId } from '../lib';
 
 interface InventoryAdjustmentProps {
@@ -50,13 +49,20 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
     const currentDate = filters.date ?? new Date().toISOString().slice(0, 10);
     const { confirmAndDelete, confirmDialog } = useConfirmAction();
     const dateLocale = locale === 'en' ? 'en-US' : 'id-ID';
+    const [adjustmentRows, setAdjustmentRows] = useState<Adjustment[]>(adjustments.data);
+
+    useEffect(() => {
+        setAdjustmentRows(adjustments.data);
+    }, [adjustments.data]);
 
     const handleDelete = (id: number) => {
-        confirmAndDelete(t('dashboardAdvance.inventoryAdjustments.list.deleteConfirm'), route('dashboard.inventory.adjustments.destroy', id));
+        confirmAndDelete(t('dashboardAdvance.inventoryAdjustments.list.deleteConfirm'), route('dashboard.inventory.adjustments.destroy', id), {
+            onSuccess: () => setAdjustmentRows((prev) => prev.filter((a) => a.id !== id)),
+        });
         closeMenu();
     };
 
-    const groupedAdjustments = adjustments.data.reduce<Record<string, Adjustment[]>>((acc, row) => {
+    const groupedAdjustments = adjustmentRows.reduce<Record<string, Adjustment[]>>((acc, row) => {
         const dateKey = new Date(row.date).toLocaleDateString(dateLocale, {
             weekday: 'long',
             day: 'numeric',
@@ -68,7 +74,7 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
         return acc;
     }, {});
 
-    const activeMenuAdj = adjustments.data.find((a) => a.id === openMenuId);
+    const activeMenuAdj = adjustmentRows.find((a) => a.id === openMenuId);
 
     const statusOptions = [
         { value: 'in', label: t('dashboardAdvance.inventoryAdjustments.list.statusIn') },
@@ -107,11 +113,17 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                         </div>
 
                         <div className="flex items-center gap-3">
+                            <FilterDropdown
+                                value={filters.status}
+                                options={statusOptions}
+                                allLabel={t('dashboardAdvance.inventoryAdjustments.list.statusAll')}
+                                onChange={(v) => applyFilters({ status: v })}
+                                className="shrink-0"
+                            />
                             <CreateButton
                                 label={t('dashboardAdvance.inventoryAdjustments.list.createButton')}
                                 onClick={() => setShowCreateModal(true)}
                             />
-                            <PrintButton label={t('dashboardAdvance.inventoryAdjustments.list.printButton')} />
                         </div>
                     </div>
 
@@ -122,21 +134,13 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                             onSubmit={handleSearch}
                             placeholder={t('dashboardAdvance.inventoryAdjustments.list.searchPlaceholder')}
                         />
-
-                        <FilterDropdown
-                            value={filters.status}
-                            options={statusOptions}
-                            allLabel={t('dashboardAdvance.inventoryAdjustments.list.statusAll')}
-                            onChange={(v) => applyFilters({ status: v })}
-                            className="shrink-0"
-                        />
                     </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-4">
                     <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-3 shadow-sm sm:gap-4 sm:p-5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 sm:h-12 sm:w-12 dark:bg-[var(--second-accent)]">
-                            <ArrowUpDown className="h-5 w-5 text-slate-600 sm:h-6 sm:w-6 dark:text-[var(--muted-foreground)]" />
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--second-accent)] sm:h-12 sm:w-12">
+                            <ArrowUpDown className="h-5 w-5 text-[var(--grey-text)] sm:h-6 sm:w-6" />
                         </div>
                         <div className="min-w-0">
                             <p className="text-lg font-bold text-[var(--subheading)] sm:text-2xl">{stats.total_changes}</p>
@@ -149,8 +153,8 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                         </div>
                     </div>
                     <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-3 shadow-sm sm:gap-4 sm:p-5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-green-50 sm:h-12 sm:w-12 dark:bg-green-900/30">
-                            <Package className="h-5 w-5 text-green-600 sm:h-6 sm:w-6 dark:text-green-400" />
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--success-background)] sm:h-12 sm:w-12">
+                            <Package className="h-5 w-5 text-[var(--success)] sm:h-6 sm:w-6" />
                         </div>
                         <div className="min-w-0">
                             <p className="text-lg font-bold text-[var(--subheading)] sm:text-2xl">{stats.items_changed}</p>
@@ -163,7 +167,7 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                         </div>
                     </div>
                     <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-3 shadow-sm sm:gap-4 sm:p-5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-600 sm:h-12 sm:w-12 sm:text-sm dark:bg-blue-900/30 dark:text-blue-400">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--income-icon-bg)] text-xs font-bold text-[var(--income-icon-text)] sm:h-12 sm:w-12 sm:text-sm">
                             Rp
                         </div>
                         <div className="min-w-0">
@@ -179,7 +183,7 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                         </div>
                     </div>
                     <div className="flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-3 shadow-sm sm:gap-4 sm:p-5">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50 text-xs font-bold text-red-500 sm:h-12 sm:w-12 sm:text-sm dark:bg-red-900/30 dark:text-red-400">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--danger-background)] text-xs font-bold text-[var(--danger)] sm:h-12 sm:w-12 sm:text-sm">
                             Rp
                         </div>
                         <div className="min-w-0">
@@ -222,7 +226,7 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {adjustments.data.length === 0 ? (
+                                {adjustmentRows.length === 0 ? (
                                     <TableEmptyState
                                         colSpan={6}
                                         icon={Package}
@@ -236,7 +240,7 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                                 ) : (
                                     Object.entries(groupedAdjustments).map(([dateLabel, rows]) => (
                                         <React.Fragment key={dateLabel}>
-                                            <TableRow className="bg-slate-50 hover:bg-slate-50 dark:bg-[var(--second-accent)] dark:hover:bg-[var(--second-accent)]">
+                                            <TableRow className="bg-[var(--second-accent)] hover:bg-[var(--second-accent)]">
                                                 <TableCell colSpan={5}>
                                                     <div className="flex items-center gap-2 text-sm font-medium whitespace-nowrap text-[var(--subheading)]">
                                                         {dateLabel}
@@ -272,12 +276,12 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
                                                         <p className="text-xs text-[var(--grey-text)]">{row.item.sku}</p>
                                                     </TableCell>
                                                     <TableCell
-                                                        className={`font-bold whitespace-nowrap ${row.qty_change > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}
+                                                        className={`font-bold whitespace-nowrap ${row.qty_change > 0 ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}
                                                     >
                                                         {row.qty_change > 0 ? `+${row.qty_change}` : row.qty_change}
                                                     </TableCell>
                                                     <TableCell
-                                                        className={`font-bold whitespace-nowrap ${row.financial_change > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}
+                                                        className={`font-bold whitespace-nowrap ${row.financial_change > 0 ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}
                                                     >
                                                         {row.financial_change > 0 ? '+' : '-'} Rp.{' '}
                                                         {Math.abs(Number(row.financial_change)).toLocaleString('id-ID')}

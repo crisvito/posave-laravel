@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Supplier extends Model
 {
-    protected $fillable = ['company_id', 'name', 'category_id', 'address', 'phone', 'email', 'logo'];
+    protected $fillable = ['company_id', 'name', 'category_id', 'address', 'phone', 'email', 'logo', 'is_active'];
 
     public function company(): BelongsTo
     {

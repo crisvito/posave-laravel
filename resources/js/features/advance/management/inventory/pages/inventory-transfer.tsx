@@ -271,32 +271,32 @@ export default function InventoryTransferList({
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {iAmApproverWaiting && (
                                                             <>
-                                                                <button
+                                                                <Button
                                                                     aria-label={`${t('dashboardAdvance.inventoryTransfers.list.acceptAriaLabelPrefix')} ${transfer.transfer_number}`}
                                                                     onClick={() => handleAccept(transfer)}
                                                                     className="flex shrink-0 items-center gap-1 rounded-lg bg-green-600 px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600"
                                                                 >
                                                                     <Check className="h-3.5 w-3.5" />{' '}
                                                                     {t('dashboardAdvance.inventoryTransfers.list.acceptLabel')}
-                                                                </button>
-                                                                <button
+                                                                </Button>
+                                                                <Button
                                                                     aria-label={`${t('dashboardAdvance.inventoryTransfers.list.rejectAriaLabelPrefix')} ${transfer.transfer_number}`}
                                                                     onClick={() => setRejectTarget(transfer)}
                                                                     className="flex shrink-0 items-center gap-1 rounded-lg bg-red-100 px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-red-600 hover:bg-red-200 dark:bg-red-900/40 dark:text-red-400 dark:hover:bg-red-900/60"
                                                                 >
                                                                     <XIcon className="h-3.5 w-3.5" />{' '}
                                                                     {t('dashboardAdvance.inventoryTransfers.list.rejectLabel')}
-                                                                </button>
+                                                                </Button>
                                                             </>
                                                         )}
                                                         {iAmInvolvedWaiting && (
-                                                            <button
+                                                            <Button
                                                                 aria-label={`${t('dashboardAdvance.inventoryTransfers.list.cancelAriaLabelPrefix')} ${transfer.transfer_number}`}
                                                                 onClick={() => handleCancel(transfer)}
                                                                 className="rounded-lg border border-[var(--border-strong)] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[var(--grey-text)] hover:bg-[var(--second-accent)]"
                                                             >
                                                                 {t('dashboardAdvance.inventoryTransfers.list.cancelLabel')}
-                                                            </button>
+                                                            </Button>
                                                         )}
                                                     </div>
                                                 </TableCell>

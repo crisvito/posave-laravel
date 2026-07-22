@@ -1,5 +1,7 @@
 import {
+    Button,
     CreateButton,
+    FilterDropdown,
     PaginationBar,
     SearchInput,
     Table,
@@ -15,7 +17,7 @@ import { useConfirmAction, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
 import { Building2, Package } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Supplier {
     id: number;
@@ -43,7 +45,7 @@ interface InventorySupplierListProps {
     };
     categories: CategoryOption[];
     is_branch_manager: boolean;
-    filters: { search?: string; per_page?: string };
+    filters: { search?: string; category_id?: string; per_page?: string };
 }
 
 export default function InventorySupplierList({ suppliers, categories, is_branch_manager, filters }: InventorySupplierListProps) {
@@ -51,7 +53,12 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editSupplier, setEditSupplier] = useState<Supplier | null>(null);
     const { search, setSearch, applyFilters, handleSearch } = useFilters('dashboard.inventory.suppliers.index', filters);
-    const { confirmAndDelete } = useConfirmAction();
+    const { confirmAndDelete, confirmDialog } = useConfirmAction();
+    const [supplierRows, setSupplierRows] = useState<Supplier[]>(suppliers.data);
+
+    useEffect(() => {
+        setSupplierRows(suppliers.data);
+    }, [suppliers.data]);
 
     const canManageCatalog = !is_branch_manager;
 
@@ -59,6 +66,9 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
         confirmAndDelete(
             `${t('dashboardAdvance.inventorySuppliers.list.deleteConfirmPrefix')} "${supplier.name}"?`,
             route('dashboard.inventory.suppliers.destroy', supplier.id),
+            {
+                onSuccess: () => setSupplierRows((prev) => prev.filter((s) => s.id !== supplier.id)),
+            },
         );
     };
 
@@ -76,10 +86,20 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                         onSubmit={handleSearch}
                         placeholder={t('dashboardAdvance.inventorySuppliers.list.searchPlaceholder')}
                     />
-
-                    {canManageCatalog && (
-                        <CreateButton label={t('dashboardAdvance.inventorySuppliers.list.createButton')} onClick={() => setShowCreateModal(true)} />
-                    )}
+                    <div className="flex gap-2">
+                        <FilterDropdown
+                            value={filters.category_id}
+                            options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
+                            allLabel={t('dashboardAdvance.inventorySuppliers.list.allCategories')}
+                            onChange={(v) => applyFilters({ category_id: v })}
+                        />
+                        {canManageCatalog && (
+                            <CreateButton
+                                label={t('dashboardAdvance.inventorySuppliers.list.createButton')}
+                                onClick={() => setShowCreateModal(true)}
+                            />
+                        )}
+                    </div>
                 </div>
 
                 <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
@@ -105,7 +125,7 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                             </TableHeader>
 
                             <TableBody>
-                                {suppliers.data.length === 0 ? (
+                                {supplierRows.length === 0 ? (
                                     <TableEmptyState
                                         colSpan={7}
                                         icon={Package}
@@ -117,7 +137,7 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                         }}
                                     />
                                 ) : (
-                                    suppliers.data.map((supplier) => (
+                                    supplierRows.map((supplier) => (
                                         <TableRow key={supplier.id}>
                                             <TableCell>
                                                 <div className="flex items-center gap-3">
@@ -159,20 +179,21 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                             {canManageCatalog && (
                                                 <TableCell>
                                                     <div className="flex gap-2 whitespace-nowrap">
-                                                        <button
+                                                        <Button
                                                             aria-label={`${t('dashboardAdvance.inventorySuppliers.list.editAriaLabelPrefix')} ${supplier.name}`}
                                                             onClick={() => setEditSupplier(supplier)}
                                                             className="text-xs font-medium text-[var(--secondary-600)] hover:underline"
                                                         >
                                                             {t('dashboardAdvance.inventorySuppliers.list.editLabel')}
-                                                        </button>
-                                                        <button
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
                                                             aria-label={`${t('dashboardAdvance.inventorySuppliers.list.deleteAriaLabelPrefix')} ${supplier.name}`}
                                                             onClick={() => handleDelete(supplier)}
-                                                            className="text-xs font-medium text-[var(--danger)] hover:underline"
+                                                            className="border-1 !border-[var(--danger)] text-xs font-medium !text-[var(--danger)] hover:underline"
                                                         >
                                                             {t('dashboardAdvance.inventorySuppliers.list.deleteLabel')}
-                                                        </button>
+                                                        </Button>
                                                     </div>
                                                 </TableCell>
                                             )}
@@ -202,6 +223,8 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
             {canManageCatalog && editSupplier && (
                 <InventorySupplierEditModal supplier={editSupplier} categories={categories} onClose={() => setEditSupplier(null)} />
             )}
+
+            {confirmDialog}
         </DashboardSidebarLayout>
     );
 }

@@ -15,10 +15,10 @@ interface DropdownActionMenuProps {
 }
 
 const VARIANT_STYLES: Record<string, string> = {
-    default: 'bg-orange-50 text-orange-500 hover:bg-orange-100',
-    danger: 'bg-red-50 text-red-500 hover:bg-red-100',
-    success: 'bg-green-50 text-green-600 hover:bg-green-100',
-    warning: 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100',
+    default: 'bg-[var(--secondary-600)]/10 text-[var(--secondary-600)] hover:bg-[var(--secondary-600)]/20',
+    danger: 'bg-[var(--danger-background)] text-[var(--danger)] hover:opacity-80',
+    success: 'bg-[var(--success-background)] text-[var(--success)] hover:opacity-80',
+    warning: 'bg-[var(--warning-background)] text-[var(--warning)] hover:opacity-80',
 };
 
 export function DropdownActionMenu({ position, onClose, items, width = 'w-36' }: DropdownActionMenuProps) {

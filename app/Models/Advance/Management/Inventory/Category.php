@@ -9,7 +9,7 @@ class Category extends Model
 {
     protected $table = 'inventory_categories';
 
-    protected $fillable = ['name', 'company_id', 'color'];
+    protected $fillable = ['name', 'company_id', 'color', 'is_active'];
 
     public function items()
     {

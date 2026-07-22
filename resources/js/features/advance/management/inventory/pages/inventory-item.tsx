@@ -3,7 +3,6 @@ import {
     CreateButton,
     FilterDropdown,
     PaginationBar,
-    PrintButton,
     SearchInput,
     Table,
     TableBody,
@@ -24,8 +23,7 @@ import {
 import { useConfirmAction, useDropdownMenu, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head } from '@inertiajs/react';
-import axios from 'axios';
-import { Minus, MoreVertical, Package, Plus, Store } from 'lucide-react';
+import { MoreVertical, Package, Store } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { resolveBranchId } from '../lib';
 
@@ -52,8 +50,7 @@ export default function InventoryItemList({ items, categories, branches, filters
     const [showCreateModal, setShowCreateModal] = useState(false);
     const { search, setSearch, applyFilters, handleSearch } = useFilters('dashboard.inventory.items.index', filters);
     const [itemRows, setItemRows] = useState<InventoryItem[]>(items.data);
-    const [pendingStockId, setPendingStockId] = useState<number | null>(null);
-    const { confirmAndDelete } = useConfirmAction();
+    const { confirmAndDelete, confirmDialog } = useConfirmAction();
 
     useEffect(() => {
         setItemRows(items.data);
@@ -69,37 +66,22 @@ export default function InventoryItemList({ items, categories, branches, filters
     };
 
     const handleDelete = (id: number) => {
-        confirmAndDelete(t('dashboardAdvance.inventoryItems.list.deleteConfirm'), route('dashboard.inventory.items.destroy', id));
+        confirmAndDelete(t('dashboardAdvance.inventoryItems.list.deleteConfirm'), route('dashboard.inventory.items.destroy', id), {
+            onSuccess: () => setItemRows((prev) => prev.filter((i) => i.id !== id)),
+        });
         closeMenu();
     };
 
     const activeMenuitem = itemRows.find((i) => i.id === openMenuId);
     const activeBranchName = branches.find((b) => String(b.id) === filters.branch_id)?.name;
     const selectedBranchId = resolveBranchId({ isBranchManager: is_branch_manager, branches, filterBranchId: filters.branch_id });
+    const hasSelectedBranch = !!selectedBranchId;
     const getStockStatus = (item: InventoryItem) => {
         if (item.current_stock === 0)
             return { label: t('dashboardAdvance.inventoryItems.list.statusOutOfStock'), color: 'bg-[var(--danger-background)] text-[var(--danger)]' };
         if (item.current_stock <= item.min_stock)
             return { label: t('dashboardAdvance.inventoryItems.list.statusLowStock'), color: 'bg-[var(--warning-background)] text-[var(--warning)]' };
         return { label: t('dashboardAdvance.inventoryItems.list.statusSafe'), color: 'bg-[var(--success-background)] text-[var(--success)]' };
-    };
-
-    const handleStockAdjust = async (item: InventoryItem, delta: number) => {
-        if (!selectedBranchId) return;
-        if (item.current_stock + delta < 0) return;
-
-        setPendingStockId(item.id);
-        try {
-            const res = await axios.patch(route('dashboard.inventory.items.stock', item.id), {
-                delta,
-                branch_id: selectedBranchId,
-            });
-            setItemRows((prev) => prev.map((i) => (i.id === item.id ? { ...i, current_stock: res.data.current_stock } : i)));
-        } catch {
-            alert(t('dashboardAdvance.inventoryItems.list.stockErrorAlert'));
-        } finally {
-            setPendingStockId(null);
-        }
     };
 
     return (
@@ -126,6 +108,12 @@ export default function InventoryItemList({ items, categories, branches, filters
                                     {branches[0]?.name ?? t('dashboardAdvance.inventoryItems.list.yourBranchFallback')}
                                 </div>
                             )}
+                            <FilterDropdown
+                                value={filters.category_id}
+                                options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
+                                allLabel={t('dashboardAdvance.inventoryItems.list.allCategories')}
+                                onChange={(v) => applyFilters({ category_id: v })}
+                            />
                         </div>
                         <div className="flex items-center gap-3">
                             {can_manage_catalog && (
@@ -134,7 +122,6 @@ export default function InventoryItemList({ items, categories, branches, filters
                                     onClick={() => setShowCreateModal(true)}
                                 />
                             )}
-                            <PrintButton />
                         </div>
                     </div>
                     <div className="flex w-full items-center justify-between">
@@ -143,13 +130,6 @@ export default function InventoryItemList({ items, categories, branches, filters
                             onChange={setSearch}
                             onSubmit={handleSearch}
                             placeholder={t('dashboardAdvance.inventoryItems.list.searchPlaceholder')}
-                        />
-
-                        <FilterDropdown
-                            value={filters.category_id}
-                            options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
-                            allLabel={t('dashboardAdvance.inventoryItems.list.allCategories')}
-                            onChange={(v) => applyFilters({ category_id: v })}
                         />
                     </div>
                 </div>
@@ -198,8 +178,6 @@ export default function InventoryItemList({ items, categories, branches, filters
                                 ) : (
                                     itemRows.map((item) => {
                                         const status = getStockStatus(item);
-                                        const canAdjustStock = !!selectedBranchId;
-                                        const isPending = pendingStockId === item.id;
 
                                         return (
                                             <TableRow key={item.id}>
@@ -232,28 +210,8 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                     </span>
                                                 </TableCell>
                                                 <TableCell className="text-[var(--grey-text)]">
-                                                    {canAdjustStock ? (
-                                                        <div className="flex items-center gap-2">
-                                                            <button
-                                                                aria-label={`${t('dashboardAdvance.inventoryItems.list.decreaseStockAriaLabelPrefix')} ${item.name}`}
-                                                                disabled={isPending || item.current_stock === 0}
-                                                                onClick={() => handleStockAdjust(item, -1)}
-                                                                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--border-strong)] hover:bg-[var(--second-accent)] disabled:opacity-30"
-                                                            >
-                                                                <Minus className="h-3 w-3" />
-                                                            </button>
-                                                            <span className="w-6 shrink-0 text-center font-semibold text-[var(--subheading)]">
-                                                                {item.current_stock}
-                                                            </span>
-                                                            <button
-                                                                aria-label={`${t('dashboardAdvance.inventoryItems.list.increaseStockAriaLabelPrefix')} ${item.name}`}
-                                                                disabled={isPending}
-                                                                onClick={() => handleStockAdjust(item, 1)}
-                                                                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[var(--border-strong)] hover:bg-[var(--second-accent)] disabled:opacity-30"
-                                                            >
-                                                                <Plus className="h-3 w-3" />
-                                                            </button>
-                                                        </div>
+                                                    {hasSelectedBranch ? (
+                                                        <span className="font-semibold text-[var(--subheading)]">{item.current_stock}</span>
                                                     ) : (
                                                         <span title={t('dashboardAdvance.inventoryItems.list.selectBranchTitle')}>
                                                             {item.current_stock}
@@ -328,21 +286,15 @@ export default function InventoryItemList({ items, categories, branches, filters
                 />
             )}
 
-            {detailItem && <InventoryItemDetailModal item={detailItem} onClose={() => setDetailItem(null)} />}
+            {detailItem && <InventoryItemDetailModal item={detailItem} canSeeCost={can_manage_catalog} onClose={() => setDetailItem(null)} />}
 
             {can_manage_catalog && showCreateModal && (
                 <InventoryItemCreateModal categories={categories} branches={branches} onClose={() => setShowCreateModal(false)} />
             )}
 
-            {can_manage_catalog && editItem && (
-                <InventoryItemEditModal
-                    item={editItem}
-                    categories={categories}
-                    branches={branches}
-                    selectedBranchId={selectedBranchId}
-                    onClose={() => setEditItem(null)}
-                />
-            )}
+            {can_manage_catalog && editItem && <InventoryItemEditModal item={editItem} categories={categories} onClose={() => setEditItem(null)} />}
+
+            {confirmDialog}
         </DashboardSidebarLayout>
     );
 }

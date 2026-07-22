@@ -18,6 +18,7 @@ const inventorySuppliers = {
         deleteLabel: 'Delete',
         deleteConfirmPrefix: 'Delete supplier',
         itemLabel: 'Suppliers',
+        allCategories: 'All Categories',
         noCategoryFallback: '-',
     },
     createModal: {

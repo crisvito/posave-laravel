@@ -44,6 +44,11 @@ const inventoryPurchaseOrders = {
         cancel: 'Batal',
         submitting: 'Menyimpan...',
         submitLabel: 'Buat PO',
+        itemColumnLabel: 'Barang',
+        qtyColumnLabel: 'Jumlah',
+        priceColumnLabel: 'Harga Beli',
+        subtotalPrefix: 'Subtotal:',
+        lastPricePrefix: 'Harga terakhir:',
     },
     actionsMenu: {
         markSuccess: 'Tandai Sukses',

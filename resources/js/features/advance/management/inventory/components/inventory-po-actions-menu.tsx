@@ -47,12 +47,16 @@ export function InventoryPurchaseOrderActionsMenu({
                   },
               ]
             : []),
-        {
-            label: t('dashboardAdvance.inventoryPurchaseOrders.actionsMenu.delete'),
-            icon: Trash2,
-            onClick: () => onDelete(purchaseOrder.id),
-            variant: 'danger' as const,
-        },
+        ...(purchaseOrder.status !== 'success'
+            ? [
+                  {
+                      label: t('dashboardAdvance.inventoryPurchaseOrders.actionsMenu.delete'),
+                      icon: Trash2,
+                      onClick: () => onDelete(purchaseOrder.id),
+                      variant: 'danger' as const,
+                  },
+              ]
+            : []),
     ];
 
     return <DropdownActionMenu position={position} onClose={onClose} items={items} width="w-44" />;

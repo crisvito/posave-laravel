@@ -60,6 +60,9 @@ const inventoryItems = {
         cancel: 'Batal',
         submitting: 'Menyimpan...',
         submitLabel: 'Simpan Barang',
+        costLabel: 'Harga Modal',
+        costAriaLabel: 'Harga modal barang',
+        noInitialStockNotice: 'Stok awal tidak diisi di sini. Setelah barang dibuat, tambahkan stok lewat Pembelian (PO).',
     },
     detailModal: {
         title: 'Detail Barang',
@@ -71,8 +74,12 @@ const inventoryItems = {
         minStockLabel: 'Stok Minimum',
         priceLabel: 'Harga',
         closeButton: 'Tutup',
+        costLabel: 'Harga Modal',
     },
     editModal: {
+        costLabel: 'Harga Modal',
+        costAriaLabel: 'Harga modal barang',
+        stockEditHint: 'Untuk mengubah stok, gunakan halaman Perubahan Stok. Untuk menambah stok, buat Pembelian (PO).',
         title: 'Ubah Barang',
         closeAriaLabel: 'Tutup modal ubah barang',
         imageLabel: 'Gambar',
@@ -92,7 +99,7 @@ const inventoryItems = {
         priceLabel: 'Harga',
         priceAriaLabel: 'Harga barang',
         cancel: 'Batal',
-        submitting: 'Menyimpan...',
+        submitting: 'Menyimpan...', 
         submitLabel: 'Simpan Perubahan',
     },
     actionsMenu: {
@@ -100,6 +107,7 @@ const inventoryItems = {
         edit: 'Ubah',
         delete: 'Hapus',
     },
+    
 };
 
 export default inventoryItems;

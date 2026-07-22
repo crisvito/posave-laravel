@@ -104,9 +104,16 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                     {t(item.key)}
                                                 </Link>
                                             ))}
+                                            <Button
+                                                variant="outline"
+                                                className="h-[44px] rounded-[10px] border-[var(--secondary-600)] px-6 text-[15px] font-semibold text-[var(--secondary-600)] hover:bg-[var(--secondary-600)]/10"
+                                                asChild
+                                            >
+                                                <Link href={route('dashboard.index')}>{t('shared.nav.dashboard')}</Link>
+                                            </Button>
                                         </div>
 
-                                        <div className="flex items-center gap-2 border-t border-[var(--border-strong)] pt-4">
+                                        <div className="jlg:flex flex flex-col items-start gap-2 border-t border-[var(--border-strong)] pt-4 lg:items-center">
                                             <LanguageSwitcher />
                                             <AppearanceToggle />
                                         </div>
@@ -152,15 +159,6 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                     asChild
                                 >
                                     <Link href={route('dashboard.index')}>{t('shared.nav.dashboard')}</Link>
-                                </Button>
-
-                                <Button
-                                    className="h-[44px] rounded-[10px] bg-[var(--secondary-600)] px-6 text-[15px] font-semibold text-white hover:bg-[var(--secondary-700)]"
-                                    asChild
-                                >
-                                    <Link href={route('logout')} method="post">
-                                        {t('shared.nav.logout')}
-                                    </Link>
                                 </Button>
                             </>
                         ) : (

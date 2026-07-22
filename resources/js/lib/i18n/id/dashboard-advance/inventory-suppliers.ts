@@ -19,6 +19,7 @@ const inventorySuppliers = {
         deleteConfirmPrefix: 'Hapus pemasok',
         itemLabel: 'Pemasok',
         noCategoryFallback: '-',
+        allCategories: 'Semua Kategori',
     },
     createModal: {
         title: 'Buat Pemasok',
