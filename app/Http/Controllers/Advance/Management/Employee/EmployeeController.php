@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Advance\Management\Employee;
 use App\Http\Controllers\Controller;
 use App\Mail\EmployeeInvitation;
 use App\Models\Advance\Management\Employee\Employee;
-use App\Models\Advance\Management\Employee\EmployeeAccess;
 use App\Models\Advance\Messaging\Conversation;
 use App\Models\Auth\Branch;
 use App\Models\User;
@@ -26,7 +25,17 @@ class EmployeeController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        $employeesQuery = Employee::where('company_id', $user->company_id)->with(['branch', 'user']);
+        $employeesQuery = Employee::where('company_id', $user->company_id)
+            ->with(['branch', 'user'])
+            ->when($request->search, function ($query) use ($request) {
+                $query->where(function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->search . '%')
+                        ->orWhereHas('user', fn($uq) => $uq->where('email', 'like', '%' . $request->search . '%'));
+                });
+            })
+            ->when($request->status && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('is_active', $request->status === 'active');
+            });
 
         if ($user->isBranchManager()) {
             $employeesQuery->where('branch_id', $user->branch_id);
@@ -46,6 +55,7 @@ class EmployeeController extends Controller
                 'branch' => $employee->branch ? ['id' => $employee->branch->id, 'name' => $employee->branch->name] : null,
                 'active_date' => $employee->active_date?->format('Y-m-d'),
                 'slot_status' => $employee->slot_status,
+                'is_active' => $employee->is_active,
                 'user' => $employee->user ? ['id' => $employee->user->id, 'email' => $employee->user->email] : null,
             ];
         });
@@ -57,7 +67,7 @@ class EmployeeController extends Controller
         return Inertia::render('advance/management/employee/employee-list', [
             'employees' => $employees,
             'branches' => $branches,
-            'filters' => $request->only('branch', 'per_page'),
+            'filters' => $request->only('branch', 'per_page', 'search', 'status'),
             'is_branch_manager' => $user->isBranchManager(),
         ]);
     }
@@ -68,12 +78,10 @@ class EmployeeController extends Controller
         $user = Auth::user();
         abort_if($user->isBranchManager(), 403);
 
-        // Fix: scope ke company_id — sebelumnya bocor nama role milik company lain.
-        $roles = EmployeeAccess::where('company_id', $user->company_id)->pluck('name');
         $branches = Branch::where('company_id', $user->company_id)->get(['id', 'name']);
 
         return Inertia::render('advance/management/employee/employee-create', [
-            'roles' => $roles,
+            'roles' => Employee::ASSIGNABLE_ROLES,
             'branches' => $branches,
             'is_branch_manager' => $user->isBranchManager(),
         ]);
@@ -85,12 +93,10 @@ class EmployeeController extends Controller
         $user = Auth::user();
         abort_if($user->isBranchManager(), 403);
 
-        $validRoles = EmployeeAccess::where('company_id', $user->company_id)->pluck('name');
-
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role' => ['required', 'string', 'max:255', Rule::in($validRoles)],
+            'role' => ['required', 'string', Rule::in(Employee::ASSIGNABLE_ROLES)],
             'branch_id' => 'required|exists:branches,id',
             'active_date' => 'required|date',
             'slot_status' => 'required|string',
@@ -132,7 +138,6 @@ class EmployeeController extends Controller
             return [$newUser, $employee];
         });
 
-        // Kirim email di luar transaction — kegagalan kirim email bukan alasan rollback data karyawan yang sudah valid.
         Mail::to($newUser->email)->send(new EmployeeInvitation($newUser, $temporaryPassword, $user->company->profile));
 
         return redirect()->route('dashboard.employees.index')->with('success', 'Karyawan berhasil ditambahkan dan undangan telah dikirim.');
@@ -151,11 +156,9 @@ class EmployeeController extends Controller
 
         $employee = $employeeQuery->firstOrFail();
 
-        $validRoles = EmployeeAccess::where('company_id', $user->company_id)->pluck('name');
-
         $request->validate([
             'name' => 'required|string|max:255',
-            'role' => ['required', 'string', 'max:255', Rule::in($validRoles)],
+            'role' => ['required', 'string', Rule::in(Employee::ASSIGNABLE_ROLES)],
             'branch_id' => 'required|exists:branches,id',
             'active_date' => 'required|date',
             'slot_status' => 'required|string',
@@ -183,6 +186,48 @@ class EmployeeController extends Controller
         });
 
         return redirect()->route('dashboard.employees.index')->with('success', 'Data karyawan berhasil diperbarui.');
+    }
+
+    /**
+     * Nonaktifkan/aktifkan karyawan — TIDAK menghapus data, tetap tampil di list.
+     * Nonaktif juga memblokir login (soft-delete User), dipulihkan lagi saat diaktifkan ulang.
+     */
+    public function toggleActive(string $id)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $employeeQuery = Employee::where('id', $id)->where('company_id', $user->company_id);
+
+        if ($user->isBranchManager()) {
+            $employeeQuery->where('branch_id', $user->branch_id)->where('role', 'cashier');
+        }
+
+        $employee = $employeeQuery->firstOrFail();
+        $newActive = !$employee->is_active;
+
+        DB::transaction(function () use ($employee, $newActive) {
+            $employee->update(['is_active' => $newActive]);
+
+            if ($employee->user_id) {
+                $linkedUser = User::withTrashed()->find($employee->user_id);
+
+                if ($linkedUser) {
+                    if ($newActive && $linkedUser->trashed()) {
+                        $linkedUser->restore();
+                    } elseif (!$newActive && !$linkedUser->trashed()) {
+                        $linkedUser->delete();
+                    }
+                }
+            }
+        });
+
+        return redirect()->route('dashboard.employees.index')->with(
+            'success',
+            $newActive
+                ? 'Karyawan diaktifkan kembali, akun login juga dipulihkan.'
+                : 'Karyawan dinonaktifkan, akun login diblokir.',
+        );
     }
 
     public function destroy(string $id)

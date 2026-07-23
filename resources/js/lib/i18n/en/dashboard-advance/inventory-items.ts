@@ -30,6 +30,12 @@ const inventoryItems = {
         statusOutOfStock: 'Out of Stock',
         statusLowStock: 'Low Stock',
         statusSafe: 'Safe',
+        columnActiveStatus: 'Active Status',
+        activeStatusActive: 'Active',
+        activeStatusInactive: 'Inactive',
+        allActiveStatus: 'All Status',
+        allStockStatus: 'All Stock',
+    deactivateConfirmPrefix: 'Deactivate item',
     },
     createModal: {
         title: 'Add Item',
@@ -106,6 +112,8 @@ const inventoryItems = {
         view: 'View',
         edit: 'Edit',
         delete: 'Delete',
+        activate: 'Activate',
+        deactivate: 'Deactivate',
     },
 };
 

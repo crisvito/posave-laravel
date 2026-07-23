@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface MenuPosition {
     top: number;
@@ -18,12 +18,24 @@ export function useDropdownMenu(menuWidth: number = 144) {
         const btn = buttonRefs.current[id];
         if (btn) {
             const rect = btn.getBoundingClientRect();
-            setPosition({ top: rect.bottom + window.scrollY + 4, left: rect.right + window.scrollX - menuWidth });
+            setPosition({ top: rect.bottom + 4, left: rect.right - menuWidth });
         }
         setOpenId(id);
     };
 
     const closeMenu = () => setOpenId(null);
+
+    useEffect(() => {
+        if (openId === null) return;
+
+        // Dropdown-nya `position: fixed` — gak ikut discroll, jadi kalau dibiarin kebuka
+        // dia bakal "lepas" dari tombol aslinya. Tutup aja begitu ada scroll, pola standar
+        // yang dipakai kebanyakan aplikasi buat menu jenis ini.
+        const handleScroll = () => setOpenId(null);
+        window.addEventListener('scroll', handleScroll, true);
+
+        return () => window.removeEventListener('scroll', handleScroll, true);
+    }, [openId]);
 
     return { openId, position, buttonRefs, toggleMenu, closeMenu };
 }

@@ -27,6 +27,13 @@ const employees = {
         viewLabel: 'Lihat',
         itemLabel: 'Karyawan',
         deleteConfirm: 'Yakin ingin menghapus karyawan ini? Akun login karyawan juga akan terhapus.',
+        searchPlaceholder: 'Cari nama atau email karyawan...',
+        allActiveStatus: 'Semua Status',
+        activeStatusActive: 'Aktif',
+        activeStatusInactive: 'Tidak Aktif',
+        columnActiveStatus: 'Status',
+        deactivateConfirmPrefix: 'Nonaktifkan karyawan',
+        deactivateConfirmSuffix: 'Akun loginnya akan diblokir, tapi datanya tetap tersimpan.',
     },
     create: {
         headTitle: 'Tambah Karyawan',
@@ -63,6 +70,7 @@ const employees = {
         activeDateLabel: 'Tanggal Aktif',
         slotStatusLabel: 'Slot Status',
         closeButton: 'Tutup',
+        activeStatusLabel: 'Status',
     },
     editModal: {
         title: 'Ubah Data Karyawan',
@@ -80,12 +88,14 @@ const employees = {
         slotStatusAriaLabel: 'Pilih slot status',
         cancel: 'Batal',
         submitting: 'Menyimpan...',
-        submitLabel: 'Simpan Perubahan',
+        submitLabel: 'Simpan Perubahan'
     },
     actionsMenu: {
         view: 'Lihat',
         edit: 'Ubah',
         delete: 'Hapus',
+        activate: 'Aktifkan',
+        deactivate: 'Nonaktifkan',
     },
 };
 

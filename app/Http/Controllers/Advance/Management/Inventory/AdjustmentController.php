@@ -57,7 +57,7 @@ class AdjustmentController extends Controller
             'total_expense' => (float) (clone $statsBase)->where('financial_change', '<', 0)->sum('financial_change'),
         ];
 
-        $inventoryItems = Item::where('company_id', $user->company_id)->select('id', 'name', 'sku', 'price')->get();
+        $inventoryItems = Item::where('company_id', $user->company_id)->where('is_active', true)->select('id', 'name', 'sku', 'price')->get();
 
         $branches = $user->isBranchManager()
             ? Branch::where('id', $user->branch_id)->get(['id', 'name'])

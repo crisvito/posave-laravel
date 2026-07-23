@@ -14,6 +14,8 @@ class Employee extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public const ASSIGNABLE_ROLES = ['branch_manager', 'cashier'];
+
     protected $fillable = [
         'user_id',
         'company_id',
@@ -22,10 +24,12 @@ class Employee extends Model
         'role',
         'active_date',
         'slot_status',
+        'is_active',
     ];
 
     protected $casts = [
         'active_date' => 'date',
+        'is_active' => 'boolean',
     ];
 
     public function user(): BelongsTo

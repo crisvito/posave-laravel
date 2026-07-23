@@ -61,11 +61,8 @@ export default function Report({ filters, outlets, statement, productSales, cate
 
     const salesLines: Line[] = [
         { label: t('dashboardAdvance.report.lines.grossSales'), current: current.grossSales, previous: previous.grossSales },
-        { label: t('dashboardAdvance.report.lines.discounts'), current: current.discounts, previous: previous.discounts, deduction: true },
         { label: t('dashboardAdvance.report.lines.refunds'), current: current.refunds, previous: previous.refunds, deduction: true },
         { label: t('dashboardAdvance.report.lines.nettSales'), current: current.nettSales, previous: previous.nettSales, bold: true },
-        { label: t('dashboardAdvance.report.lines.gratuity'), current: current.gratuity, previous: previous.gratuity },
-        { label: t('dashboardAdvance.report.lines.tax'), current: current.tax, previous: previous.tax },
         { label: t('dashboardAdvance.report.lines.rounding'), current: current.rounding, previous: previous.rounding },
         { label: t('dashboardAdvance.report.lines.totalCollected'), current: current.totalCollected, previous: previous.totalCollected, bold: true },
     ];

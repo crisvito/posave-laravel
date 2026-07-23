@@ -1,7 +1,7 @@
 import { Button, Input, Label } from '@/components';
 import { useLanguage } from '@/hooks';
 import { useForm } from '@inertiajs/react';
-import { X } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 import React, { useState } from 'react';
 import type { InventoryCategory } from './inventory-category-actions-menu';
 import type { InventoryItem } from './inventory-item-actions-menu';
@@ -23,7 +23,6 @@ export function InventoryItemEditModal({ item, categories, onClose }: InventoryI
         category_id: string;
         image: File | null;
         price: string;
-        cost: string;
     }>({
         _method: 'PUT',
         name: item.name,
@@ -31,7 +30,6 @@ export function InventoryItemEditModal({ item, categories, onClose }: InventoryI
         category_id: String(item.category_id),
         image: null,
         price: String(item.price),
-        cost: String(item.cost),
     });
 
     const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,37 +114,38 @@ export function InventoryItemEditModal({ item, categories, onClose }: InventoryI
                         </div>
                         <div>
                             <Label>{t('dashboardAdvance.inventoryItems.editModal.categoryLabel')}</Label>
-                            <select
-                                aria-label={t('dashboardAdvance.inventoryItems.editModal.categoryAriaLabel')}
-                                value={data.category_id}
-                                onChange={(e) => setData('category_id', e.target.value)}
-                                className={`${inputClass} appearance-none`}
-                            >
-                                <option value="" disabled className="bg-[var(--card)]">
-                                    {t('dashboardAdvance.inventoryItems.editModal.categoryPlaceholder')}
-                                </option>
-                                {categories.map((cat) => (
-                                    <option key={cat.id} value={cat.id} className="bg-[var(--card)]">
-                                        {cat.name}
+                            <div className="relative">
+                                <select
+                                    aria-label={t('dashboardAdvance.inventoryItems.editModal.categoryAriaLabel')}
+                                    value={data.category_id}
+                                    onChange={(e) => setData('category_id', e.target.value)}
+                                    className={`${inputClass} appearance-none`}
+                                >
+                                    <option value="" disabled className="bg-[var(--card)]">
+                                        {t('dashboardAdvance.inventoryItems.editModal.categoryPlaceholder')}
                                     </option>
-                                ))}
-                            </select>
-                            {errors.category_id && <span className="text-xs text-[var(--danger)]">{errors.category_id}</span>}
+                                    {categories.map((cat) => (
+                                        <option key={cat.id} value={cat.id} className="bg-[var(--card)]">
+                                            {cat.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
+                                {errors.category_id && <span className="text-xs text-[var(--danger)]">{errors.category_id}</span>}
+                            </div>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <Label>{t('dashboardAdvance.inventoryItems.editModal.priceLabel')}</Label>
-                            <Input
-                                aria-label={t('dashboardAdvance.inventoryItems.editModal.priceAriaLabel')}
-                                type="number"
-                                min="0"
-                                value={data.price}
-                                onChange={(e) => setData('price', e.target.value)}
-                            />
-                            {errors.price && <span className="text-xs text-[var(--danger)]">{errors.price}</span>}
-                        </div>
+                    <div>
+                        <Label>{t('dashboardAdvance.inventoryItems.editModal.priceLabel')}</Label>
+                        <Input
+                            aria-label={t('dashboardAdvance.inventoryItems.editModal.priceAriaLabel')}
+                            type="number"
+                            min="0"
+                            value={data.price}
+                            onChange={(e) => setData('price', e.target.value)}
+                        />
+                        {errors.price && <span className="text-sm text-[var(--danger)]">{errors.price}</span>}
                     </div>
 
                     <p className="rounded-lg bg-[var(--second-accent)] px-3 py-2 text-xs text-[var(--grey-text)]">

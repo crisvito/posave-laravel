@@ -15,6 +15,7 @@ return new class extends Migration
             $table->foreignId('branch_id')->nullable()->constrained()->nullOnDelete();
             $table->string('name');
             $table->string('role');
+            $table->boolean('is_active')->default(true);
             $table->date('active_date');
             $table->softDeletes();
             $table->string('slot_status')->default('available');

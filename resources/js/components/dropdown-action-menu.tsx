@@ -25,7 +25,10 @@ export function DropdownActionMenu({ position, onClose, items, width = 'w-36' }:
     return (
         <>
             <div className="fixed inset-0 z-40" onClick={onClose} />
-            <div className={`fixed z-50 ${width} overflow-hidden rounded-xl shadow-lg`} style={{ top: position.top, left: position.left }}>
+            <div
+                className={`fixed z-50 ${width} overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--card)] shadow-lg`}
+                style={{ top: position.top, left: position.left }}
+            >
                 {items.map((item, i) => (
                     <button
                         key={i}

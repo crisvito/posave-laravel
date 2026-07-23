@@ -24,6 +24,12 @@ export function EmployeeDetailModal({ employee, onClose }: EmployeeDetailModalPr
         return t('dashboardAdvance.employees.common.slotAvailable');
     };
 
+    const slotStatusClass = (status: string) => {
+        if (status === 'on_shift') return 'bg-[var(--success-background)] text-[var(--success)]';
+        if (status === 'off') return 'bg-[var(--warning-background)] text-[var(--warning)]';
+        return 'bg-[var(--second-accent)] text-[var(--grey-text)]';
+    };
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
             <div className="w-full max-w-md rounded-2xl bg-[var(--card)] p-6 shadow-xl">
@@ -53,7 +59,7 @@ export function EmployeeDetailModal({ employee, onClose }: EmployeeDetailModalPr
                         <span className="block text-sm font-medium text-[var(--grey-text)]">
                             {t('dashboardAdvance.employees.detailModal.roleLabel')}
                         </span>
-                        <span className="mt-1 inline-block w-fit rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
+                        <span className="mt-1 inline-block w-fit rounded-full bg-[var(--secondary-600)]/10 px-3 py-1 text-xs font-medium text-[var(--secondary-600)]">
                             {roleLabel(employee.role)}
                         </span>
                     </div>
@@ -72,21 +78,31 @@ export function EmployeeDetailModal({ employee, onClose }: EmployeeDetailModalPr
                         <span className="text-base text-[var(--subheading)]">{employee.active_date}</span>
                     </div>
 
-                    <div>
-                        <span className="block text-sm font-medium text-[var(--grey-text)]">
-                            {t('dashboardAdvance.employees.detailModal.slotStatusLabel')}
-                        </span>
-                        <span
-                            className={`mt-1 inline-block rounded-full px-3 py-1 text-xs font-medium ${
-                                employee.slot_status === 'on_shift'
-                                    ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
-                                    : employee.slot_status === 'off'
-                                      ? 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400'
-                                      : 'bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'
-                            }`}
-                        >
-                            {slotStatusLabel(employee.slot_status)}
-                        </span>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <span className="block text-sm font-medium text-[var(--grey-text)]">
+                                {t('dashboardAdvance.employees.detailModal.slotStatusLabel')}
+                            </span>
+                            <span className={`mt-1 inline-block rounded-full px-3 py-1 text-xs font-medium ${slotStatusClass(employee.slot_status)}`}>
+                                {slotStatusLabel(employee.slot_status)}
+                            </span>
+                        </div>
+                        <div>
+                            <span className="block text-sm font-medium text-[var(--grey-text)]">
+                                {t('dashboardAdvance.employees.detailModal.activeStatusLabel')}
+                            </span>
+                            <span
+                                className={`mt-1 inline-block rounded-full px-3 py-1 text-xs font-medium ${
+                                    employee.is_active
+                                        ? 'bg-[var(--success-background)] text-[var(--success)]'
+                                        : 'bg-[var(--danger-background)] text-[var(--danger)]'
+                                }`}
+                            >
+                                {employee.is_active
+                                    ? t('dashboardAdvance.employees.list.activeStatusActive')
+                                    : t('dashboardAdvance.employees.list.activeStatusInactive')}
+                            </span>
+                        </div>
                     </div>
                 </div>
 

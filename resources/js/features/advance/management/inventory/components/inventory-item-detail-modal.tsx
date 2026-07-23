@@ -5,7 +5,6 @@ import type { InventoryItem } from './inventory-item-actions-menu';
 
 interface InventoryItemDetailModalProps {
     item: InventoryItem;
-    canSeeCost: boolean;
     onClose: () => void;
 }
 
@@ -69,13 +68,11 @@ export function InventoryItemDetailModal({ item, onClose }: InventoryItemDetailM
                             <span className="text-base text-[var(--subheading)]">{item.min_stock}</span>
                         </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <span className="block text-sm font-medium text-[var(--grey-text)]">
-                                {t('dashboardAdvance.inventoryItems.detailModal.priceLabel')}
-                            </span>
-                            <span className="text-base text-[var(--subheading)]">Rp {Number(item.price).toLocaleString('id-ID')}</span>
-                        </div>
+                    <div>
+                        <span className="block text-sm font-medium text-[var(--grey-text)]">
+                            {t('dashboardAdvance.inventoryItems.detailModal.priceLabel')}
+                        </span>
+                        <span className="text-base text-[var(--subheading)]">Rp {Number(item.price).toLocaleString('id-ID')}</span>
                     </div>
                 </div>
 

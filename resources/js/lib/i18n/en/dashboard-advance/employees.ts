@@ -26,6 +26,13 @@ const employees = {
         emptyState: 'No employees yet, add one to get started',
         viewLabel: 'View',
         itemLabel: 'Employees',
+        searchPlaceholder: 'Search employee name or email...',
+        allActiveStatus: 'All Status',
+        activeStatusActive: 'Active',
+        activeStatusInactive: 'Inactive',
+        columnActiveStatus: 'Status',
+        deactivateConfirmPrefix: 'Deactivate employee',
+        deactivateConfirmSuffix: 'Their login will be blocked, but their data stays saved.',
         deleteConfirm: 'Delete this employee? Their login account will also be deleted.',
     },
     create: {
@@ -63,6 +70,7 @@ const employees = {
         activeDateLabel: 'Active Date',
         slotStatusLabel: 'Slot Status',
         closeButton: 'Close',
+        activeStatusLabel: 'Status',
     },
     editModal: {
         title: 'Edit Employee Data',
@@ -85,6 +93,8 @@ const employees = {
     actionsMenu: {
         view: 'View',
         edit: 'Edit',
+        activate: 'Activate',
+        deactivate: 'Deactivate',
         delete: 'Delete',
     },
 };

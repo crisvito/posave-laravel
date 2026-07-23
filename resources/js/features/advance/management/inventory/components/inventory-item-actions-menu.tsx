@@ -1,6 +1,6 @@
 import { DropdownActionMenu } from '@/components';
 import { useLanguage } from '@/hooks';
-import { Eye, Pencil, Trash2 } from 'lucide-react';
+import { Eye, Pencil, Power } from 'lucide-react';
 
 interface InventoryCategory {
     id: number;
@@ -19,7 +19,7 @@ export interface InventoryItem {
     min_stock: number;
     current_stock: number;
     price: number;
-    cost: number;
+    is_active: boolean;
 }
 
 interface InventoryItemActionsMenuProps {
@@ -28,10 +28,10 @@ interface InventoryItemActionsMenuProps {
     onClose: () => void;
     onView: (item: InventoryItem) => void;
     onEdit: (item: InventoryItem) => void;
-    onDelete: (id: number) => void;
+    onToggleActive: (item: InventoryItem) => void;
 }
 
-export function InventoryItemActionsMenu({ item, position, onClose, onView, onEdit, onDelete }: InventoryItemActionsMenuProps) {
+export function InventoryItemActionsMenu({ item, position, onClose, onView, onEdit, onToggleActive }: InventoryItemActionsMenuProps) {
     const { t } = useLanguage();
 
     return (
@@ -52,10 +52,12 @@ export function InventoryItemActionsMenu({ item, position, onClose, onView, onEd
                     variant: 'warning',
                 },
                 {
-                    label: t('dashboardAdvance.inventoryItems.actionsMenu.delete'),
-                    icon: Trash2,
-                    onClick: () => onDelete(item.id),
-                    variant: 'danger',
+                    label: item.is_active
+                        ? t('dashboardAdvance.inventoryItems.actionsMenu.deactivate')
+                        : t('dashboardAdvance.inventoryItems.actionsMenu.activate'),
+                    icon: Power,
+                    onClick: () => onToggleActive(item),
+                    variant: item.is_active ? 'danger' : 'success',
                 },
             ]}
         />

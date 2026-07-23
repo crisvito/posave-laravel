@@ -1,6 +1,6 @@
 import { DropdownActionMenu } from '@/components';
 import { useLanguage } from '@/hooks';
-import { Eye, Pencil, Trash2 } from 'lucide-react';
+import { Eye, Pencil, Power } from 'lucide-react';
 
 export interface Employee {
     id: number;
@@ -10,6 +10,7 @@ export interface Employee {
     branch: { id: number; name: string } | null;
     active_date: string;
     slot_status: string;
+    is_active: boolean;
     user?: { id: number; email: string };
 }
 
@@ -19,10 +20,10 @@ interface EmployeeActionsMenuProps {
     onClose: () => void;
     onView: (employee: Employee) => void;
     onEdit: (employee: Employee) => void;
-    onDelete: (id: number) => void;
+    onToggleActive: (employee: Employee) => void;
 }
 
-export function EmployeeActionsMenu({ employee, position, onClose, onView, onEdit, onDelete }: EmployeeActionsMenuProps) {
+export function EmployeeActionsMenu({ employee, position, onClose, onView, onEdit, onToggleActive }: EmployeeActionsMenuProps) {
     const { t } = useLanguage();
 
     return (
@@ -31,8 +32,15 @@ export function EmployeeActionsMenu({ employee, position, onClose, onView, onEdi
             onClose={onClose}
             items={[
                 { label: t('dashboardAdvance.employees.actionsMenu.view'), icon: Eye, onClick: () => onView(employee) },
-                { label: t('dashboardAdvance.employees.actionsMenu.edit'), icon: Pencil, onClick: () => onEdit(employee) },
-                { label: t('dashboardAdvance.employees.actionsMenu.delete'), icon: Trash2, onClick: () => onDelete(employee.id), variant: 'danger' },
+                { label: t('dashboardAdvance.employees.actionsMenu.edit'), icon: Pencil, onClick: () => onEdit(employee), variant: 'warning' },
+                {
+                    label: employee.is_active
+                        ? t('dashboardAdvance.employees.actionsMenu.deactivate')
+                        : t('dashboardAdvance.employees.actionsMenu.activate'),
+                    icon: Power,
+                    onClick: () => onToggleActive(employee),
+                    variant: employee.is_active ? 'danger' : 'success',
+                },
             ]}
         />
     );

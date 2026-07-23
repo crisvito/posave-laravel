@@ -38,6 +38,10 @@ const companyProfile = {
     submitAriaLabel: 'Save company profile changes',
     submitting: 'Saving...',
     submitLabel: 'Save Changes',
+    emailLabel: 'Email',
+    emailAriaLabel: 'Company email',
+    emailPlaceholder: 'name@company.com',
+
 };
 
 export default companyProfile;

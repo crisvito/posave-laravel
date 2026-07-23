@@ -30,6 +30,12 @@ const inventoryItems = {
         statusOutOfStock: 'Stok Habis',
         statusLowStock: 'Stok Rendah',
         statusSafe: 'Aman',
+        columnActiveStatus: 'Status Aktif',
+        activeStatusActive: 'Aktif',
+        activeStatusInactive: 'Nonaktif',
+        allActiveStatus: 'Semua Status',
+        allStockStatus: 'Semua Stok',
+        deactivateConfirmPrefix: 'Nonaktifkan barang',
     },
     createModal: {
         title: 'Buat Barang',
@@ -106,6 +112,8 @@ const inventoryItems = {
         view: 'Lihat',
         edit: 'Ubah',
         delete: 'Hapus',
+        activate: 'Aktifkan',
+        deactivate: 'Nonaktifkan',  
     },
     
 };

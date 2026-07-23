@@ -1,15 +1,22 @@
-import { Button, PaginationBar, SearchInput, Table, TableBody, TableCell, TableEmptyState, TableHead, TableHeader, TableRow } from '@/components';
 import {
-    InventoryCategoryActionsMenu,
-    InventoryCategoryCreateModal,
-    InventoryCategoryEditModal,
-    type InventoryCategory,
-} from '@/features/advance/management/inventory/components';
-import { useConfirmAction, useDropdownMenu, useFilters, useLanguage } from '@/hooks';
+    Button,
+    FilterDropdown,
+    PaginationBar,
+    SearchInput,
+    Table,
+    TableBody,
+    TableCell,
+    TableEmptyState,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components';
+import { InventoryCategoryCreateModal, InventoryCategoryEditModal, type InventoryCategory } from '@/features/advance/management/inventory/components';
+import { useConfirmAction, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
-import { Head } from '@inertiajs/react';
-import { MoreVertical, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { Head, router } from '@inertiajs/react';
+import { Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface InventoryCategoryListProps {
     categories: {
@@ -19,7 +26,7 @@ interface InventoryCategoryListProps {
         to: number;
         links: { url: string | null; label: string; active: boolean }[];
     };
-    filters: { search?: string; per_page?: string };
+    filters: { search?: string; per_page?: string; status?: string };
     can_manage_catalog: boolean;
 }
 
@@ -28,19 +35,29 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editCategory, setEditCategory] = useState<InventoryCategory | null>(null);
     const { search, setSearch, applyFilters, handleSearch } = useFilters('dashboard.inventory.categories.index', filters);
-    const { openId: openMenuId, position: menuPosition, buttonRefs, toggleMenu, closeMenu } = useDropdownMenu();
-    const { confirmAndDelete } = useConfirmAction();
+    const { confirmAndRun, confirmDialog } = useConfirmAction();
+    const [categoryRows, setCategoryRows] = useState<InventoryCategory[]>(categories.data);
 
-    const handleEdit = (category: InventoryCategory) => {
-        setEditCategory(category);
-        closeMenu();
+    useEffect(() => {
+        setCategoryRows(categories.data);
+    }, [categories.data]);
+
+    const handleDeactivate = (category: InventoryCategory) => {
+        confirmAndRun(
+            `${t('dashboardAdvance.inventoryCategories.list.deactivateConfirmPrefix')} "${category.name}"?`,
+            () => router.patch(route('dashboard.inventory.categories.toggle-active', category.id), {}, { preserveScroll: true }),
+            'danger',
+        );
     };
 
-    const handleDelete = (id: number) => {
-        confirmAndDelete(t('dashboardAdvance.inventoryCategories.list.deleteConfirm'), route('dashboard.inventory.categories.destroy', id));
-        closeMenu();
+    const handleActivate = (category: InventoryCategory) => {
+        router.patch(route('dashboard.inventory.categories.toggle-active', category.id), {}, { preserveScroll: true });
     };
-    const activeMenuCategory = categories.data.find((c) => c.id === openMenuId);
+
+    const statusOptions = [
+        { value: 'active', label: t('dashboardAdvance.inventoryCategories.list.statusActive') },
+        { value: 'inactive', label: t('dashboardAdvance.inventoryCategories.list.statusInactive') },
+    ];
 
     return (
         <DashboardSidebarLayout
@@ -50,12 +67,22 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
             <Head title={t('dashboardAdvance.inventoryCategories.list.headTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-                    <SearchInput
-                        value={search}
-                        onChange={setSearch}
-                        onSubmit={handleSearch}
-                        placeholder={t('dashboardAdvance.inventoryCategories.list.searchPlaceholder')}
-                    />
+                    <div className="flex flex-wrap items-center gap-3">
+                        <SearchInput
+                            value={search}
+                            onChange={setSearch}
+                            onSubmit={handleSearch}
+                            placeholder={t('dashboardAdvance.inventoryCategories.list.searchPlaceholder')}
+                        />
+                        {can_manage_catalog && (
+                            <FilterDropdown
+                                value={filters.status}
+                                options={statusOptions}
+                                allLabel={t('dashboardAdvance.inventoryCategories.list.filterAllStatus')}
+                                onChange={(v) => applyFilters({ status: v })}
+                            />
+                        )}
+                    </div>
 
                     <div className="flex flex-wrap items-center gap-3">
                         {can_manage_catalog && (
@@ -72,7 +99,7 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
 
                 <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
                     <div className="overflow-x-auto">
-                        <Table className="min-w-[420px]">
+                        <Table className="min-w-[560px]">
                             <TableHeader className="bg-[var(--surface-header)]">
                                 <TableRow className="border-none hover:bg-[var(--surface-header)]">
                                     <TableHead className="text-[var(--text-light)]">
@@ -81,8 +108,11 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                                     <TableHead className="text-[var(--text-light)]">
                                         {t('dashboardAdvance.inventoryCategories.list.columnItemsCount')}
                                     </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryCategories.list.columnStatus')}
+                                    </TableHead>
                                     {can_manage_catalog && (
-                                        <TableHead className="w-[60px] text-[var(--text-light)]">
+                                        <TableHead className="text-[var(--text-light)]">
                                             {t('dashboardAdvance.inventoryCategories.list.columnAction')}
                                         </TableHead>
                                     )}
@@ -90,9 +120,9 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                             </TableHeader>
 
                             <TableBody>
-                                {categories.data.length === 0 ? (
+                                {categoryRows.length === 0 ? (
                                     <TableEmptyState
-                                        colSpan={can_manage_catalog ? 3 : 2}
+                                        colSpan={can_manage_catalog ? 4 : 3}
                                         message={
                                             filters.search
                                                 ? `${t('dashboardAdvance.inventoryCategories.list.notFoundPrefix')} "${filters.search}" ${t('dashboardAdvance.inventoryCategories.list.notFoundSuffix')}`
@@ -100,8 +130,8 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                                         }
                                     />
                                 ) : (
-                                    categories.data.map((category) => (
-                                        <TableRow key={category.id}>
+                                    categoryRows.map((category) => (
+                                        <TableRow key={category.id} className={!category.is_active ? 'opacity-60' : ''}>
                                             <TableCell>
                                                 <span
                                                     className="rounded-full px-3 py-1 text-xs font-medium"
@@ -116,18 +146,48 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                                             <TableCell className="text-[var(--grey-text)]">
                                                 {category.items_count} {t('dashboardAdvance.inventoryCategories.list.itemsCountSuffix')}
                                             </TableCell>
+                                            <TableCell>
+                                                <span
+                                                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${
+                                                        category.is_active
+                                                            ? 'bg-[var(--success-background)] text-[var(--success)]'
+                                                            : 'bg-[var(--danger-background)] text-[var(--danger)]'
+                                                    }`}
+                                                >
+                                                    {category.is_active
+                                                        ? t('dashboardAdvance.inventoryCategories.list.statusActive')
+                                                        : t('dashboardAdvance.inventoryCategories.list.statusInactive')}
+                                                </span>
+                                            </TableCell>
                                             {can_manage_catalog && (
-                                                <TableCell className="relative">
-                                                    <Button
-                                                        ref={(el) => {
-                                                            buttonRefs.current[category.id] = el;
-                                                        }}
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => toggleMenu(category.id)}
-                                                    >
-                                                        <MoreVertical className="h-4 w-4" />
-                                                    </Button>
+                                                <TableCell>
+                                                    <div className="flex flex-wrap gap-2 whitespace-nowrap">
+                                                        <Button
+                                                            aria-label={`${t('dashboardAdvance.inventoryCategories.list.editAriaLabelPrefix')} ${category.name}`}
+                                                            onClick={() => setEditCategory(category)}
+                                                            className="text-xs font-medium text-[var(--secondary-600)] hover:underline"
+                                                        >
+                                                            {t('dashboardAdvance.inventoryCategories.list.editLabel')}
+                                                        </Button>
+                                                        {category.is_active ? (
+                                                            <Button
+                                                                variant="outline"
+                                                                aria-label={`${t('dashboardAdvance.inventoryCategories.list.toggleAriaLabelPrefix')} ${category.name}`}
+                                                                onClick={() => handleDeactivate(category)}
+                                                                className="border-1 !border-[var(--danger)] text-xs font-medium !text-[var(--danger)] hover:underline"
+                                                            >
+                                                                {t('dashboardAdvance.inventoryCategories.list.toggleDeactivateLabel')}
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                aria-label={`${t('dashboardAdvance.inventoryCategories.list.toggleAriaLabelPrefix')} ${category.name}`}
+                                                                onClick={() => handleActivate(category)}
+                                                                className="text-xs font-medium text-[var(--success)] hover:underline"
+                                                            >
+                                                                {t('dashboardAdvance.inventoryCategories.list.toggleActivateLabel')}
+                                                            </Button>
+                                                        )}
+                                                    </div>
                                                 </TableCell>
                                             )}
                                         </TableRow>
@@ -149,19 +209,11 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                 />
             </div>
 
-            {can_manage_catalog && activeMenuCategory && (
-                <InventoryCategoryActionsMenu
-                    category={activeMenuCategory}
-                    position={menuPosition}
-                    onClose={closeMenu}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                />
-            )}
-
             {can_manage_catalog && showCreateModal && <InventoryCategoryCreateModal onClose={() => setShowCreateModal(false)} />}
 
             {can_manage_catalog && editCategory && <InventoryCategoryEditModal category={editCategory} onClose={() => setEditCategory(null)} />}
+
+            {confirmDialog}
         </DashboardSidebarLayout>
     );
 }

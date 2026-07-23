@@ -52,6 +52,8 @@ const inventoryTransfers = {
         removeItemAriaLabel: 'Hapus barang',
         cancel: 'Batal',
         submitting: 'Mengirim...',
+        stockRemainingPrefix: 'Sisa:',
+        selectSenderFirstHint: 'Pilih cabang pengirim dulu untuk melihat sisa stok barang.',
         submitLabel: 'Kirim Permintaan',
     },
     rejectModal: {

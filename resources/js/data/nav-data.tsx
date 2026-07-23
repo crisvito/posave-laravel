@@ -53,17 +53,7 @@ export const mainNavItems: NavItem[] = [
     {
         title: 'dashboardAdvance.sidebar.employees',
         icon: Group,
-        routeName: '',
-        children: [
-            {
-                title: 'dashboardAdvance.sidebar.employeesList',
-                routeName: 'dashboard.employees.index',
-            },
-            {
-                title: 'dashboardAdvance.sidebar.employeesAccess',
-                routeName: 'dashboard.employees-access.index',
-            },
-        ],
+        routeName: 'dashboard.employees.index',
     },
     {
         title: 'dashboardAdvance.sidebar.reports',

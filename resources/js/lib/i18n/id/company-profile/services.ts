@@ -1,5 +1,5 @@
 const services = {
-    pageTitle: 'Layanan - POSAVE',
+    pageTitle: 'Layanan',
     heroEyebrow: 'Layanan POSAVE',
     heroTitle: 'Kelola Toko Jadi Lebih Mudah',
     heroSubtitle: 'Satu Sistem untuk Semua Kebutuhan Toko',

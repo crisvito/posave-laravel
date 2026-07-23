@@ -1,5 +1,5 @@
 const history = {
-    pageTitle: 'Riwayat Pesanan - POSAVE',
+    pageTitle: 'Riwayat Pesanan',
     searchPlaceholder: 'Cari invoice...',
     paymentFilter: {
         aria: 'Filter metode pembayaran',

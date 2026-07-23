@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Advance\Management\Employee\EmployeeController;
-use App\Http\Controllers\Advance\Management\Employee\EmployeeAccessController;
 use App\Http\Controllers\Advance\Management\Inventory\AdjustmentController;
 use App\Http\Controllers\Advance\Management\Inventory\CategoryController;
 use App\Http\Controllers\Advance\Management\Inventory\ItemController;
@@ -25,20 +24,26 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
       Route::patch('/transfers/{transfer}/reject', [TransferController::class, 'reject'])->name('transfers.reject');
       Route::resource('adjustments', AdjustmentController::class);
       Route::resource('categories', CategoryController::class);
+
+      Route::middleware('role:owner')->group(function () {
+        Route::patch('/items/{item}/toggle-active', [ItemController::class, 'toggleActive'])->name('items.toggle-active');
+        Route::patch('/categories/{category}/toggle-active', [CategoryController::class, 'toggleActive'])->name('categories.toggle-active');
+        Route::patch('/suppliers/{supplier}/toggle-active', [SupplierController::class, 'toggleActive'])->name('suppliers.toggle-active');
+      });
     });
 
     Route::resource('reports', ReportController::class);
     Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
+
+    Route::middleware('role:owner')->group(function () {
+      Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
+      Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+    });
+
     Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
     Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
     Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
-  });
-
-  Route::middleware('role:owner')->group(function () {
-    Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
-    Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
-
-    Route::resource('employees-access', EmployeeAccessController::class);
+    Route::patch('/employees/{employee}/toggle-active', [EmployeeController::class, 'toggleActive'])->name('employees.toggle-active');
   });
 });
 

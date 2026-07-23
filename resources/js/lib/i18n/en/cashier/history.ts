@@ -1,5 +1,5 @@
 const history = {
-    pageTitle: 'Order History - POSAVE',
+    pageTitle: 'Order History',
     searchPlaceholder: 'Search invoice...',
     paymentFilter: {
         aria: 'Filter payment method',

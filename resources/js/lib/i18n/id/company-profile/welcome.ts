@@ -1,5 +1,5 @@
 const welcome = {
-    pageTitle: 'Beranda - POSAVE',
+    pageTitle: 'Beranda',
     hero: {
         titleLine1: 'Satu Untuk',
         titleLine2: 'Semua Masalah',

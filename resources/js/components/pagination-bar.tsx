@@ -24,7 +24,7 @@ export function PaginationBar({ from, to, total, itemLabel, links, perPage, onPe
     if (total === 0) return null;
 
     return (
-        <div className="mt-4 grid grid-cols-1 items-center justify-center gap-3 sm:grid-cols-3">
+        <div className="mt-15 grid grid-cols-1 items-center justify-center gap-3 sm:grid-cols-3">
             <span className="text-center text-sm text-[var(--grey-text)] sm:text-left">
                 {t('shared.pagination.showingPrefix')} {from}-{to} {t('shared.pagination.showingMiddle')} {total} {itemLabel}
             </span>

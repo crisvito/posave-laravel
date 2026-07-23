@@ -16,13 +16,21 @@ interface InventoryItemOption {
 
 interface InventoryTransferCreateModalProps {
     inventoryItems: InventoryItemOption[];
+    branchStocks: Record<number, Record<number, number>>;
     branches: BranchOption[];
     myBranchId: number | null;
     isBranchManager: boolean;
     onClose: () => void;
 }
 
-export function InventoryTransferCreateModal({ inventoryItems, branches, myBranchId, isBranchManager, onClose }: InventoryTransferCreateModalProps) {
+export function InventoryTransferCreateModal({
+    inventoryItems,
+    branchStocks,
+    branches,
+    myBranchId,
+    isBranchManager,
+    onClose,
+}: InventoryTransferCreateModalProps) {
     const { t } = useLanguage();
     const [direction, setDirection] = React.useState<'send' | 'receive'>('send');
 
@@ -34,6 +42,12 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
         items: [{ inventory_item_id: '', quantity: 1 }] as { inventory_item_id: string; quantity: number }[],
     });
 
+    // Stok barang di cabang PENGIRIM yang lagi aktif — ini yang membatasi berapa banyak
+    // barang boleh dikirim. Berubah otomatis kalau cabang pengirim diganti.
+    const senderStocks = branchStocks[Number(data.sender_branch_id)] ?? {};
+
+    const getStockFor = (itemId: string) => (itemId ? (senderStocks[Number(itemId)] ?? 0) : Infinity);
+
     const handleDirectionChange = (dir: 'send' | 'receive') => {
         setDirection(dir);
         if (dir === 'send') {
@@ -41,6 +55,17 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
         } else {
             setData((prev) => ({ ...prev, sender_branch_id: '', receiver_branch_id: String(myBranchId) }));
         }
+    };
+
+    const handleSenderBranchChange = (branchId: string) => {
+        const newStocks = branchStocks[Number(branchId)] ?? {};
+        // Cabang pengirim ganti -> sisa stok tiap barang bisa beda. Clamp quantity yang udah
+        // diisi biar gak lebih dari stok yang tersedia di cabang baru.
+        const clampedItems = data.items.map((item) => {
+            const max = item.inventory_item_id ? (newStocks[Number(item.inventory_item_id)] ?? 0) : Infinity;
+            return { ...item, quantity: Math.min(item.quantity, Math.max(max, 1)) };
+        });
+        setData((prev) => ({ ...prev, sender_branch_id: branchId, items: clampedItems }));
     };
 
     const addItem = () => setData('items', [...data.items, { inventory_item_id: '', quantity: 1 }]);
@@ -52,6 +77,16 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
     const updateItem = (index: number, field: 'inventory_item_id' | 'quantity', value: string | number) => {
         const items = [...data.items];
         items[index] = { ...items[index], [field]: value };
+
+        if (field === 'inventory_item_id') {
+            // Barang baru dipilih -> clamp quantity ke stok yang tersedia buat barang itu.
+            const max = getStockFor(String(value));
+            items[index].quantity = Math.min(items[index].quantity, Math.max(max, 1));
+        } else if (field === 'quantity') {
+            const max = getStockFor(items[index].inventory_item_id);
+            items[index].quantity = Math.min(Number(value), Math.max(max, 1));
+        }
+
         setData('items', items);
     };
 
@@ -125,7 +160,7 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                         onChange={(e) =>
                                             direction === 'send'
                                                 ? setData('receiver_branch_id', e.target.value)
-                                                : setData('sender_branch_id', e.target.value)
+                                                : handleSenderBranchChange(e.target.value)
                                         }
                                         className={`${inputClass} bg-[var(--card)]`}
                                     >
@@ -153,7 +188,7 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                 <div className="relative">
                                     <select
                                         value={data.sender_branch_id}
-                                        onChange={(e) => setData('sender_branch_id', e.target.value)}
+                                        onChange={(e) => handleSenderBranchChange(e.target.value)}
                                         className={`${inputClass} appearance-none`}
                                     >
                                         <option value="" disabled className="bg-[var(--card)]">
@@ -213,43 +248,77 @@ export function InventoryTransferCreateModal({ inventoryItems, branches, myBranc
                                 <Plus className="h-4 w-4" /> {t('dashboardAdvance.inventoryTransfers.createModal.addItemButton')}
                             </button>
                         </div>
-                        <div className="flex flex-col gap-3">
-                            {data.items.map((item, index) => (
-                                <div key={index} className="flex items-center gap-2">
-                                    <select
-                                        value={item.inventory_item_id}
-                                        onChange={(e) => updateItem(index, 'inventory_item_id', e.target.value)}
-                                        className={`${inputClass} appearance-none`}
-                                    >
-                                        <option value="" disabled className="bg-[var(--card)]">
-                                            {t('dashboardAdvance.inventoryTransfers.createModal.itemPlaceholder')}
-                                        </option>
-                                        {inventoryItems.map((i) => (
-                                            <option key={i.id} value={i.id} className="bg-[var(--card)]">
-                                                {i.name} ({i.sku})
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <Input
-                                        type="number"
-                                        min={1}
-                                        value={item.quantity}
-                                        onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
-                                        placeholder={t('dashboardAdvance.inventoryTransfers.createModal.qtyPlaceholder')}
-                                    />
-                                    {data.items.length > 1 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => removeItem(index)}
-                                            aria-label={t('dashboardAdvance.inventoryTransfers.createModal.removeItemAriaLabel')}
-                                            className="rounded-md p-1 hover:bg-[var(--danger-background)]"
-                                        >
-                                            <Trash2 className="h-5 w-5 text-[var(--danger)]" />
-                                        </button>
-                                    )}
-                                </div>
-                            ))}
+
+                        {!data.sender_branch_id && (
+                            <p className="mb-2 text-xs text-[var(--grey-text)]">
+                                {t('dashboardAdvance.inventoryTransfers.createModal.selectSenderFirstHint')}
+                            </p>
+                        )}
+
+                        <div className="flex flex-col gap-2">
+                            {data.items.map((item, index) => {
+                                const stock = getStockFor(item.inventory_item_id);
+                                return (
+                                    <div key={index} className="flex flex-col gap-1">
+                                        <div className="flex items-center gap-2">
+                                            <div className="relative flex-1">
+                                                <select
+                                                    value={item.inventory_item_id}
+                                                    onChange={(e) => updateItem(index, 'inventory_item_id', e.target.value)}
+                                                    className={`${inputClass} appearance-none`}
+                                                >
+                                                    <option value="" disabled className="bg-[var(--card)]">
+                                                        {t('dashboardAdvance.inventoryTransfers.createModal.itemPlaceholder')}
+                                                    </option>
+                                                    {inventoryItems.map((i) => {
+                                                        const itemStock = senderStocks[i.id] ?? 0;
+                                                        return (
+                                                            <option
+                                                                key={i.id}
+                                                                value={i.id}
+                                                                disabled={!!data.sender_branch_id && itemStock <= 0}
+                                                                className="bg-[var(--card)]"
+                                                            >
+                                                                {i.name} ({i.sku}){' '}
+                                                                {data.sender_branch_id
+                                                                    ? `- ${t('dashboardAdvance.inventoryTransfers.createModal.stockRemainingPrefix')} ${itemStock}`
+                                                                    : ''}
+                                                            </option>
+                                                        );
+                                                    })}
+                                                </select>
+                                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 !text-[var(--grey-text)]" />
+                                            </div>
+                                            <Input
+                                                type="number"
+                                                min={1}
+                                                max={stock === Infinity ? undefined : stock}
+                                                value={item.quantity}
+                                                onChange={(e) => updateItem(index, 'quantity', Number(e.target.value))}
+                                                placeholder={t('dashboardAdvance.inventoryTransfers.createModal.qtyPlaceholder')}
+                                                className="w-24 shrink-0"
+                                            />
+                                            {data.items.length > 1 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeItem(index)}
+                                                    aria-label={t('dashboardAdvance.inventoryTransfers.createModal.removeItemAriaLabel')}
+                                                    className="shrink-0 rounded-md p-1 hover:bg-[var(--danger-background)]"
+                                                >
+                                                    <Trash2 className="h-5 w-5 text-[var(--danger)]" />
+                                                </button>
+                                            )}
+                                        </div>
+                                        {item.inventory_item_id && data.sender_branch_id && (
+                                            <p className="pr-9 text-right text-xs text-[var(--grey-text)]">
+                                                {t('dashboardAdvance.inventoryTransfers.createModal.stockRemainingPrefix')} {stock}
+                                            </p>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
+                        {errors.items && <span className="text-sm text-[var(--danger)]">{errors.items}</span>}
                     </div>
 
                     <div className="mt-2 flex justify-end gap-2">

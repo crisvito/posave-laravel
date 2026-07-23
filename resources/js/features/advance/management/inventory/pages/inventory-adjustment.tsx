@@ -90,7 +90,7 @@ export default function InventoryAdjustment({ adjustments, stats, inventoryItems
         >
             <Head title={t('dashboardAdvance.inventoryAdjustments.list.headTitle')} />
 
-            <div className="flex flex-col gap-6 p-4 sm:p-6">
+            <div className="flex min-h-screen flex-col gap-6 bg-[var(--page-bg)] p-4 sm:p-6">
                 <div className="flex flex-col gap-3">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex flex-wrap items-center gap-3">

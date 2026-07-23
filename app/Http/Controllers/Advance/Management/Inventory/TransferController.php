@@ -47,9 +47,15 @@ class TransferController extends Controller
 
         $branches = Branch::where('company_id', $user->company_id)->get(['id', 'name']);
 
+        $branchStocks = BranchStock::whereIn('branch_id', $branches->pluck('id'))
+            ->get(['branch_id', 'inventory_item_id', 'current_stock'])
+            ->groupBy('branch_id')
+            ->map(fn($stocks) => $stocks->pluck('current_stock', 'inventory_item_id'));
+
         return Inertia::render('advance/management/inventory/inventory-transfer', [
             'transfers' => $transfers,
-            'inventoryItems' => Item::where('company_id', $user->company_id)->select('id', 'name', 'sku')->get(),
+            'inventoryItems' => Item::where('company_id', $user->company_id)->where('is_active', true)->select('id', 'name', 'sku')->get(),
+            'branchStocks' => $branchStocks,
             'branches' => $branches,
             'my_branch_id' => $user->branch_id,
             'incoming_pending_count' => $incomingPendingCount,

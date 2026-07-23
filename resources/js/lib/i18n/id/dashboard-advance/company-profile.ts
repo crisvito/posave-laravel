@@ -38,6 +38,9 @@ const companyProfile = {
     submitAriaLabel: 'Simpan perubahan profil perusahaan',
     submitting: 'Menyimpan...',
     submitLabel: 'Simpan Perubahan',
+    emailLabel: 'Email',
+    emailAriaLabel: 'Email perusahaan',
+    emailPlaceholder: 'nama@perusahaan.com',
 };
 
 export default companyProfile;

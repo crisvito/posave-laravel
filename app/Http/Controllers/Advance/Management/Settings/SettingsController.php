@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Advance\Management\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Models\Advance\Management\Messaging\Conversation;
+use App\Models\Advance\Messaging\Conversation;
 use App\Models\Auth\Branch;
 use App\Models\Auth\CompanyProfile;
 use App\Models\Advance\Management\Settings\ReceiptSetting;
@@ -44,6 +44,7 @@ class SettingsController extends Controller
         $request->validate([
             'name'      => 'required|string|max:255',
             'phone'     => 'nullable|string|max:20',
+            'email'     => 'nullable|email|max:255',
             'address'   => 'nullable|string|max:500',
             'province'  => 'nullable|string|max:100',
             'city'      => 'nullable|string|max:100',
@@ -64,6 +65,7 @@ class SettingsController extends Controller
         $data = $request->only([
             'name',
             'phone',
+            'email',
             'address',
             'province',
             'city',
@@ -91,6 +93,8 @@ class SettingsController extends Controller
     }
 
     // ─── Receipt Settings ──────────────────────────────────────────
+    // Identitas company (nama, alamat, kontak, logo) SEMUANYA ditarik dari Company Profile.
+    // Receipt cuma nyimpen hal yang spesifik struk: catatan/pesan footer.
 
     public function receiptSettings()
     {
@@ -98,22 +102,15 @@ class SettingsController extends Controller
         $company = $user->company->load(['profile', 'receiptSetting']);
 
         return Inertia::render('advance/management/company-settings/receipt', [
-            'receipt'      => $company->receiptSetting,
-            'company_name' => $company->profile?->name ?? '',
+            'receipt' => $company->receiptSetting,
+            'profile' => $company->profile,
         ]);
     }
 
     public function updateReceiptSettings(Request $request)
     {
         $request->validate([
-            'address'  => 'nullable|string|max:500',
-            'province' => 'nullable|string|max:100',
-            'city'     => 'nullable|string|max:100',
-            'zip'      => 'nullable|string|max:10',
-            'phone'    => 'nullable|string|max:20',
-            'email'    => 'nullable|email|max:255',
-            'notes'    => 'nullable|string|max:500',
-            'logo'     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'notes' => 'nullable|string|max:500',
         ]);
 
         $user    = $this->getOwner();
@@ -121,16 +118,7 @@ class SettingsController extends Controller
         $receipt = $company->receiptSetting
             ?? ReceiptSetting::make(['company_id' => $company->id]);
 
-        $data = $request->only(['address', 'province', 'city', 'zip', 'phone', 'email', 'notes']);
-
-        if ($request->hasFile('logo')) {
-            if ($receipt->logo) {
-                Storage::disk('public')->delete($receipt->logo);
-            }
-            $data['logo'] = $request->file('logo')->store('logos/receipt', 'public');
-        }
-
-        $receipt->fill($data);
+        $receipt->fill($request->only(['notes']));
         $receipt->company_id = $company->id;
         $receipt->save();
 
@@ -178,7 +166,6 @@ class SettingsController extends Controller
             'is_main'    => false,
         ]);
 
-        // Auto-buat group conversation untuk branch ini
         $conversation = Conversation::create([
             'company_id' => $user->company_id,
             'branch_id'  => $branch->id,
@@ -186,7 +173,6 @@ class SettingsController extends Controller
             'name'       => $branch->name,
         ]);
 
-        // Owner otomatis masuk group
         $conversation->members()->attach($user->id, ['last_read_at' => now()]);
 
         return back()->with('success', 'Cabang berhasil ditambahkan.');

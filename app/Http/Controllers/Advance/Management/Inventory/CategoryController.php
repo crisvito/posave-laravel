@@ -24,12 +24,15 @@ class CategoryController extends Controller
             ->when($request->search, function ($query) use ($request) {
                 $query->where('name', 'like', '%' . $request->search . '%');
             })
+            ->when($request->status && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('is_active', $request->status === 'active');
+            })
             ->paginate(5)
             ->withQueryString();
 
         return Inertia::render('advance/management/inventory/inventory-category', [
             'categories' => $categories,
-            'filters' => $request->only('search'),
+            'filters' => $request->only('search', 'status'),
             'can_manage_catalog' => $user->isOwner(),
         ]);
     }
@@ -124,5 +127,17 @@ class CategoryController extends Controller
         $index = Category::where('company_id', $companyId)->count() % count(self::COLOR_PALETTE);
 
         return self::COLOR_PALETTE[$index];
+    }
+    public function toggleActive(string $id)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        abort_if(!$user->isOwner(), 403);
+
+        $category = Category::where('company_id', $user->company_id)->findOrFail($id);
+        $category->update(['is_active' => !$category->is_active]);
+
+        return redirect()->route('dashboard.inventory.categories.index')
+            ->with('success', $category->is_active ? 'Kategori diaktifkan kembali!' : 'Kategori dinonaktifkan.');
     }
 }

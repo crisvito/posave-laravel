@@ -20,8 +20,6 @@ class ItemController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        // Branch manager: selalu cabangnya sendiri, gak peduli query param.
-        // Owner: boleh pilih cabang lewat dropdown, atau kosongin buat lihat semua.
         $branchId = $user->isBranchManager() ? $user->branch_id : ($request->integer('branch_id') ?: null);
 
         $itemsQuery = Item::with('category')
@@ -34,6 +32,9 @@ class ItemController extends Controller
             })
             ->when($request->category_id, function ($query) use ($request) {
                 $query->where('category_id', $request->category_id);
+            })
+            ->when($request->status && $request->status !== 'all', function ($query) use ($request) {
+                $query->where('is_active', $request->status === 'active');
             });
 
         if ($branchId) {
@@ -57,7 +58,19 @@ class ItemController extends Controller
             return $item;
         });
 
-        $categories = Category::where('company_id', $user->company_id)->select('id', 'name')->get();
+        if ($request->stock_status && $request->stock_status !== 'all') {
+            $filtered = $items->getCollection()->filter(function ($item) use ($request) {
+                return match ($request->stock_status) {
+                    'out' => $item->current_stock === 0,
+                    'low' => $item->current_stock > 0 && $item->current_stock <= $item->min_stock,
+                    'safe' => $item->current_stock > $item->min_stock,
+                    default => true,
+                };
+            });
+            $items->setCollection($filtered->values());
+        }
+
+        $categories = Category::where('company_id', $user->company_id)->where('is_active', true)->select('id', 'name')->get();
 
         $branches = $user->isBranchManager()
             ? Branch::where('id', $user->branch_id)->select('id', 'name')->get()
@@ -67,7 +80,7 @@ class ItemController extends Controller
             'items' => $items,
             'categories' => $categories,
             'branches' => $branches,
-            'filters' => $request->only('search', 'category_id', 'branch_id', 'per_page'),
+            'filters' => $request->only('search', 'category_id', 'branch_id', 'per_page', 'status', 'stock_status'),
             'is_branch_manager' => $user->isBranchManager(),
             'can_manage_catalog' => $user->isOwner(),
         ]);
@@ -238,5 +251,17 @@ class ItemController extends Controller
         $stock->update(['current_stock' => $newStock]);
 
         return response()->json(['current_stock' => $newStock]);
+    }
+    public function toggleActive(string $id)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        abort_if(!$user->isOwner(), 403);
+
+        $item = Item::where('company_id', $user->company_id)->findOrFail($id);
+        $item->update(['is_active' => !$item->is_active]);
+
+        return redirect()->route('dashboard.inventory.items.index')
+            ->with('success', $item->is_active ? 'Barang diaktifkan kembali!' : 'Barang dinonaktifkan.');
     }
 }

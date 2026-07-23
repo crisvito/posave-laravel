@@ -15,7 +15,7 @@ import {
 import { InventorySupplierCreateModal, InventorySupplierEditModal } from '@/features/advance/management/inventory/components';
 import { useConfirmAction, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { Building2, Package } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -28,6 +28,7 @@ interface Supplier {
     phone: string | null;
     email: string | null;
     logo: string | null;
+    is_active: boolean;
 }
 
 interface CategoryOption {
@@ -45,7 +46,7 @@ interface InventorySupplierListProps {
     };
     categories: CategoryOption[];
     is_branch_manager: boolean;
-    filters: { search?: string; category_id?: string; per_page?: string };
+    filters: { search?: string; category_id?: string; per_page?: string; status?: string };
 }
 
 export default function InventorySupplierList({ suppliers, categories, is_branch_manager, filters }: InventorySupplierListProps) {
@@ -53,7 +54,7 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [editSupplier, setEditSupplier] = useState<Supplier | null>(null);
     const { search, setSearch, applyFilters, handleSearch } = useFilters('dashboard.inventory.suppliers.index', filters);
-    const { confirmAndDelete, confirmDialog } = useConfirmAction();
+    const { confirmAndRun, confirmDialog } = useConfirmAction();
     const [supplierRows, setSupplierRows] = useState<Supplier[]>(suppliers.data);
 
     useEffect(() => {
@@ -62,15 +63,22 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
 
     const canManageCatalog = !is_branch_manager;
 
-    const handleDelete = (supplier: Supplier) => {
-        confirmAndDelete(
-            `${t('dashboardAdvance.inventorySuppliers.list.deleteConfirmPrefix')} "${supplier.name}"?`,
-            route('dashboard.inventory.suppliers.destroy', supplier.id),
-            {
-                onSuccess: () => setSupplierRows((prev) => prev.filter((s) => s.id !== supplier.id)),
-            },
+    const handleDeactivate = (supplier: Supplier) => {
+        confirmAndRun(
+            `${t('dashboardAdvance.inventorySuppliers.list.deactivateConfirmPrefix')} "${supplier.name}"?`,
+            () => router.patch(route('dashboard.inventory.suppliers.toggle-active', supplier.id), {}, { preserveScroll: true }),
+            'danger',
         );
     };
+
+    const handleActivate = (supplier: Supplier) => {
+        router.patch(route('dashboard.inventory.suppliers.toggle-active', supplier.id), {}, { preserveScroll: true });
+    };
+
+    const statusOptions = [
+        { value: 'active', label: t('dashboardAdvance.inventorySuppliers.list.statusActive') },
+        { value: 'inactive', label: t('dashboardAdvance.inventorySuppliers.list.statusInactive') },
+    ];
 
     return (
         <DashboardSidebarLayout
@@ -79,20 +87,15 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
         >
             <Head title={t('dashboardAdvance.inventorySuppliers.list.headTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
-                <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-                    <SearchInput
-                        value={search}
-                        onChange={setSearch}
-                        onSubmit={handleSearch}
-                        placeholder={t('dashboardAdvance.inventorySuppliers.list.searchPlaceholder')}
-                    />
-                    <div className="flex gap-2">
-                        <FilterDropdown
-                            value={filters.category_id}
-                            options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
-                            allLabel={t('dashboardAdvance.inventorySuppliers.list.allCategories')}
-                            onChange={(v) => applyFilters({ category_id: v })}
+                <div className="mb-5 flex flex-col flex-wrap justify-between gap-4">
+                    <div className="flex justify-between">
+                        <SearchInput
+                            value={search}
+                            onChange={setSearch}
+                            onSubmit={handleSearch}
+                            placeholder={t('dashboardAdvance.inventorySuppliers.list.searchPlaceholder')}
                         />
+
                         {canManageCatalog && (
                             <CreateButton
                                 label={t('dashboardAdvance.inventorySuppliers.list.createButton')}
@@ -100,11 +103,29 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                             />
                         )}
                     </div>
+                    <div className="flex flex-wrap items-center gap-3">
+                        <div className="flex gap-3">
+                            <FilterDropdown
+                                value={filters.category_id}
+                                options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
+                                allLabel={t('dashboardAdvance.inventorySuppliers.list.allCategories')}
+                                onChange={(v) => applyFilters({ category_id: v })}
+                            />
+                            {canManageCatalog && (
+                                <FilterDropdown
+                                    value={filters.status}
+                                    options={statusOptions}
+                                    allLabel={t('dashboardAdvance.inventorySuppliers.list.allStatus')}
+                                    onChange={(v) => applyFilters({ status: v })}
+                                />
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
                     <div className="overflow-x-auto">
-                        <Table className="min-w-[560px]">
+                        <Table className="min-w-[680px]">
                             <TableHeader className="bg-[var(--surface-header)]">
                                 <TableRow className="border-none hover:bg-[var(--surface-header)]">
                                     <TableHead className="text-[var(--text-light)]">
@@ -116,8 +137,11 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                     <TableHead className="text-[var(--text-light)]">
                                         {t('dashboardAdvance.inventorySuppliers.list.columnContact')}
                                     </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventorySuppliers.list.columnStatus')}
+                                    </TableHead>
                                     {canManageCatalog && (
-                                        <TableHead className="w-[80px] text-[var(--text-light)]">
+                                        <TableHead className="text-[var(--text-light)]">
                                             {t('dashboardAdvance.inventorySuppliers.list.columnAction')}
                                         </TableHead>
                                     )}
@@ -138,7 +162,7 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                     />
                                 ) : (
                                     supplierRows.map((supplier) => (
-                                        <TableRow key={supplier.id}>
+                                        <TableRow key={supplier.id} className={!supplier.is_active ? 'opacity-60' : ''}>
                                             <TableCell>
                                                 <div className="flex items-center gap-3">
                                                     {supplier.logo ? (
@@ -176,9 +200,22 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                                 <div className="text-sm whitespace-nowrap">{supplier.phone ?? '-'}</div>
                                                 <div className="text-xs whitespace-nowrap">{supplier.email ?? '-'}</div>
                                             </TableCell>
+                                            <TableCell>
+                                                <span
+                                                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${
+                                                        supplier.is_active
+                                                            ? 'bg-[var(--success-background)] text-[var(--success)]'
+                                                            : 'bg-[var(--danger-background)] text-[var(--danger)]'
+                                                    }`}
+                                                >
+                                                    {supplier.is_active
+                                                        ? t('dashboardAdvance.inventorySuppliers.list.statusActive')
+                                                        : t('dashboardAdvance.inventorySuppliers.list.statusInactive')}
+                                                </span>
+                                            </TableCell>
                                             {canManageCatalog && (
                                                 <TableCell>
-                                                    <div className="flex gap-2 whitespace-nowrap">
+                                                    <div className="flex flex-wrap gap-2 whitespace-nowrap">
                                                         <Button
                                                             aria-label={`${t('dashboardAdvance.inventorySuppliers.list.editAriaLabelPrefix')} ${supplier.name}`}
                                                             onClick={() => setEditSupplier(supplier)}
@@ -186,14 +223,24 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                                         >
                                                             {t('dashboardAdvance.inventorySuppliers.list.editLabel')}
                                                         </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            aria-label={`${t('dashboardAdvance.inventorySuppliers.list.deleteAriaLabelPrefix')} ${supplier.name}`}
-                                                            onClick={() => handleDelete(supplier)}
-                                                            className="border-1 !border-[var(--danger)] text-xs font-medium !text-[var(--danger)] hover:underline"
-                                                        >
-                                                            {t('dashboardAdvance.inventorySuppliers.list.deleteLabel')}
-                                                        </Button>
+                                                        {supplier.is_active ? (
+                                                            <Button
+                                                                variant="outline"
+                                                                aria-label={`${t('dashboardAdvance.inventorySuppliers.list.deactivateAriaLabelPrefix')} ${supplier.name}`}
+                                                                onClick={() => handleDeactivate(supplier)}
+                                                                className="border-1 !border-[var(--danger)] text-xs font-medium !text-[var(--danger)] hover:underline"
+                                                            >
+                                                                {t('dashboardAdvance.inventorySuppliers.list.toggleDeactivateLabel')}
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                aria-label={`${t('dashboardAdvance.inventorySuppliers.list.activateAriaLabelPrefix')} ${supplier.name}`}
+                                                                onClick={() => handleActivate(supplier)}
+                                                                className="text-xs font-medium text-[var(--success)] hover:underline"
+                                                            >
+                                                                {t('dashboardAdvance.inventorySuppliers.list.toggleActivateLabel')}
+                                                            </Button>
+                                                        )}
                                                     </div>
                                                 </TableCell>
                                             )}

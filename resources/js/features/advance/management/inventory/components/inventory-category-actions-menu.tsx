@@ -7,6 +7,7 @@ export interface InventoryCategory {
     name: string;
     color: string | null;
     items_count: number;
+    is_active: boolean;
 }
 
 interface InventoryCategoryActionsMenuProps {

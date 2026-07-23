@@ -4,7 +4,6 @@ namespace App\Services\Chatbot\Tools;
 
 use App\Mail\EmployeeInvitation;
 use App\Models\Advance\Management\Employee\Employee;
-use App\Models\Advance\Management\Employee\EmployeeAccess;
 use App\Models\Advance\Messaging\Conversation;
 use App\Models\Auth\Branch;
 use App\Models\Auth\UserProfile;
@@ -63,7 +62,7 @@ class CreateEmployeeTool implements ToolInterface
 
   private function validRoleNames(User $user)
   {
-    return EmployeeAccess::where('company_id', $user->company_id)->pluck('name');
+    return collect(Employee::ASSIGNABLE_ROLES);
   }
 
   /** Dipanggil pas nyiapin draft — validasi di sini, TAPI belum bikin akun/kirim email. */

@@ -48,6 +48,8 @@ const inventoryTransfers = {
         itemsLabel: 'Items',
         addItemButton: 'Add Item',
         itemPlaceholder: 'Select item',
+        stockRemainingPrefix: 'Stock left:',
+        selectSenderFirstHint: 'Select the sender branch first to see item stock availability.',
         qtyPlaceholder: 'Qty',
         removeItemAriaLabel: 'Remove item',
         cancel: 'Cancel',

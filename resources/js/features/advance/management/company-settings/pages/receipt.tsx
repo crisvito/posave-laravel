@@ -1,12 +1,16 @@
-import { Button, Input, Label, Textarea } from '@/components';
+import { Button, Label, Textarea } from '@/components';
 import { SettingsCard } from '@/features/advance/management/company-settings/components';
 import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, useForm } from '@inertiajs/react';
-import { useRef, useState } from 'react';
 
 interface ReceiptSetting {
     id?: number;
+    notes?: string;
+}
+
+interface CompanyProfileData {
+    name?: string;
     logo?: string;
     address?: string;
     province?: string;
@@ -14,41 +18,23 @@ interface ReceiptSetting {
     zip?: string;
     phone?: string;
     email?: string;
-    notes?: string;
 }
 
 interface Props {
     receipt: ReceiptSetting | null;
-    company_name: string;
+    profile: CompanyProfileData | null;
 }
 
-export default function ReceiptSettingsPage({ receipt, company_name }: Props) {
+export default function ReceiptSettingsPage({ receipt, profile }: Props) {
     const { locale, t } = useLanguage();
 
     const { data, setData, post, processing, errors } = useForm({
-        logo: null as File | null,
-        address: receipt?.address ?? '',
-        province: receipt?.province ?? '',
-        city: receipt?.city ?? '',
-        zip: receipt?.zip ?? '',
-        phone: receipt?.phone ?? '',
-        email: receipt?.email ?? '',
         notes: receipt?.notes ?? '',
     });
 
-    const [logoPreview, setLogoPreview] = useState<string | null>(receipt?.logo ? `/storage/${receipt.logo}` : null);
-    const logoRef = useRef<HTMLInputElement>(null);
-
-    const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        setData('logo', file);
-        setLogoPreview(URL.createObjectURL(file));
-    };
-
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('settings.receipt.update'), { forceFormData: true });
+        post(route('settings.receipt.update'));
     };
 
     const today = new Date().toLocaleDateString(locale === 'en' ? 'en-US' : 'id-ID', {
@@ -56,6 +42,8 @@ export default function ReceiptSettingsPage({ receipt, company_name }: Props) {
         month: 'long',
         year: 'numeric',
     });
+
+    const logoPreview = profile?.logo ? `/storage/${profile.logo}` : null;
 
     return (
         <DashboardSidebarLayout title={t('dashboardAdvance.receipt.layoutTitle')} description={t('dashboardAdvance.receipt.layoutDescription')}>
@@ -65,89 +53,7 @@ export default function ReceiptSettingsPage({ receipt, company_name }: Props) {
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <form onSubmit={submit}>
                         <SettingsCard title={t('dashboardAdvance.receipt.cardTitle')}>
-                            <div className="mb-5 flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4">
-                                <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[var(--border-strong)] bg-[var(--page-bg)]">
-                                    {logoPreview ? (
-                                        <img src={logoPreview} alt={t('dashboardAdvance.receipt.logoAlt')} className="h-full w-full object-contain" />
-                                    ) : (
-                                        <span className="text-xs text-[var(--grey-text)]">{t('dashboardAdvance.receipt.logoPlaceholder')}</span>
-                                    )}
-                                </div>
-                                <div>
-                                    <Button type="button" onClick={() => logoRef.current?.click()} className="px-3 text-xs font-medium">
-                                        {t('dashboardAdvance.receipt.uploadLogoButton')}
-                                    </Button>
-                                    <p className="mt-1 text-xs text-[var(--grey-text-muted)]">{t('dashboardAdvance.receipt.logoHint')}</p>
-                                </div>
-                                <Input
-                                    aria-label={t('dashboardAdvance.receipt.uploadLogoAriaLabel')}
-                                    ref={logoRef}
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={handleLogoChange}
-                                />
-                            </div>
-
-                            <div className="mb-4">
-                                <Label>{t('dashboardAdvance.receipt.addressLabel')}</Label>
-                                <Input
-                                    value={data.address}
-                                    onChange={(e) => setData('address', e.target.value)}
-                                    placeholder={t('dashboardAdvance.receipt.addressPlaceholder')}
-                                />
-                            </div>
-
-                            <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                                <div>
-                                    <Label>{t('dashboardAdvance.receipt.provinceLabel')}</Label>
-                                    <Input
-                                        type="text"
-                                        value={data.province}
-                                        onChange={(e) => setData('province', e.target.value)}
-                                        placeholder={t('dashboardAdvance.receipt.provincePlaceholder')}
-                                    />
-                                </div>
-                                <div>
-                                    <Label>{t('dashboardAdvance.receipt.cityLabel')}</Label>
-                                    <Input
-                                        type="text"
-                                        value={data.city}
-                                        onChange={(e) => setData('city', e.target.value)}
-                                        placeholder={t('dashboardAdvance.receipt.cityPlaceholder')}
-                                    />
-                                </div>
-                                <div>
-                                    <Label>{t('dashboardAdvance.receipt.zipLabel')}</Label>
-                                    <Input
-                                        type="text"
-                                        value={data.zip}
-                                        onChange={(e) => setData('zip', e.target.value)}
-                                        placeholder={t('dashboardAdvance.receipt.zipPlaceholder')}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                <div>
-                                    <Label>{t('dashboardAdvance.receipt.phoneLabel')}</Label>
-                                    <Input
-                                        type="text"
-                                        value={data.phone}
-                                        onChange={(e) => setData('phone', e.target.value)}
-                                        placeholder={t('dashboardAdvance.receipt.phonePlaceholder')}
-                                    />
-                                </div>
-                                <div>
-                                    <Label>{t('dashboardAdvance.receipt.emailLabel')}</Label>
-                                    <Input
-                                        type="email"
-                                        value={data.email}
-                                        onChange={(e) => setData('email', e.target.value)}
-                                        placeholder={t('dashboardAdvance.receipt.emailPlaceholder')}
-                                    />
-                                </div>
-                            </div>
+                            <p className="mb-5 text-sm text-[var(--grey-text)]">{t('dashboardAdvance.receipt.identityFromProfileHint')}</p>
 
                             <div className="mb-6">
                                 <Label>{t('dashboardAdvance.receipt.notesLabel')}</Label>
@@ -157,6 +63,7 @@ export default function ReceiptSettingsPage({ receipt, company_name }: Props) {
                                     placeholder={t('dashboardAdvance.receipt.notesPlaceholder')}
                                     rows={3}
                                 />
+                                {errors.notes && <p className="mt-1 text-xs text-[var(--danger)]">{errors.notes}</p>}
                             </div>
 
                             <Button type="submit" disabled={processing} className="w-full">
@@ -176,16 +83,16 @@ export default function ReceiptSettingsPage({ receipt, company_name }: Props) {
 
                                 <div className="mb-3 text-center">
                                     <p className="font-bold text-[var(--subheading)]">
-                                        {company_name || t('dashboardAdvance.receipt.previewCompanyPlaceholder')}
+                                        {profile?.name || t('dashboardAdvance.receipt.previewCompanyPlaceholder')}
                                     </p>
-                                    {data.address && (
+                                    {profile?.address && (
                                         <p className="mt-0.5 text-xs text-[var(--grey-text)]">
-                                            {[data.address, data.city, data.province].filter(Boolean).join(', ')}
+                                            {[profile.address, profile.city, profile.province].filter(Boolean).join(', ')}
                                         </p>
                                     )}
-                                    {(data.phone || data.email) && (
+                                    {(profile?.phone || profile?.email) && (
                                         <p className="mt-0.5 text-xs text-[var(--grey-text)]">
-                                            {[data.phone, data.email].filter(Boolean).join(' | ')}
+                                            {[profile?.phone, profile?.email].filter(Boolean).join(' | ')}
                                         </p>
                                     )}
                                 </div>
@@ -218,10 +125,6 @@ export default function ReceiptSettingsPage({ receipt, company_name }: Props) {
                                     <div className="flex justify-between">
                                         <span className="text-[var(--grey-text)]">{t('dashboardAdvance.receipt.previewSubtotalLabel')}</span>
                                         <span>Rp 50.000</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-[var(--grey-text)]">{t('dashboardAdvance.receipt.previewTaxLabel')}</span>
-                                        <span>Rp 2.500</span>
                                     </div>
                                     <div className="mt-1 flex justify-between font-bold">
                                         <span>{t('dashboardAdvance.receipt.previewTotalLabel')}</span>

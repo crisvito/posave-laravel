@@ -1,5 +1,5 @@
 const services = {
-    pageTitle: 'Services - POSAVE',
+    pageTitle: 'Services',
     heroEyebrow: 'POSAVE Services',
     heroTitle: 'Manage Your Store Made Easy',
     heroSubtitle: 'One System for All Your Store Needs',

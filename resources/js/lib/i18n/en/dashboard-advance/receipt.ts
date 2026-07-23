@@ -31,6 +31,7 @@ const receipt = {
     previewSampleProduct: 'Sample Product x1',
     previewSubtotalLabel: 'Subtotal',
     previewTaxLabel: 'Tax (5%)',
+    identityFromProfileHint: 'Name, address, contact, and logo automatically follow your Company Profile.',
     previewTotalLabel: 'TOTAL',
 };
 

@@ -3,6 +3,7 @@ import {
     CreateButton,
     FilterDropdown,
     PaginationBar,
+    PrintButton,
     SearchInput,
     Table,
     TableBody,
@@ -22,7 +23,7 @@ import {
 } from '@/features/advance/management/inventory/components';
 import { useConfirmAction, useDropdownMenu, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { MoreVertical, Package, Store } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { resolveBranchId } from '../lib';
@@ -37,7 +38,7 @@ interface InventoryItemListProps {
     };
     categories: InventoryCategory[];
     branches: { id: number; name: string }[];
-    filters: { search?: string; category_id?: string; branch_id?: string; per_page?: string };
+    filters: { search?: string; category_id?: string; branch_id?: string; per_page?: string; status?: string; stock_status?: string };
     is_branch_manager: boolean;
     can_manage_catalog: boolean;
 }
@@ -50,7 +51,7 @@ export default function InventoryItemList({ items, categories, branches, filters
     const [showCreateModal, setShowCreateModal] = useState(false);
     const { search, setSearch, applyFilters, handleSearch } = useFilters('dashboard.inventory.items.index', filters);
     const [itemRows, setItemRows] = useState<InventoryItem[]>(items.data);
-    const { confirmAndDelete, confirmDialog } = useConfirmAction();
+    const { confirmAndRun, confirmDialog } = useConfirmAction();
 
     useEffect(() => {
         setItemRows(items.data);
@@ -64,11 +65,14 @@ export default function InventoryItemList({ items, categories, branches, filters
         setEditItem(item);
         closeMenu();
     };
+    const handleToggleActive = (item: InventoryItem) => {
+        const doToggle = () => router.patch(route('dashboard.inventory.items.toggle-active', item.id), {}, { preserveScroll: true });
 
-    const handleDelete = (id: number) => {
-        confirmAndDelete(t('dashboardAdvance.inventoryItems.list.deleteConfirm'), route('dashboard.inventory.items.destroy', id), {
-            onSuccess: () => setItemRows((prev) => prev.filter((i) => i.id !== id)),
-        });
+        if (item.is_active) {
+            confirmAndRun(`${t('dashboardAdvance.inventoryItems.list.deactivateConfirmPrefix')} "${item.name}"?`, doToggle, 'danger');
+        } else {
+            doToggle();
+        }
         closeMenu();
     };
 
@@ -84,6 +88,16 @@ export default function InventoryItemList({ items, categories, branches, filters
         return { label: t('dashboardAdvance.inventoryItems.list.statusSafe'), color: 'bg-[var(--success-background)] text-[var(--success)]' };
     };
 
+    const activeStatusOptions = [
+        { value: 'active', label: t('dashboardAdvance.inventoryItems.list.activeStatusActive') },
+        { value: 'inactive', label: t('dashboardAdvance.inventoryItems.list.activeStatusInactive') },
+    ];
+    const stockStatusOptions = [
+        { value: 'safe', label: t('dashboardAdvance.inventoryItems.list.statusSafe') },
+        { value: 'low', label: t('dashboardAdvance.inventoryItems.list.statusLowStock') },
+        { value: 'out', label: t('dashboardAdvance.inventoryItems.list.statusOutOfStock') },
+    ];
+
     return (
         <DashboardSidebarLayout
             title={t('dashboardAdvance.inventoryItems.list.layoutTitle')}
@@ -93,7 +107,7 @@ export default function InventoryItemList({ items, categories, branches, filters
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
                 <div className="mb-5 flex flex-col items-start justify-between gap-5">
                     <div className="flex w-full justify-between">
-                        <div className="flex gap-3">
+                        <div className="flex flex-wrap gap-3">
                             {!is_branch_manager ? (
                                 <FilterDropdown
                                     value={filters.branch_id}
@@ -108,11 +122,19 @@ export default function InventoryItemList({ items, categories, branches, filters
                                     {branches[0]?.name ?? t('dashboardAdvance.inventoryItems.list.yourBranchFallback')}
                                 </div>
                             )}
+                            {can_manage_catalog && (
+                                <FilterDropdown
+                                    value={filters.status}
+                                    options={activeStatusOptions}
+                                    allLabel={t('dashboardAdvance.inventoryItems.list.allActiveStatus')}
+                                    onChange={(v) => applyFilters({ status: v })}
+                                />
+                            )}
                             <FilterDropdown
-                                value={filters.category_id}
-                                options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
-                                allLabel={t('dashboardAdvance.inventoryItems.list.allCategories')}
-                                onChange={(v) => applyFilters({ category_id: v })}
+                                value={filters.stock_status}
+                                options={stockStatusOptions}
+                                allLabel={t('dashboardAdvance.inventoryItems.list.allStockStatus')}
+                                onChange={(v) => applyFilters({ stock_status: v })}
                             />
                         </div>
                         <div className="flex items-center gap-3">
@@ -122,6 +144,7 @@ export default function InventoryItemList({ items, categories, branches, filters
                                     onClick={() => setShowCreateModal(true)}
                                 />
                             )}
+                            <PrintButton />
                         </div>
                     </div>
                     <div className="flex w-full items-center justify-between">
@@ -131,12 +154,19 @@ export default function InventoryItemList({ items, categories, branches, filters
                             onSubmit={handleSearch}
                             placeholder={t('dashboardAdvance.inventoryItems.list.searchPlaceholder')}
                         />
+
+                        <FilterDropdown
+                            value={filters.category_id}
+                            options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
+                            allLabel={t('dashboardAdvance.inventoryItems.list.allCategories')}
+                            onChange={(v) => applyFilters({ category_id: v })}
+                        />
                     </div>
                 </div>
 
                 <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
                     <div className="overflow-x-auto">
-                        <Table className="min-w-[840px]">
+                        <Table className="min-w-[900px]">
                             <TableHeader className="bg-[var(--surface-header)]">
                                 <TableRow className="border-none hover:bg-[var(--surface-header)]">
                                     <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.inventoryItems.list.columnName')}</TableHead>
@@ -156,6 +186,9 @@ export default function InventoryItemList({ items, categories, branches, filters
                                     </TableHead>
                                     <TableHead className="text-[var(--text-light)]">
                                         {t('dashboardAdvance.inventoryItems.list.columnStatus')}
+                                    </TableHead>
+                                    <TableHead className="text-[var(--text-light)]">
+                                        {t('dashboardAdvance.inventoryItems.list.columnActiveStatus')}
                                     </TableHead>
                                     <TableHead className="w-[60px] text-[var(--text-light)]">
                                         {t('dashboardAdvance.inventoryItems.list.columnAction')}
@@ -180,7 +213,7 @@ export default function InventoryItemList({ items, categories, branches, filters
                                         const status = getStockStatus(item);
 
                                         return (
-                                            <TableRow key={item.id}>
+                                            <TableRow key={item.id} className={!item.is_active ? 'opacity-60' : ''}>
                                                 <TableCell>
                                                     <div className="flex items-center gap-3">
                                                         {item.image ? (
@@ -233,6 +266,19 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                         </span>
                                                     </div>
                                                 </TableCell>
+                                                <TableCell>
+                                                    <span
+                                                        className={`rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${
+                                                            item.is_active
+                                                                ? 'bg-[var(--success-background)] text-[var(--success)]'
+                                                                : 'bg-[var(--danger-background)] text-[var(--danger)]'
+                                                        }`}
+                                                    >
+                                                        {item.is_active
+                                                            ? t('dashboardAdvance.inventoryItems.list.activeStatusActive')
+                                                            : t('dashboardAdvance.inventoryItems.list.activeStatusInactive')}
+                                                    </span>
+                                                </TableCell>
                                                 <TableCell className="relative">
                                                     {can_manage_catalog ? (
                                                         <Button
@@ -282,11 +328,11 @@ export default function InventoryItemList({ items, categories, branches, filters
                     onClose={closeMenu}
                     onView={handleShowDetail}
                     onEdit={handleShowEdit}
-                    onDelete={handleDelete}
+                    onToggleActive={handleToggleActive}
                 />
             )}
 
-            {detailItem && <InventoryItemDetailModal item={detailItem} canSeeCost={can_manage_catalog} onClose={() => setDetailItem(null)} />}
+            {detailItem && <InventoryItemDetailModal item={detailItem} onClose={() => setDetailItem(null)} />}
 
             {can_manage_catalog && showCreateModal && (
                 <InventoryItemCreateModal categories={categories} branches={branches} onClose={() => setShowCreateModal(false)} />

@@ -22,14 +22,17 @@ class SupplierController extends Controller
             ->where('company_id', $user->company_id)
             ->when($request->search, fn($q) => $q->where('name', 'like', '%' . $request->search . '%'))
             ->when($request->category_id, fn($q) => $q->where('category_id', $request->category_id))
+            ->when($request->status && $request->status !== 'all', function ($q) use ($request) {
+                $q->where('is_active', $request->status === 'active');
+            })
             ->paginate($request->per_page ?? 6)
             ->withQueryString();
 
         return Inertia::render('advance/management/inventory/inventory-supplier', [
             'suppliers' => $suppliers,
-            'categories' => Category::where('company_id', $user->company_id)->select('id', 'name')->get(),
+            'categories' => Category::where('company_id', $user->company_id)->where('is_active', true)->select('id', 'name')->get(),
             'is_branch_manager' => $user->isBranchManager(),
-            'filters' => $request->only('search', 'per_page', 'category_id'),
+            'filters' => $request->only('search', 'per_page', 'category_id', 'status'),
         ]);
     }
 
@@ -125,5 +128,17 @@ class SupplierController extends Controller
         $supplier->delete();
 
         return redirect()->route('dashboard.inventory.suppliers.index')->with('success', 'Pemasok berhasil dihapus!');
+    }
+    public function toggleActive(string $id)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        abort_if(!$user->isOwner(), 403);
+
+        $supplier = Supplier::where('company_id', $user->company_id)->findOrFail($id);
+        $supplier->update(['is_active' => !$supplier->is_active]);
+
+        return redirect()->route('dashboard.inventory.suppliers.index')
+            ->with('success', $supplier->is_active ? 'Pemasok diaktifkan kembali!' : 'Pemasok dinonaktifkan.');
     }
 }

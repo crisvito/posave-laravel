@@ -32,6 +32,7 @@ const receipt = {
     previewSubtotalLabel: 'Subtotal',
     previewTaxLabel: 'Pajak (5%)',
     previewTotalLabel: 'TOTAL',
+    identityFromProfileHint: 'Nama, alamat, kontak, dan logo otomatis mengikuti Company Profile.',
 };
 
 export default receipt;

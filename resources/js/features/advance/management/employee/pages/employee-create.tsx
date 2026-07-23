@@ -2,7 +2,7 @@ import { Button, Input, Label } from '@/components';
 import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronDown, ChevronLeft } from 'lucide-react';
 import React from 'react';
 
 interface Branch {
@@ -39,7 +39,7 @@ export default function EmployeeCreate({ roles, branches }: EmployeeCreateProps)
     };
 
     const selectClass =
-        'border-input focus-visible:ring-ring w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:ring-1 focus-visible:outline-none';
+        'w-full appearance-none rounded-md border border-[var(--border-strong)] bg-transparent px-3 py-2 text-sm text-[var(--subheading)] shadow-sm outline-none focus-visible:ring-1 focus-visible:ring-[var(--ring)] dark:text-[var(--neutral-white)]';
 
     return (
         <DashboardSidebarLayout
@@ -88,22 +88,25 @@ export default function EmployeeCreate({ roles, branches }: EmployeeCreateProps)
 
                         <div>
                             <Label htmlFor="emp-role">{t('dashboardAdvance.employees.create.roleLabel')}</Label>
-                            <select
-                                id="emp-role"
-                                aria-label={t('dashboardAdvance.employees.create.roleAriaLabel')}
-                                className={selectClass}
-                                value={data.role}
-                                onChange={(e) => setData('role', e.target.value)}
-                            >
-                                <option value="" disabled>
-                                    {t('dashboardAdvance.employees.create.rolePlaceholder')}
-                                </option>
-                                {roles.map((role) => (
-                                    <option key={role} value={role}>
-                                        {roleLabel(role)}
+                            <div className="relative">
+                                <select
+                                    id="emp-role"
+                                    aria-label={t('dashboardAdvance.employees.create.roleAriaLabel')}
+                                    className={selectClass}
+                                    value={data.role}
+                                    onChange={(e) => setData('role', e.target.value)}
+                                >
+                                    <option value="" disabled className="bg-[var(--card)]">
+                                        {t('dashboardAdvance.employees.create.rolePlaceholder')}
                                     </option>
-                                ))}
-                            </select>
+                                    {roles.map((role) => (
+                                        <option key={role} value={role} className="bg-[var(--card)]">
+                                            {roleLabel(role)}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 !text-[var(--grey-text)]" />
+                            </div>
                             {errors.role && <span className="text-sm text-[var(--danger)]">{errors.role}</span>}
                         </div>
 
@@ -111,22 +114,25 @@ export default function EmployeeCreate({ roles, branches }: EmployeeCreateProps)
                             <label htmlFor="emp-branch" className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
                                 {t('dashboardAdvance.employees.create.branchLabel')}
                             </label>
-                            <select
-                                id="emp-branch"
-                                aria-label={t('dashboardAdvance.employees.create.branchAriaLabel')}
-                                className={selectClass}
-                                value={data.branch_id}
-                                onChange={(e) => setData('branch_id', e.target.value)}
-                            >
-                                <option value="" disabled>
-                                    {t('dashboardAdvance.employees.create.branchPlaceholder')}
-                                </option>
-                                {branches.map((branch) => (
-                                    <option key={branch.id} value={branch.id}>
-                                        {branch.name}
+                            <div className="relative">
+                                <select
+                                    id="emp-branch"
+                                    aria-label={t('dashboardAdvance.employees.create.branchAriaLabel')}
+                                    className={selectClass}
+                                    value={data.branch_id}
+                                    onChange={(e) => setData('branch_id', e.target.value)}
+                                >
+                                    <option value="" disabled className="bg-[var(--card)]">
+                                        {t('dashboardAdvance.employees.create.branchPlaceholder')}
                                     </option>
-                                ))}
-                            </select>
+                                    {branches.map((branch) => (
+                                        <option key={branch.id} value={branch.id} className="bg-[var(--card)]">
+                                            {branch.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 !text-[var(--grey-text)]" />
+                            </div>
                             {errors.branch_id && <span className="text-sm text-[var(--danger)]">{errors.branch_id}</span>}
                         </div>
 
@@ -148,17 +154,26 @@ export default function EmployeeCreate({ roles, branches }: EmployeeCreateProps)
                             <label htmlFor="emp-slot" className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
                                 {t('dashboardAdvance.employees.create.slotStatusLabel')}
                             </label>
-                            <select
-                                id="emp-slot"
-                                aria-label={t('dashboardAdvance.employees.create.slotStatusAriaLabel')}
-                                className={selectClass}
-                                value={data.slot_status}
-                                onChange={(e) => setData('slot_status', e.target.value)}
-                            >
-                                <option value="available">{t('dashboardAdvance.employees.common.slotAvailable')}</option>
-                                <option value="on_shift">{t('dashboardAdvance.employees.common.slotOnShift')}</option>
-                                <option value="off">{t('dashboardAdvance.employees.common.slotOff')}</option>
-                            </select>
+                            <div className="relative">
+                                <select
+                                    id="emp-slot"
+                                    aria-label={t('dashboardAdvance.employees.create.slotStatusAriaLabel')}
+                                    className={selectClass}
+                                    value={data.slot_status}
+                                    onChange={(e) => setData('slot_status', e.target.value)}
+                                >
+                                    <option value="available" className="bg-[var(--card)]">
+                                        {t('dashboardAdvance.employees.common.slotAvailable')}
+                                    </option>
+                                    <option value="on_shift" className="bg-[var(--card)]">
+                                        {t('dashboardAdvance.employees.common.slotOnShift')}
+                                    </option>
+                                    <option value="off" className="bg-[var(--card)]">
+                                        {t('dashboardAdvance.employees.common.slotOff')}
+                                    </option>
+                                </select>
+                                <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 !text-[var(--grey-text)]" />
+                            </div>
                         </div>
 
                         <div className="mt-4 flex justify-end">

@@ -43,7 +43,7 @@ class PurchaseOrderController extends Controller
             ? Branch::where('id', $user->branch_id)->get(['id', 'name'])
             : Branch::where('company_id', $user->company_id)->get(['id', 'name']);
 
-        $inventoryItems = Item::where('company_id', $user->company_id)->select('id', 'name', 'sku', 'price')->get();
+        $inventoryItems = Item::where('company_id', $user->company_id)->where('is_active', true)->select('id', 'name', 'sku', 'price')->get();
 
         // Ambil harga beli PALING TERAKHIR per barang, dari riwayat PO — bukan dari Item.cost
         // (Item tidak punya konsep harga modal statis; harga beli sepenuhnya hidup di riwayat PO).
@@ -59,7 +59,7 @@ class PurchaseOrderController extends Controller
 
         return Inertia::render('advance/management/inventory/inventory-po', [
             'purchaseOrders' => $purchaseOrders,
-            'suppliers' => Supplier::where('company_id', $user->company_id)->select('id', 'name')->get(),
+            'suppliers' => Supplier::where('company_id', $user->company_id)->where('is_active', true)->select('id', 'name')->get(),
             'inventoryItems' => $inventoryItems,
             'lastPurchasePrices' => $lastPurchasePrices,
             'branches' => $branches,

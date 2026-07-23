@@ -1,5 +1,5 @@
 const blog = {
-    pageTitle: 'Article - POSAVE',
+    pageTitle: 'Article',
     heroTitle: 'Stories & Tips for',
     heroTitleLine2: 'Your Business',
     heroSubtitle: 'Insights and tips to help grow your business',

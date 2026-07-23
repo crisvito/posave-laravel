@@ -17,6 +17,7 @@ interface CompanyProfile {
     x?: string;
     youtube?: string;
     whatsapp?: string;
+    email?: string;
     website?: string;
 }
 
@@ -45,6 +46,7 @@ export default function CompanyProfilePage({ company }: Props) {
         youtube: profile?.youtube ?? '',
         whatsapp: profile?.whatsapp ?? '',
         website: profile?.website ?? '',
+        email: profile?.email ?? '',
         logo: null as File | null,
     });
 
@@ -143,6 +145,18 @@ export default function CompanyProfilePage({ company }: Props) {
                                             onChange={(e) => setData('phone', e.target.value)}
                                             placeholder={t('dashboardAdvance.companyProfile.phonePlaceholder')}
                                         />
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="company-email">{t('dashboardAdvance.companyProfile.emailLabel')}</Label>
+                                        <Input
+                                            id="company-email"
+                                            type="email"
+                                            aria-label={t('dashboardAdvance.companyProfile.emailAriaLabel')}
+                                            value={data.email}
+                                            onChange={(e) => setData('email', e.target.value)}
+                                            placeholder={t('dashboardAdvance.companyProfile.emailPlaceholder')}
+                                        />
+                                        {errors.email && <p className="mt-1 text-xs text-[var(--danger)]">{errors.email}</p>}
                                     </div>
 
                                     <div>

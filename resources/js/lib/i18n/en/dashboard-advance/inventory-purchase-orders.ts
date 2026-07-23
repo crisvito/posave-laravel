@@ -51,7 +51,7 @@ const inventoryPurchaseOrders = {
         lastPricePrefix: 'Last price:',
     },
     actionsMenu: {
-        markSuccess: 'Mark as Completed',
+        markSuccess: 'Completed',
         cancelOrder: 'Cancel',
         delete: 'Delete',
     },

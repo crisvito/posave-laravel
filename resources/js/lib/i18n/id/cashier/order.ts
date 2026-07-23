@@ -1,5 +1,5 @@
 const order = {
-    pageTitle: 'Kasir - POSAVE',
+    pageTitle: 'Kasir',
     searchPlaceholder: 'Cari barang...',
     successPrefix: 'Pembayaran berhasil! Invoice',
     successTotalLabel: 'Total',
