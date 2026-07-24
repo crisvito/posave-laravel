@@ -217,6 +217,7 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                                 <TableCell>
                                                     <div className="flex flex-wrap gap-2 whitespace-nowrap">
                                                         <Button
+                                                            variant="outline"
                                                             aria-label={`${t('dashboardAdvance.inventorySuppliers.list.editAriaLabelPrefix')} ${supplier.name}`}
                                                             onClick={() => setEditSupplier(supplier)}
                                                             className="text-xs font-medium text-[var(--secondary-600)] hover:underline"
@@ -234,6 +235,7 @@ export default function InventorySupplierList({ suppliers, categories, is_branch
                                                             </Button>
                                                         ) : (
                                                             <Button
+                                                                variant="outline"
                                                                 aria-label={`${t('dashboardAdvance.inventorySuppliers.list.activateAriaLabelPrefix')} ${supplier.name}`}
                                                                 onClick={() => handleActivate(supplier)}
                                                                 className="text-xs font-medium text-[var(--success)] hover:underline"

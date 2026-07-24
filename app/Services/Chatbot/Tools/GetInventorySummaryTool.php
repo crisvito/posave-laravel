@@ -31,7 +31,7 @@ class GetInventorySummaryTool implements ToolInterface
         'category_name' => ['type' => 'string', 'description' => 'Filter kategori tertentu (opsional).'],
         'branch_name' => ['type' => 'string', 'description' => 'Filter cabang tertentu. Hanya berlaku untuk Owner — diabaikan untuk Branch Manager/Cashier karena mereka cuma bisa lihat cabangnya sendiri. Kalau Owner tidak sebutkan cabang, stok dijumlahkan dari semua cabang.'],
         'stock_status' => ['type' => 'string', 'enum' => ['all', 'out', 'low', 'safe'], 'description' => 'Filter status stok: habis, mau habis, atau aman. Default "all".'],
-        'sort_by' => ['type' => 'string', 'enum' => ['name', 'price', 'cost', 'stock'], 'description' => 'Urutkan berdasarkan apa. Default "name".'],
+        'sort_by' => ['type' => 'string', 'enum' => ['name', 'price', 'stock'], 'description' => 'Urutkan berdasarkan apa. Default "name".'],
         'order' => ['type' => 'string', 'enum' => ['asc', 'desc'], 'description' => 'Urutan naik ("asc", untuk termurah/tersedikit) atau turun ("desc", untuk termahal/terbanyak). Default "asc".'],
         'limit' => ['type' => 'integer', 'description' => 'Jumlah hasil maksimal. Pakai untuk "top 3", "5 barang termahal", dll. Default 20, maksimal 100.'],
       ],
@@ -106,7 +106,6 @@ class GetInventorySummaryTool implements ToolInterface
         'sku' => $item->sku,
         'category_name' => $item->category?->name,
         'price' => (float) $item->price,
-        'cost' => (float) $item->cost,
         'current_stock' => $current,
         'min_stock' => $min,
         'status' => $status,
@@ -122,7 +121,6 @@ class GetInventorySummaryTool implements ToolInterface
     $order = $args['order'] ?? 'asc';
     $sortKey = match ($sortBy) {
       'price' => 'price',
-      'cost' => 'cost',
       'stock' => 'current_stock',
       default => 'name',
     };

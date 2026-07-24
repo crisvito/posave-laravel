@@ -280,6 +280,7 @@ export default function InventoryTransferList({
                                                         {iAmApproverWaiting && (
                                                             <>
                                                                 <Button
+                                                                    variant="outline"
                                                                     aria-label={`${t('dashboardAdvance.inventoryTransfers.list.acceptAriaLabelPrefix')} ${transfer.transfer_number}`}
                                                                     onClick={() => handleAccept(transfer)}
                                                                     className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--success)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:opacity-90"
@@ -288,6 +289,7 @@ export default function InventoryTransferList({
                                                                     {t('dashboardAdvance.inventoryTransfers.list.acceptLabel')}
                                                                 </Button>
                                                                 <Button
+                                                                    variant="outline"
                                                                     aria-label={`${t('dashboardAdvance.inventoryTransfers.list.rejectAriaLabelPrefix')} ${transfer.transfer_number}`}
                                                                     onClick={() => setRejectTarget(transfer)}
                                                                     className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--danger-background)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-[var(--danger)] hover:opacity-90"
@@ -299,6 +301,7 @@ export default function InventoryTransferList({
                                                         )}
                                                         {iAmInvolvedWaiting && (
                                                             <Button
+                                                                variant="outline"
                                                                 aria-label={`${t('dashboardAdvance.inventoryTransfers.list.cancelAriaLabelPrefix')} ${transfer.transfer_number}`}
                                                                 onClick={() => handleCancel(transfer)}
                                                                 className="rounded-lg border border-[var(--border-strong)] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[var(--grey-text)] hover:bg-[var(--second-accent)]"

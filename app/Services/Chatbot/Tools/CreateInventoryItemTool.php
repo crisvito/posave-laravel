@@ -17,9 +17,7 @@ class CreateInventoryItemTool implements ToolInterface
 
   public function description(): string
   {
-    return 'Tambah barang baru ke katalog. WAJIB tanya user dulu kalau nama/harga/kategori belum lengkap — jangan asal isi sendiri. '
-      . 'Harga modal (cost) opsional tapi sebaiknya diisi supaya laporan margin & penyesuaian stok nanti akurat. '
-      . 'Tool ini cuma nyiapin draft, belum langsung nyimpen — user tetap harus konfirmasi lewat tombol yang muncul.';
+    return 'Tambah barang baru ke katalog. Untuk mode Advance, stok awal TIDAK diisi di sini — user diarahkan pakai Pembelian (PO) untuk menambah stok setelah barang dibuat.';
   }
 
   public function parameters(): array
@@ -29,9 +27,9 @@ class CreateInventoryItemTool implements ToolInterface
       'properties' => [
         'name' => ['type' => 'string', 'description' => 'Nama barang'],
         'price' => ['type' => 'number', 'description' => 'Harga jual dalam Rupiah'],
-        'cost' => ['type' => 'number', 'description' => 'Harga modal / HPP dalam Rupiah. Opsional — kalau tidak disebut, disimpan 0 dan bisa diisi belakangan.'],
         'category_name' => ['type' => 'string', 'description' => 'Nama kategori (harus salah satu kategori yang sudah ada)'],
-        'initial_stock' => ['type' => 'integer', 'description' => 'Stok awal, default 0 kalau tidak disebut'],
+        'min_stock' => ['type' => 'integer', 'description' => 'Batas stok minimum sebelum dianggap "mau habis". Opsional.'],
+        'initial_stock' => ['type' => 'integer', 'description' => 'Stok awal. Hanya berlaku untuk mode Lite — diabaikan untuk mode Advance (gunakan Pembelian/PO untuk menambah stok).'],
       ],
       'required' => ['name', 'price', 'category_name'],
     ];
@@ -59,13 +57,16 @@ class CreateInventoryItemTool implements ToolInterface
       ->where('name', 'like', $args['category_name'] ?? '')
       ->first();
 
+    $isLite = $user->company?->isLite() ?? false;
+
     return [
       'name' => $args['name'] ?? null,
       'price' => (float) ($args['price'] ?? 0),
-      'cost' => (float) ($args['cost'] ?? 0),
       'category_name' => $category?->name ?? ($args['category_name'] ?? 'Tidak ditemukan'),
       'category_valid' => (bool) $category,
-      'initial_stock' => (int) ($args['initial_stock'] ?? 0),
+      'min_stock' => (int) ($args['min_stock'] ?? 0),
+      'initial_stock' => $isLite ? (int) ($args['initial_stock'] ?? 0) : 0,
+      'initial_stock_note' => $isLite ? null : 'Stok awal diabaikan di mode Advance — tambahkan lewat Pembelian (PO) setelah barang dibuat.',
     ];
   }
 
@@ -75,8 +76,8 @@ class CreateInventoryItemTool implements ToolInterface
     $validated = Validator::make($args, [
       'name' => 'required|string|max:255',
       'price' => 'required|numeric|min:0',
-      'cost' => 'nullable|numeric|min:0',
       'category_name' => 'required|string',
+      'min_stock' => 'nullable|integer|min:0',
       'initial_stock' => 'nullable|integer|min:0',
     ])->validate();
 
@@ -89,16 +90,17 @@ class CreateInventoryItemTool implements ToolInterface
       'name' => $validated['name'],
       'category_id' => $category->id,
       'price' => $validated['price'],
-      'cost' => $validated['cost'] ?? 0,
       'is_active' => true,
       'sku' => Item::generateSku(),
     ]);
 
+    $isLite = $user->company?->isLite() ?? false;
+
     BranchStock::create([
       'branch_id' => $user->branch_id,
       'inventory_item_id' => $item->id,
-      'current_stock' => $validated['initial_stock'] ?? 0,
-      'min_stock' => 0,
+      'current_stock' => $isLite ? ($validated['initial_stock'] ?? 0) : 0,
+      'min_stock' => $validated['min_stock'] ?? 0,
     ]);
 
     return ['item_id' => $item->id, 'name' => $item->name];
@@ -107,13 +109,19 @@ class CreateInventoryItemTool implements ToolInterface
   public function formFields(User $user, array $currentArgs): array
   {
     $categories = Category::where('company_id', $user->company_id)->orderBy('name')->pluck('name');
+    $isLite = $user->company?->isLite() ?? false;
 
-    return [
+    $fields = [
       ['name' => 'name', 'label' => 'Nama Barang', 'type' => 'text', 'required' => true, 'value' => $currentArgs['name'] ?? ''],
       ['name' => 'price', 'label' => 'Harga Jual (Rp)', 'type' => 'number', 'required' => true, 'value' => $currentArgs['price'] ?? ''],
-      ['name' => 'cost', 'label' => 'Harga Modal / HPP (Rp, opsional)', 'type' => 'number', 'required' => false, 'value' => $currentArgs['cost'] ?? ''],
       ['name' => 'category_name', 'label' => 'Kategori', 'type' => 'select', 'required' => true, 'value' => $currentArgs['category_name'] ?? '', 'options' => $categories->values()->all()],
-      ['name' => 'initial_stock', 'label' => 'Stok Awal (opsional)', 'type' => 'number', 'required' => false, 'value' => $currentArgs['initial_stock'] ?? 0],
+      ['name' => 'min_stock', 'label' => 'Batas Stok Minimum (opsional)', 'type' => 'number', 'required' => false, 'value' => $currentArgs['min_stock'] ?? 0],
     ];
+
+    if ($isLite) {
+      $fields[] = ['name' => 'initial_stock', 'label' => 'Stok Awal (opsional)', 'type' => 'number', 'required' => false, 'value' => $currentArgs['initial_stock'] ?? 0];
+    }
+
+    return $fields;
   }
 }
