@@ -5,7 +5,7 @@ const welcome = {
         titleLine2: 'All Problems',
         subtitleLine1: "We're always here to accompany your",
         subtitleLine2: 'business journey.',
-        button: 'Schedule a Demo',
+        button: 'Try it Right Now',
         eyebrow: 'Modern Cashier System',
     },
     features: {

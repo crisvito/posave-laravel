@@ -1,5 +1,4 @@
 import type { LucideIcon } from 'lucide-react';
-import { DeltaBadge } from './delta-badge';
 
 export interface Kpi {
     value: number;
@@ -22,7 +21,7 @@ export function KpiCard({
     suffix?: string;
     color: string;
     bg: string;
-    delta: number;
+    delta?: number;
 }) {
     return (
         <div className="flex flex-col gap-3 rounded-xl border border-[var(--border-strong)] bg-[var(--card)] p-4 shadow-sm">
@@ -30,7 +29,7 @@ export function KpiCard({
                 <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor: bg, color }}>
                     <Icon className="h-5 w-5" />
                 </div>
-                <DeltaBadge value={delta} compact />
+                {/* <DeltaBadge value={delta} compact /> */}
             </div>
             <div className="min-w-0">
                 <p className="truncate text-xs font-medium text-[var(--grey-text)]">{label}</p>

@@ -282,6 +282,7 @@ export default function BranchesPage({ branches, filters = {} }: Props) {
                             <div className="flex gap-3">
                                 <DeleteButton type="button" label={t('dashboardAdvance.branches.cancel')} onClick={closeModal} />
                                 <Button
+                                    variant="outline"
                                     type="submit"
                                     aria-label={
                                         modal === 'add'

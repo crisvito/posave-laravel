@@ -5,7 +5,7 @@ const welcome = {
         titleLine2: 'Semua Masalah',
         subtitleLine1: 'Kami hadir untuk senantiasa menemani perjalanan',
         subtitleLine2: 'bisnis anda',
-        button: 'Jadwalkan Demo',
+        button: 'Coba Sekarang',
         eyebrow: 'Sistem Kasir Modern',
     },
     features: {

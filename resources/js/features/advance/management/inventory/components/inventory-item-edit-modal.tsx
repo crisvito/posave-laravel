@@ -109,6 +109,7 @@ export function InventoryItemEditModal({ item, categories, onClose }: InventoryI
                                 type="text"
                                 value={data.sku}
                                 onChange={(e) => setData('sku', e.target.value)}
+                                disabled
                             />
                             {errors.sku && <span className="text-xs text-[var(--danger)]">{errors.sku}</span>}
                         </div>

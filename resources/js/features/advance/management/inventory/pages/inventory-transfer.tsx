@@ -283,7 +283,7 @@ export default function InventoryTransferList({
                                                                     variant="outline"
                                                                     aria-label={`${t('dashboardAdvance.inventoryTransfers.list.acceptAriaLabelPrefix')} ${transfer.transfer_number}`}
                                                                     onClick={() => handleAccept(transfer)}
-                                                                    className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--success)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:opacity-90"
+                                                                    className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--success)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:underline hover:opacity-90"
                                                                 >
                                                                     <Check className="h-3.5 w-3.5" />{' '}
                                                                     {t('dashboardAdvance.inventoryTransfers.list.acceptLabel')}
@@ -292,7 +292,7 @@ export default function InventoryTransferList({
                                                                     variant="outline"
                                                                     aria-label={`${t('dashboardAdvance.inventoryTransfers.list.rejectAriaLabelPrefix')} ${transfer.transfer_number}`}
                                                                     onClick={() => setRejectTarget(transfer)}
-                                                                    className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--danger-background)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-[var(--danger)] hover:opacity-90"
+                                                                    className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--danger-background)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-[var(--danger)] hover:underline hover:opacity-90"
                                                                 >
                                                                     <XIcon className="h-3.5 w-3.5" />{' '}
                                                                     {t('dashboardAdvance.inventoryTransfers.list.rejectLabel')}
@@ -304,11 +304,12 @@ export default function InventoryTransferList({
                                                                 variant="outline"
                                                                 aria-label={`${t('dashboardAdvance.inventoryTransfers.list.cancelAriaLabelPrefix')} ${transfer.transfer_number}`}
                                                                 onClick={() => handleCancel(transfer)}
-                                                                className="rounded-lg border border-[var(--border-strong)] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[var(--grey-text)] hover:bg-[var(--second-accent)]"
+                                                                className="rounded-lg border border-[var(--border-strong)] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[var(--grey-text)] hover:bg-[var(--second-accent)] hover:underline"
                                                             >
                                                                 {t('dashboardAdvance.inventoryTransfers.list.cancelLabel')}
                                                             </Button>
                                                         )}
+                                                        {!iAmInvolvedWaiting && !iAmApproverWaiting && <span>-</span>}
                                                     </div>
                                                 </TableCell>
                                             </TableRow>

@@ -44,7 +44,7 @@ interface SuccessSnapshot {
 
 export default function OrderPage({ items, categories, company_profile = null, receipt_notes = null }: Props) {
     const { open } = useChatbot();
-    const { t } = useLanguage();
+    const { t, locale } = useLanguage();
     const [search, setSearch] = useState('');
     const [activeCategory, setActiveCategory] = useState<number | 'all'>('all');
     const [cart, setCart] = useState<CartItem[]>([]);
@@ -365,7 +365,13 @@ export default function OrderPage({ items, categories, company_profile = null, r
             {successData && (
                 <PrintableReceipt
                     invoice={successData.invoice}
-                    date={successData.date}
+                    dateLabel={successData.date.toLocaleString(locale === 'en' ? 'en-US' : 'id-ID', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    })}
                     items={successData.items}
                     subtotal={successData.subtotal}
                     discount={successData.discount}

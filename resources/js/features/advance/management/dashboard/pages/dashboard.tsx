@@ -21,9 +21,9 @@ import {
 } from '@/features/advance/management/dashboard/components';
 import { useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
-import { formatNumber, formatPct, formatRupiah } from '@/lib/format';
+import { formatNumber, formatRupiah } from '@/lib/format';
 import { Head, Link, router } from '@inertiajs/react';
-import { ArrowUpRight, Boxes, Clock, CreditCard, Percent, PiggyBank, Receipt, TrendingUp, Wallet } from 'lucide-react';
+import { ArrowUpRight, Boxes, Clock, CreditCard, PiggyBank, Receipt, TrendingUp, Wallet } from 'lucide-react';
 import { lazy, Suspense, useState } from 'react';
 
 const SalesTrendChart = lazy(() => import('../components/sales-trend-chart').then((m) => ({ default: m.SalesTrendChart })));
@@ -93,7 +93,7 @@ export default function Dashboard({
 
                 <PendingTransfersCard transfers={pendingTransfers} count={pendingTransfersCount} />
 
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
                     <KpiCard
                         icon={Wallet}
                         label={t('dashboardAdvance.dashboard.kpis.totalSales')}
@@ -134,14 +134,6 @@ export default function Dashboard({
                         color="var(--success)"
                         bg="var(--success-background)"
                         delta={kpis.grossProfit.deltaPct}
-                    />
-                    <KpiCard
-                        icon={Percent}
-                        label={t('dashboardAdvance.dashboard.kpis.margin')}
-                        value={formatPct(kpis.margin.value)}
-                        color="var(--income-icon-text)"
-                        bg="var(--income-icon-bg)"
-                        delta={kpis.margin.deltaPct}
                     />
                 </div>
 

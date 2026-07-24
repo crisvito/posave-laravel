@@ -105,8 +105,6 @@ export default function HistoryPage({ transactions, filters, company_profile = n
                                 <SelectItem value="all">{t('cashier.history.paymentFilter.all')}</SelectItem>
                                 <SelectItem value="cash">{t('cashier.history.paymentFilter.cash')}</SelectItem>
                                 <SelectItem value="qris">{t('cashier.history.paymentFilter.qris')}</SelectItem>
-                                <SelectItem value="debit">{t('cashier.history.paymentFilter.debit')}</SelectItem>
-                                <SelectItem value="transfer">{t('cashier.history.paymentFilter.transfer')}</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>

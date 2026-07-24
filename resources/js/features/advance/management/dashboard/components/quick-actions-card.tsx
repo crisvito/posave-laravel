@@ -1,6 +1,6 @@
 import { useLanguage } from '@/hooks';
 import { Link } from '@inertiajs/react';
-import { FileText, Package, Plus, Receipt, ReceiptText, UserPlus, type LucideIcon } from 'lucide-react';
+import { Package, Plus, Receipt, ReceiptText, UserPlus, type LucideIcon } from 'lucide-react';
 
 interface QuickAction {
     label: string;
@@ -17,7 +17,7 @@ export function QuickActionsCard({ className }: { className?: string }) {
         {
             label: t('dashboardAdvance.dashboard.quickActions.addProduct'),
             icon: Plus,
-            routeName: 'dashboard.inventory.items.create',
+            routeName: 'dashboard.inventory.items.index',
             color: 'var(--income-icon-text)',
             bg: 'var(--income-icon-bg)',
         },
@@ -43,13 +43,6 @@ export function QuickActionsCard({ className }: { className?: string }) {
             bg: 'var(--warning-background)',
         },
         {
-            label: t('dashboardAdvance.dashboard.quickActions.stockReport'),
-            icon: FileText,
-            routeName: '',
-            color: 'var(--income-icon-text)',
-            bg: 'var(--income-icon-bg)',
-        },
-        {
             label: t('dashboardAdvance.dashboard.quickActions.printReceipt'),
             icon: Receipt,
             routeName: 'settings.receipt',
@@ -61,7 +54,7 @@ export function QuickActionsCard({ className }: { className?: string }) {
     return (
         <div className={`rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] p-4 shadow-sm sm:p-6 ${className ?? ''}`}>
             <h3 className="mb-4 text-sm font-semibold text-[var(--subheading)]">{t('dashboardAdvance.dashboard.quickActions.title')}</h3>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
                 {QUICK_ACTIONS.map((action) => {
                     const content = (
                         <>
