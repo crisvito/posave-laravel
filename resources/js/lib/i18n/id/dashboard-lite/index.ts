@@ -1,4 +1,5 @@
 import { dashboard } from './dashboard';
+import { history } from './history';
 import { inventoryAdjustments } from './inventory-adjustments';
 import { inventoryCategories } from './inventory-categories';
 import { inventoryItems } from './inventory-items';

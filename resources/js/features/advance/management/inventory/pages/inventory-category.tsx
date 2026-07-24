@@ -163,6 +163,7 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                                                 <TableCell>
                                                     <div className="flex flex-wrap gap-2 whitespace-nowrap">
                                                         <Button
+                                                            variant="outline"
                                                             aria-label={`${t('dashboardAdvance.inventoryCategories.list.editAriaLabelPrefix')} ${category.name}`}
                                                             onClick={() => setEditCategory(category)}
                                                             className="text-xs font-medium text-[var(--secondary-600)] hover:underline"

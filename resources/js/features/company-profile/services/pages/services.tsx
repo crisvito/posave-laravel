@@ -4,8 +4,15 @@ import { Head } from '@inertiajs/react';
 import { AnimatedLink } from '../components/animatedLink';
 import { FeatureCard } from '../components/featureCard';
 
+// Pastikan lokasi import di bawah ini sesuai dengan tempat kamu menyimpan file-nya
+import { Reveal } from '../../components';
+import { useSmoothScroll } from '../../lib/use-smooth-scroll';
+
 export default function Services() {
     const { t } = useLanguage();
+
+    // Mengaktifkan smooth scroll untuk halaman ini
+    useSmoothScroll();
 
     const steps = [
         { no: '1', label: t('companyProfile.services.step1') },
@@ -17,124 +24,154 @@ export default function Services() {
         <AppLayout>
             <Head title={t('companyProfile.services.pageTitle')} />
 
-            <div className="py-4 md:py-8">
-                <div className="relative mx-4 flex h-[380px] items-center justify-center overflow-hidden rounded-[30px] md:mx-0 md:h-[460px] md:rounded-[40px]">
-                    <img src="assets/services/services-banner.png" alt="Pemilik Toko" className="absolute inset-0 h-full w-full object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
+            {/* 
+              Bungkus utama dengan padding atas-bawah.
+              Kita gunakan mx-auto dan max-w-6xl di setiap section agar rapi di tengah.
+            */}
+            <div className="py-8 md:py-12">
+                {/* --- 1. HERO SECTION --- */}
+                <div className="mx-auto max-w-6xl">
+                    <Reveal y={40}>
+                        <div className="relative flex min-h-[500px] w-full items-center justify-center overflow-hidden rounded-[2rem] shadow-2xl md:min-h-[600px] md:rounded-[3rem]">
+                            <img
+                                src="assets/services/services-banner.png"
+                                alt="Pemilik Toko"
+                                className="absolute inset-0 h-full w-full object-cover transition-transform duration-1000 hover:scale-105"
+                            />
+                            {/* Gradient yang lebih halus */}
+                            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/80"></div>
 
-                    <div className="relative z-10 flex flex-col items-center px-6 text-center">
-                        {/* <span className="mb-4 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-widest text-white uppercase backdrop-blur-sm md:text-sm">
-                            {t('companyProfile.services.heroEyebrow')}
-                        </span> */}
+                            <div className="relative z-10 flex flex-col items-center px-6 text-center">
+                                <h1 className="mb-4 text-4xl leading-tight font-bold tracking-tight text-white md:text-6xl lg:text-[72px]">
+                                    {t('companyProfile.services.heroTitle')}
+                                </h1>
 
-                        <h1 className="text-3xl leading-tight font-semibold tracking-wide text-white md:text-[56px]">
-                            {t('companyProfile.services.heroTitle')}
-                        </h1>
+                                <p className="mb-10 max-w-2xl text-lg text-white/90 md:text-2xl">{t('companyProfile.services.heroSubtitle')}</p>
 
-                        <p className="mt-3 mb-8 text-base text-white/80 md:mb-10 md:text-[24px]">{t('companyProfile.services.heroSubtitle')}</p>
+                                <AnimatedLink
+                                    href="/register"
+                                    className="rounded-full bg-[var(--secondary-600)] px-10 py-4 text-lg font-semibold text-white shadow-xl transition-all hover:-translate-y-1 md:text-xl"
+                                    hoverBgClass="bg-[var(--secondary-700)]"
+                                >
+                                    {t('companyProfile.services.heroButton')}
+                                </AnimatedLink>
+                            </div>
+                        </div>
+                    </Reveal>
+                </div>
 
-                        <AnimatedLink
-                            href="/register"
-                            className="rounded-full bg-[var(--secondary-600)] px-8 py-3 text-lg font-medium text-white shadow-lg md:px-10 md:text-[20px]"
-                            hoverBgClass="bg-[var(--secondary-700)]"
-                        >
-                            {t('companyProfile.services.heroButton')}
-                        </AnimatedLink>
+                {/* --- 2. CHAT SECTION --- */}
+                <div className="mx-auto max-w-6xl px-6 py-20 md:py-32">
+                    <div className="flex flex-col-reverse items-center justify-between gap-16 md:flex-row md:gap-12">
+                        <div className="flex w-full flex-col items-center text-center md:w-1/2 md:items-start md:text-left">
+                            <Reveal delay={0.1}>
+                                <p className="mb-3 text-sm font-bold tracking-widest text-[var(--secondary-600)] uppercase md:text-base">
+                                    {t('companyProfile.services.chatEyebrow')}
+                                </p>
+                                <h2 className="mb-6 text-3xl leading-tight font-bold text-[var(--foreground)] md:mb-8 md:text-5xl">
+                                    {t('companyProfile.services.chatTitle')}
+                                </h2>
+                                <p className="mb-10 text-lg leading-relaxed text-[var(--muted-foreground)] md:text-xl">
+                                    {t('companyProfile.services.chatBody')}
+                                </p>
+                                <AnimatedLink
+                                    href="#"
+                                    className="rounded-full border-2 border-[var(--secondary-600)] bg-transparent px-8 py-3 text-base font-semibold text-[var(--secondary-600)] transition-all hover:shadow-lg md:px-10 md:text-lg"
+                                    hoverBgClass="bg-[var(--secondary-600)]/10"
+                                >
+                                    {t('companyProfile.services.chatButton')}
+                                </AnimatedLink>
+                            </Reveal>
+                        </div>
+
+                        <div className="flex w-full justify-center md:w-1/2 md:justify-end">
+                            <Reveal delay={0.3}>
+                                {/* Efek bingkai bayangan di belakang gambar */}
+                                <div className="relative">
+                                    <div className="absolute -inset-4 rounded-[2.5rem] bg-[var(--secondary-600)]/10 blur-xl"></div>
+                                    <div className="relative rounded-[2rem] bg-[var(--card)] p-4 shadow-xl ring-1 ring-[var(--border)]">
+                                        <img
+                                            src="assets/services/chat-toko.png"
+                                            alt="Chat Toko"
+                                            className="w-full max-w-[260px] rounded-xl object-contain md:max-w-[320px]"
+                                        />
+                                    </div>
+                                </div>
+                            </Reveal>
+                        </div>
                     </div>
                 </div>
 
-                <div className="mt-16 mb-16 px-6 md:mt-24 md:mb-20 md:px-20 lg:px-28">
-                    <p className="mb-2 text-center text-sm font-semibold tracking-widest text-[var(--secondary-600)] uppercase md:text-base">
-                        {t('companyProfile.services.chatEyebrow')}
-                    </p>
-                    <h2 className="mb-10 text-center text-3xl font-semibold text-[var(--foreground)] md:mb-14 md:text-[44px]">
-                        {t('companyProfile.services.chatTitle')}
-                    </h2>
-
-                    <div className="flex flex-col-reverse items-center justify-between gap-10 md:flex-row md:gap-12">
-                        <div className="flex flex-col items-center text-center md:w-1/2 md:items-start md:text-left">
-                            <p className="mb-8 text-base leading-relaxed text-[var(--muted-foreground)] md:text-[20px]">
-                                {t('companyProfile.services.chatBody')}
+                {/* --- 3. FEATURES SECTION --- */}
+                <div className="mx-4 max-w-6xl bg-[var(--card)] py-20 shadow-sm ring-1 ring-[var(--border)] sm:rounded-[3rem] md:mx-auto md:px-12">
+                    <div className="mx-auto max-w-5xl px-6">
+                        <Reveal className="mb-16 text-center md:mb-20">
+                            <p className="mb-3 text-sm font-bold tracking-widest text-[var(--secondary-600)] uppercase md:text-base">
+                                {t('companyProfile.services.featuresEyebrow')}
                             </p>
-                            <AnimatedLink
-                                href="#"
-                                className="rounded-full border-2 border-[var(--secondary-600)] bg-transparent px-8 py-3 text-base font-medium text-[var(--secondary-600)] md:text-[18px]"
-                                hoverBgClass="bg-[var(--secondary-600)]/10"
-                            >
-                                {t('companyProfile.services.chatButton')}
-                            </AnimatedLink>
-                        </div>
+                            <h2 className="text-3xl font-bold text-[var(--foreground)] md:text-5xl">{t('companyProfile.services.featuresTitle')}</h2>
+                        </Reveal>
 
-                        <div className="flex justify-center md:w-1/2 md:justify-end">
-                            <div className="rounded-[28px] bg-[var(--card)] p-4 shadow-lg ring-1 ring-[var(--border)]">
+                        <Reveal delay={0.2}>
+                            <FeatureCard />
+                        </Reveal>
+                    </div>
+                </div>
+
+                {/* --- 4. HOW IT WORKS SECTION --- */}
+                <div className="mx-auto max-w-6xl px-6 py-20 md:py-32">
+                    <Reveal className="mb-12 text-center md:mb-16">
+                        <h2 className="text-3xl font-bold text-[var(--foreground)] md:text-5xl">{t('companyProfile.services.howItWorksTitle')}</h2>
+                    </Reveal>
+
+                    {/* Menggunakan Grid agar kotak langkah-langkah sama besar dan rapi */}
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 md:gap-8">
+                        {steps.map((step, index) => (
+                            <Reveal key={step.no} delay={index * 0.15}>
+                                <div className="flex h-full flex-col items-center justify-center rounded-[2rem] bg-[var(--card)] p-8 text-center ring-1 ring-[var(--border)] transition-transform duration-300 hover:-translate-y-2 hover:shadow-xl">
+                                    <span className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--secondary-600)] text-2xl font-bold text-white shadow-lg">
+                                        {step.no}
+                                    </span>
+                                    <span className="text-lg font-bold text-[var(--foreground)] md:text-xl">{step.label}</span>
+                                </div>
+                            </Reveal>
+                        ))}
+                    </div>
+                </div>
+
+                {/* --- 5. CALL TO ACTION SECTION --- */}
+                <div className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
+                    <Reveal>
+                        <div className="relative flex flex-col items-center justify-between gap-10 overflow-hidden rounded-[2.5rem] bg-[var(--primary-900)] p-10 text-center shadow-2xl md:flex-row md:p-14 md:text-left lg:p-20">
+                            {/* Hiasan background abstrak di dalam kotak */}
+                            <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-white/5 blur-3xl"></div>
+
+                            <div className="relative z-10 flex w-full flex-col items-center md:w-3/5 md:items-start">
+                                <h2 className="mb-4 text-3xl leading-tight font-bold text-white sm:text-4xl lg:text-5xl">
+                                    {t('companyProfile.services.ctaTitleLine1')}
+                                    <br className="hidden md:block" /> {t('companyProfile.services.ctaTitleLine2')}
+                                </h2>
+
+                                <p className="mb-8 text-base text-white/80 md:text-lg lg:text-xl">{t('companyProfile.services.ctaSubtitle')}</p>
+
+                                <AnimatedLink
+                                    href="/register"
+                                    className="inline-block rounded-full bg-[var(--secondary-600)] px-8 py-4 text-lg font-semibold text-white shadow-lg transition-transform hover:-translate-y-1 lg:px-10 lg:text-xl"
+                                    hoverBgClass="bg-[var(--secondary-700)]"
+                                >
+                                    {t('companyProfile.services.ctaButton')}
+                                </AnimatedLink>
+                            </div>
+
+                            <div className="relative z-10 flex w-full justify-center md:w-2/5 md:justify-end">
                                 <img
-                                    src="assets/services/chat-toko.png"
-                                    alt="Chat Toko"
-                                    className="w-full max-w-[240px] rounded-2xl object-contain md:max-w-[300px]"
+                                    src="assets/services/mulai-sekarang.png"
+                                    alt="Mulai Sekarang"
+                                    className="w-full max-w-[280px] rounded-2xl object-cover shadow-2xl transition-transform duration-500 hover:scale-105 hover:rotate-2 lg:max-w-[340px]"
                                 />
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <div className="mx-4 mb-10 rounded-[30px] bg-[var(--card)] px-5 py-12 ring-1 ring-[var(--border)] md:mx-0 md:rounded-[40px] md:px-12 md:py-16">
-                    <div className="mb-16 md:mb-20">
-                        <p className="mb-2 text-center text-sm font-semibold tracking-widest text-[var(--secondary-600)] uppercase md:text-base">
-                            {t('companyProfile.services.featuresEyebrow')}
-                        </p>
-                        <h2 className="mb-8 text-center text-3xl font-semibold text-[var(--foreground)] md:mb-10 md:text-[44px]">
-                            {t('companyProfile.services.featuresTitle')}
-                        </h2>
-                        <FeatureCard />
-                    </div>
-
-                    <div className="mb-16 md:mb-20">
-                        <h2 className="mb-8 text-center text-3xl font-semibold text-[var(--foreground)] md:mb-10 md:text-[44px]">
-                            {t('companyProfile.services.howItWorksTitle')}
-                        </h2>
-                        <div className="flex flex-wrap justify-center gap-4 md:gap-7">
-                            {steps.map((step) => (
-                                <div
-                                    key={step.no}
-                                    className="flex w-full items-center gap-4 rounded-2xl bg-[var(--background)] px-6 py-4 ring-1 ring-[var(--border)] sm:w-auto md:px-8 md:py-5"
-                                >
-                                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--secondary-600)] text-lg font-bold text-white md:h-12 md:w-12 md:text-xl">
-                                        {step.no}
-                                    </span>
-                                    <span className="text-base font-semibold text-[var(--foreground)] md:text-[20px]">{step.label}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-between gap-8 overflow-hidden rounded-[24px] bg-[var(--primary-900)] p-6 text-center shadow-md md:flex-row md:p-10 md:text-left lg:gap-0 lg:rounded-[30px] lg:p-12">
-                        <div className="flex w-full flex-col items-center md:w-[55%] md:items-start lg:w-[60%]">
-                            <h2 className="mb-3 text-2xl leading-snug font-semibold text-white sm:text-3xl md:mb-5 lg:text-[40px]">
-                                {t('companyProfile.services.ctaTitleLine1')}
-                                <br className="hidden lg:block" /> {t('companyProfile.services.ctaTitleLine2')}
-                            </h2>
-
-                            <p className="mb-6 px-2 text-[15px] text-[var(--accent-900)] sm:text-base md:mb-8 md:px-0 md:text-lg lg:text-[19px]">
-                                {t('companyProfile.services.ctaSubtitle')}
-                            </p>
-
-                            <AnimatedLink
-                                href="/register"
-                                className="inline-block rounded-full bg-[var(--secondary-600)] px-6 py-3 text-base font-medium text-white shadow-md sm:text-lg lg:px-8 lg:py-3.5 lg:text-[22px]"
-                                hoverBgClass="bg-[var(--secondary-700)]"
-                            >
-                                {t('companyProfile.services.ctaButton')}
-                            </AnimatedLink>
-                        </div>
-
-                        <div className="mt-2 flex w-full justify-center md:mt-0 md:w-[45%] md:justify-end lg:w-[40%]">
-                            <img
-                                src="assets/services/mulai-sekarang.png"
-                                alt="Mulai Sekarang"
-                                className="w-full max-w-[260px] rounded-2xl object-cover md:max-w-[300px] lg:max-w-[360px]"
-                            />
-                        </div>
-                    </div>
+                    </Reveal>
                 </div>
             </div>
         </AppLayout>

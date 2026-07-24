@@ -6,6 +6,7 @@ const welcome = {
         subtitleLine1: "We're always here to accompany your",
         subtitleLine2: 'business journey.',
         button: 'Schedule a Demo',
+        eyebrow: 'Modern Cashier System',
     },
     features: {
         title: 'POSAVE Main Features',

@@ -9,8 +9,6 @@ export const history = {
         all: 'Semua',
         cash: 'Tunai',
         qris: 'QRIS',
-        debit: 'Debit',
-        transfer: 'Transfer',
     },
     filterAriaPrefix: 'Filter metode',
     emptyState: 'Belum ada penjualan di tanggal ini',

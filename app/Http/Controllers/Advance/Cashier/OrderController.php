@@ -21,6 +21,7 @@ class OrderController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
+        $user->load('company.profile', 'company.receiptSetting');
 
         $items = Item::with('category')
             ->where('company_id', $user->company_id)
@@ -50,6 +51,8 @@ class OrderController extends Controller
         return Inertia::render('advance/cashier/order/order', [
             'items' => $items,
             'categories' => $categories,
+            'company_profile' => $user->company->profile,
+            'receipt_notes' => $user->company->receiptSetting?->notes,
         ]);
     }
 

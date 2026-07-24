@@ -126,7 +126,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                             <img
                                 src="/assets/landing-page/logo.png"
                                 alt="POSAVE"
-                                className="ml-5 h-[34px] w-auto scale-350 dark:brightness-0 dark:invert"
+                                className="ml-5 h-3 w-auto scale-350 dark:brightness-0 dark:invert"
                             />
                         </Link>
                     </div>

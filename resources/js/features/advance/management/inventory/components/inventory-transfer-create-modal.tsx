@@ -109,16 +109,17 @@ export function InventoryTransferCreateModal({
             <div className="w-full max-w-lg rounded-2xl bg-[var(--card)] p-6 shadow-xl">
                 <div className="mb-5 flex items-center justify-between">
                     <h3 className="text-lg font-bold text-[var(--subheading)]">{t('dashboardAdvance.inventoryTransfers.createModal.title')}</h3>
-                    <button
+                    <Button
                         type="button"
                         onClick={() => {
                             reset();
                             onClose();
                         }}
                         aria-label={t('dashboardAdvance.inventoryTransfers.createModal.closeAriaLabel')}
+                        variant="outline"
                     >
                         <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
-                    </button>
+                    </Button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="-mx-1 flex max-h-[70vh] flex-col gap-4 overflow-y-auto px-1">

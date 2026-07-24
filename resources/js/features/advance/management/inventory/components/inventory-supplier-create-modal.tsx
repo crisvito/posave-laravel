@@ -73,9 +73,14 @@ export function InventorySupplierCreateModal({ categories, onClose }: InventoryS
                             <p className="text-sm text-[var(--grey-text)]">{t('dashboardAdvance.inventorySuppliers.createModal.subtitle')}</p>
                         </div>
                     </div>
-                    <button onClick={handleClose} className="mt-1" aria-label={t('dashboardAdvance.inventorySuppliers.createModal.closeAriaLabel')}>
+                    <Button
+                        variant="outline"
+                        onClick={handleClose}
+                        className="mt-1"
+                        aria-label={t('dashboardAdvance.inventorySuppliers.createModal.closeAriaLabel')}
+                    >
                         <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
-                    </button>
+                    </Button>
                 </div>
 
                 <div className="border-t border-[var(--border-strong)]" />

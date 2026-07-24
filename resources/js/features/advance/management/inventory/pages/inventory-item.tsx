@@ -3,7 +3,6 @@ import {
     CreateButton,
     FilterDropdown,
     PaginationBar,
-    PrintButton,
     SearchInput,
     Table,
     TableBody,
@@ -136,6 +135,12 @@ export default function InventoryItemList({ items, categories, branches, filters
                                 allLabel={t('dashboardAdvance.inventoryItems.list.allStockStatus')}
                                 onChange={(v) => applyFilters({ stock_status: v })}
                             />
+                            <FilterDropdown
+                                value={filters.category_id}
+                                options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
+                                allLabel={t('dashboardAdvance.inventoryItems.list.allCategories')}
+                                onChange={(v) => applyFilters({ category_id: v })}
+                            />
                         </div>
                         <div className="flex items-center gap-3">
                             {can_manage_catalog && (
@@ -144,7 +149,6 @@ export default function InventoryItemList({ items, categories, branches, filters
                                     onClick={() => setShowCreateModal(true)}
                                 />
                             )}
-                            <PrintButton />
                         </div>
                     </div>
                     <div className="flex w-full items-center justify-between">
@@ -153,13 +157,6 @@ export default function InventoryItemList({ items, categories, branches, filters
                             onChange={setSearch}
                             onSubmit={handleSearch}
                             placeholder={t('dashboardAdvance.inventoryItems.list.searchPlaceholder')}
-                        />
-
-                        <FilterDropdown
-                            value={filters.category_id}
-                            options={categories.map((c) => ({ value: String(c.id), label: c.name }))}
-                            allLabel={t('dashboardAdvance.inventoryItems.list.allCategories')}
-                            onChange={(v) => applyFilters({ category_id: v })}
                         />
                     </div>
                 </div>

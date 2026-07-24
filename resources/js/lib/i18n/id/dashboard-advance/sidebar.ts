@@ -15,7 +15,7 @@ const sidebar = {
     settings: 'Pengaturan',
     settingsCompany: 'Perusahaan',
     settingsReceipt: 'Bukti Bayar',
-    settingsBranches: 'Toko',
+    settingsBranches: 'Cabang',
 };
 
 export default sidebar;

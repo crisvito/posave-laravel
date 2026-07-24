@@ -63,6 +63,7 @@ export function InventoryAdjustmentCreateModal({
                     <h3 className="text-lg font-bold text-[var(--subheading)]">{t('dashboardAdvance.inventoryAdjustments.createModal.title')}</h3>
                     <Button
                         type="button"
+                        variant="outline"
                         onClick={() => {
                             reset();
                             onClose();

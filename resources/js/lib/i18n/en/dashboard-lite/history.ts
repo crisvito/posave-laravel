@@ -9,8 +9,6 @@ export const history = {
         all: 'All',
         cash: 'Cash',
         qris: 'QRIS',
-        debit: 'Debit',
-        transfer: 'Transfer',
     },
     filterAriaPrefix: 'Filter method',
     emptyState: 'No sales on this date',

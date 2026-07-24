@@ -35,9 +35,9 @@ export function InventoryCategoryCreateModal({ onClose }: InventoryCategoryCreat
             <div className="w-full max-w-md rounded-2xl bg-[var(--card)] p-6 shadow-xl">
                 <div className="mb-5 flex items-center justify-between">
                     <h3 className="text-lg font-bold text-[var(--subheading)]">{t('dashboardAdvance.inventoryCategories.createModal.title')}</h3>
-                    <button aria-label={t('dashboardAdvance.inventoryCategories.createModal.closeAriaLabel')} onClick={handleClose}>
+                    <Button variant="outline" aria-label={t('dashboardAdvance.inventoryCategories.createModal.closeAriaLabel')} onClick={handleClose}>
                         <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
-                    </button>
+                    </Button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">

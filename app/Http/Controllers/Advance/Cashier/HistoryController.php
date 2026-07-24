@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Advance\Cashier;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ReceiptMail;
 use App\Models\Advance\Transaction\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class HistoryController extends Controller
@@ -58,5 +60,22 @@ class HistoryController extends Controller
                 'payment_method' => $request->payment_method ?? 'all',
             ],
         ]);
+    }
+    public function sendReceiptEmail(Request $request, string $id)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $transaction = Transaction::with('items')
+            ->where('branch_id', $user->branch_id)
+            ->findOrFail($id);
+
+        Mail::to($request->email)->send(new ReceiptMail($transaction, $user->company?->profile?->name));
+
+        return response()->json(['success' => true]);
     }
 }

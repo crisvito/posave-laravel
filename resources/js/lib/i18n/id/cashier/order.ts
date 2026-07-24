@@ -19,6 +19,7 @@ const order = {
         addAriaPrefix: 'Tambah',
         addAriaSuffix: 'ke pesanan',
     },
+    
     detail: {
         title: 'Order Detail',
         itemHeader: 'Item',
@@ -32,12 +33,24 @@ const order = {
         printAria: 'Cetak pesanan',
         printButton: 'Cetak',
         continueAria: 'Lanjut ke pembayaran',
+        removeAriaPrefix: 'Hapus',
+        decreaseAriaPrefix: 'Kurangi',
+        increaseAriaPrefix: 'Tambah',
+        qtyInputAriaPrefix: 'Jumlah',
         continueButton: 'Lanjut Pembayaran',
     },
     payment: {
         title: 'Payment',
         methodsCount: '2 metode pembayaran',
         methodsLabel: 'Metode Pembayaran',
+        confirmModalTitle: 'Konfirmasi Pembayaran',
+        confirmModalCloseAria: 'Tutup',
+        confirmModalCancel: 'Batal',
+        confirmModalSubmit: 'Ya, Proses Pembayaran',
+        successTitle: 'Pembayaran Berhasil!',
+        printReceiptButton: 'Cetak Struk',
+        newOrderButton: 'Transaksi Baru',
+        successCloseAria: 'Tutup',
         cash: 'Tunai',
         qris: 'QRIS',
         selectMethodAriaPrefix: 'Pilih metode pembayaran',
@@ -58,6 +71,14 @@ const order = {
         processingButton: 'Memproses...',
     },
     paymentFailedError: 'Gagal memproses pembayaran. Coba lagi.',
+
+    orderSlip: {
+        title: 'BON PESANAN',
+        notPaidNotice: '(Belum termasuk pembayaran)',
+        estimatedTotal: 'ESTIMASI TOTAL',
+        printAria: 'Cetak bon pesanan',
+        printButton: 'Cetak Bon Pesanan',
+    },
 };
 
 export default order

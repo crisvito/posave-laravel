@@ -32,5 +32,18 @@ const history = {
         emailAria: 'Send receipt via email',
         emailButton: 'Send via Email',
     },
+    emailModal: {
+        title: 'Send Receipt via Email',
+        description: 'Send receipt for invoice',
+        emailLabel: 'Email Address',
+        emailAriaLabel: 'Recipient email address',
+        emailPlaceholder: 'name@email.com',
+        cancel: 'Cancel',
+        sendButton: 'Send',
+        sending: 'Sending...',
+        sentPrefix: 'Receipt sent to',
+        closeButton: 'Close',
+        failed: 'Failed to send receipt. Please try again.',
+    },
 };
 export default history

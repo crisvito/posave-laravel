@@ -1,6 +1,7 @@
 import { useLanguage } from '@/hooks';
 import { pickLocale } from '@/lib/i18n/pick';
 import { usePage } from '@inertiajs/react';
+import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 import { useRef } from 'react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -14,115 +15,78 @@ export function TestimoniSection() {
     const swiperRef = useRef<any>(null);
 
     return (
-        <>
-            <div className="flex justify-center overflow-hidden px-8 md:px-16">
-                <div className="max-w-6xl overflow-hidden rounded-[42px] border border-[var(--border-strong)] bg-[var(--card)] px-4 py-6">
-                    <div className="mt-5 mb-5 flex justify-center px-4">
-                        <div className="flex flex-wrap items-center justify-center gap-y-4 text-center">
-                            <h2 className="text-[20px] leading-tight font-medium tracking-[-0.05em] text-[var(--foreground)] sm:text-[28px] md:text-[36px] lg:text-[44px]">
-                                {t('companyProfile.welcome.testimoni.titleLine1')}
-                            </h2>
+        <div className="mx-auto max-w-7xl px-6 py-20 sm:py-24 lg:px-8 lg:py-28">
+            <div className="mx-auto mb-14 max-w-2xl text-center">
+                <h2 className="text-3xl leading-[1.2] font-semibold tracking-tight text-[var(--foreground)] sm:text-4xl">
+                    {t('companyProfile.welcome.testimoni.titleLine1')}{' '}
+                    <span className="text-[var(--secondary-600)]">{t('companyProfile.welcome.testimoni.titleLine2')}</span>
+                </h2>
+            </div>
 
-                            <div className="mx-8 md:mx-14 lg:mx-20">
-                                <img
-                                    src="assets/landing-page/logo.png"
-                                    alt="POSAVE"
-                                    className="h-[28px] w-auto shrink-0 scale-400 object-contain sm:h-[38px] md:h-[48px] lg:h-[58px] dark:brightness-0 dark:invert"
-                                />
+            <Swiper
+                className="testimonial-swiper"
+                modules={[Pagination, Autoplay]}
+                slidesPerView={1.08}
+                centeredSlides
+                spaceBetween={24}
+                loop={false}
+                rewind
+                grabCursor
+                autoplay={{ delay: 4500, disableOnInteraction: false }}
+                onSwiper={(swiper) => {
+                    swiperRef.current = swiper;
+                }}
+                pagination={{ clickable: true, el: '.testimonial-dots', bulletClass: 'custom-dot', bulletActiveClass: 'custom-dot-active' }}
+                breakpoints={{ 0: { slidesPerView: 1 }, 1024: { slidesPerView: 1.08 } }}
+            >
+                {testimonials.map((item: any) => (
+                    <SwiperSlide key={item.id}>
+                        <div className="mx-auto flex h-auto max-w-[920px] flex-col overflow-hidden rounded-[28px] border border-[var(--border-strong)] bg-[var(--card)] shadow-[0_20px_50px_-25px_rgba(15,23,42,0.3)] lg:h-[320px] lg:flex-row dark:shadow-[0_20px_50px_-25px_rgba(0,0,0,0.6)]">
+                            <div className="h-[220px] w-full shrink-0 lg:h-full lg:w-[36%]">
+                                <img src={item.photo} alt={item.name} className="h-full w-full object-cover" />
                             </div>
 
-                            <h2 className="text-[20px] leading-tight font-medium tracking-[-0.05em] text-[var(--foreground)] sm:text-[28px] md:text-[36px] lg:text-[44px]">
-                                {t('companyProfile.welcome.testimoni.titleLine2')}
-                            </h2>
-                        </div>
-                    </div>
+                            <div className="flex flex-1 flex-col justify-center px-8 py-8 lg:px-10">
+                                <Quote className="mb-4 h-6 w-6 text-[var(--secondary-600)]/50" strokeWidth={1.5} />
 
-                    <Swiper
-                        className="testimonial-swiper overflow-hidden"
-                        modules={[Pagination, Autoplay]}
-                        slidesPerView={1.08}
-                        centeredSlides={true}
-                        spaceBetween={26}
-                        loop={false}
-                        rewind={true}
-                        loopAdditionalSlides={3}
-                        grabCursor={true}
-                        autoplay={{
-                            delay: 4500,
-                            disableOnInteraction: false,
-                        }}
-                        onSwiper={(swiper) => {
-                            swiperRef.current = swiper;
-                        }}
-                        pagination={{
-                            clickable: true,
-                            el: '.testimonial-dots',
-                            bulletClass: 'custom-dot',
-                            bulletActiveClass: 'custom-dot-active',
-                        }}
-                        breakpoints={{
-                            0: {
-                                slidesPerView: 1,
-                            },
-                            1024: {
-                                slidesPerView: 1.08,
-                            },
-                        }}
-                    >
-                        {testimonials.map((item: any) => (
-                            <SwiperSlide key={item.id}>
-                                <div className="mx-auto flex h-[350px] max-w-[950px] flex-col overflow-hidden rounded-[36px] bg-[var(--second-accent)] lg:flex-row">
-                                    <div className="h-[200px] w-full shrink-0 p-0 lg:h-full lg:w-[38%]">
-                                        <img src={item.photo} alt={item.name} className="h-full w-full rounded-[32px] object-cover" />
+                                <p className="mb-6 max-w-[480px] text-[15px] leading-[1.7] text-[var(--foreground)]">
+                                    {pickLocale(locale, item, 'message')}
+                                </p>
+
+                                <div className="mt-auto flex items-center justify-between gap-4">
+                                    <div>
+                                        <h3 className="text-base font-semibold text-[var(--foreground)]">{item.name}</h3>
+                                        <p className="text-sm text-[var(--grey-text)]">
+                                            {item.position} · {item.company}
+                                        </p>
                                     </div>
-
-                                    <div className="flex flex-1 flex-col justify-center px-8 py-8 lg:px-10 lg:py-10">
-                                        <div>
-                                            <h2 className="text-[24px] leading-tight font-bold tracking-[-0.04em] text-[var(--foreground)] md:text-[26px] lg:text-[28px]">
-                                                {item.name}
-                                            </h2>
-
-                                            <p className="mt-1 text-[15px] font-medium text-[var(--grey-text)] md:text-[16px]">
-                                                {item.position} {item.company}
-                                            </p>
-
-                                            <div className="mt-6">
-                                                <img src={item.logo} alt="logo" className="h-auto w-[80px] object-contain" />
-                                            </div>
-                                        </div>
-
-                                        <div className="mt-3">
-                                            <p className="max-w-[520px] text-[15px] leading-[1.7] text-[var(--foreground)]">
-                                                "{pickLocale(locale, item, 'message')}"
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <img src={item.logo} alt="logo" className="h-6 w-auto shrink-0 object-contain" />
                                 </div>
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
+                            </div>
+                        </div>
+                    </SwiperSlide>
+                ))}
+            </Swiper>
 
-                    <div className="mt-5 flex items-center justify-center gap-4">
-                        <button
-                            type="button"
-                            onClick={() => swiperRef.current?.slidePrev()}
-                            className="flex items-center justify-center text-[42px] leading-none text-[var(--secondary-600)] transition-all hover:scale-110"
-                        >
-                            ‹
-                        </button>
+            <div className="mt-8 flex items-center justify-center gap-5">
+                <button
+                    type="button"
+                    onClick={() => swiperRef.current?.slidePrev()}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-strong)] text-[var(--foreground)] transition-colors hover:border-[var(--secondary-600)] hover:text-[var(--secondary-600)]"
+                >
+                    <ChevronLeft className="h-4 w-4" strokeWidth={2} />
+                </button>
 
-                        <div className="testimonial-dots flex !w-auto items-center justify-center gap-2" />
+                <div className="testimonial-dots flex !w-auto items-center justify-center gap-2" />
 
-                        <button
-                            type="button"
-                            onClick={() => swiperRef.current?.slideNext()}
-                            className="flex items-center justify-center text-[42px] leading-none text-[var(--secondary-600)] transition-all hover:scale-110"
-                        >
-                            ›
-                        </button>
-                    </div>
-                </div>
+                <button
+                    type="button"
+                    onClick={() => swiperRef.current?.slideNext()}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--border-strong)] text-[var(--foreground)] transition-colors hover:border-[var(--secondary-600)] hover:text-[var(--secondary-600)]"
+                >
+                    <ChevronRight className="h-4 w-4" strokeWidth={2} />
+                </button>
             </div>
-        </>
+        </div>
     );
 }

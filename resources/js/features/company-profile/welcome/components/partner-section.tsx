@@ -1,37 +1,47 @@
 import { useLanguage } from '@/hooks';
 
+const PARTNERS = [
+    { src: 'assets/landing-page/serona.png', alt: 'Serona' },
+    { src: 'assets/landing-page/viktorifit.png', alt: 'Viktorifit' },
+    { src: 'assets/landing-page/studysphere.png', alt: 'Studysphere' },
+];
+
 export function PartnerSection() {
     const { t } = useLanguage();
+    const track = [...PARTNERS, ...PARTNERS];
 
     return (
-        <>
-            <div className="mx-auto max-w-6xl px-8 md:px-16">
-                <div className="mb-12 text-center">
-                    <h2 className="text-[42px] leading-none font-black tracking-tight text-[var(--neutral-white)]">
-                        {t('companyProfile.welcome.partners.title')}
-                    </h2>
+        <div className="mx-auto max-w-7xl px-6 py-20 sm:py-24 lg:px-8 lg:py-28">
+            <div className="mx-auto mb-14 max-w-xl text-center">
+                <h2 className="text-3xl leading-[1.2] font-semibold tracking-tight text-[var(--neutral-white)] sm:text-4xl">
+                    {t('companyProfile.welcome.partners.title')}
+                </h2>
+                <p className="mt-4 text-[15px] text-white/60">{t('companyProfile.welcome.partners.subtitle')}</p>
+            </div>
 
-                    <p className="mt-4 text-[22px] font-medium text-[var(--neutral-white)]">{t('companyProfile.welcome.partners.subtitle')}</p>
-                </div>
-
-                <div className="flex flex-wrap items-center justify-center gap-16 lg:gap-28">
-                    <div className="corner-lg flex items-center justify-center">
-                        <img
-                            src="assets/landing-page/serona.png"
-                            alt="Serona"
-                            className="h-[140px] rounded-[36px] object-cover shadow-lg dark:brightness-90"
-                        />
-                    </div>
-
-                    <div className="flex items-center justify-center">
-                        <img src="assets/landing-page/viktorifit.png" alt="Viktorifit" className="h-[140px] object-contain" />
-                    </div>
-
-                    <div className="flex items-center justify-center">
-                        <img src="assets/landing-page/studysphere.png" alt="Studysphere" className="h-[150px] object-contain" />
-                    </div>
+            <div className="group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+                <div className="posave-marquee-track flex w-max items-center gap-20 group-hover:[animation-play-state:paused]">
+                    {track.map((partner, index) => (
+                        <div key={index} className="flex h-24 w-40 flex-shrink-0 items-center justify-center">
+                            <img
+                                src={partner.src}
+                                alt={partner.alt}
+                                className="max-h-20 max-w-[150px] object-contain opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
+                            />
+                        </div>
+                    ))}
                 </div>
             </div>
-        </>
+
+            <style>{`
+                .posave-marquee-track {
+                    animation: posave-marquee 26s linear infinite;
+                }
+                @keyframes posave-marquee {
+                    from { transform: translateX(0); }
+                    to { transform: translateX(-50%); }
+                }
+            `}</style>
+        </div>
     );
 }

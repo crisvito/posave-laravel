@@ -61,14 +61,23 @@ export default function HistoryPage({ transactions, filters }: Props) {
     };
 
     const prevDay = () => {
-        const n = new Date(activeDate);
+        const n = new Date(filters.date);
         n.setDate(n.getDate() - 1);
-        goTo({ date: n.toISOString().split('T')[0] });
+        const year = n.getFullYear();
+        const month = String(n.getMonth() + 1).padStart(2, '0');
+        const day = String(n.getDate()).padStart(2, '0');
+
+        goTo({ date: `${year}-${month}-${day}` });
     };
+
     const nextDay = () => {
-        const n = new Date(activeDate);
+        const n = new Date(filters.date);
         n.setDate(n.getDate() + 1);
-        goTo({ date: n.toISOString().split('T')[0] });
+        const year = n.getFullYear();
+        const month = String(n.getMonth() + 1).padStart(2, '0');
+        const day = String(n.getDate()).padStart(2, '0');
+
+        goTo({ date: `${year}-${month}-${day}` });
     };
 
     const totalHariIni = transactions.reduce((s, t) => s + t.total, 0);

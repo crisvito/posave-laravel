@@ -32,6 +32,19 @@ const history = {
         emailAria: 'Kirim struk via email',
         emailButton: 'Kirim via Email',
     },
+    emailModal: {
+        title: 'Kirim Struk via Email',
+        description: 'Kirim struk untuk invoice',
+        emailLabel: 'Alamat Email',
+        emailAriaLabel: 'Alamat email tujuan',
+        emailPlaceholder: 'nama@email.com',
+        cancel: 'Batal',
+        sendButton: 'Kirim',
+        sending: 'Mengirim...',
+        sentPrefix: 'Struk berhasil dikirim ke',
+        closeButton: 'Tutup',
+        failed: 'Gagal mengirim struk. Coba lagi.',
+    },
 };
 
 export default history

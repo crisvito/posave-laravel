@@ -75,9 +75,14 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
                             <p className="text-sm text-[var(--grey-text)]">{t('dashboardAdvance.inventoryItems.createModal.subtitle')}</p>
                         </div>
                     </div>
-                    <button aria-label={t('dashboardAdvance.inventoryItems.createModal.closeAriaLabel')} onClick={handleClose} className="mt-1">
+                    <Button
+                        variant="outline"
+                        aria-label={t('dashboardAdvance.inventoryItems.createModal.closeAriaLabel')}
+                        onClick={handleClose}
+                        className="mt-1"
+                    >
                         <X className="h-5 w-5 text-[var(--grey-text)] hover:text-[var(--subheading)]" />
-                    </button>
+                    </Button>
                 </div>
 
                 <div className="border-t border-[var(--border-strong)]" />

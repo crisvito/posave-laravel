@@ -6,6 +6,7 @@ const welcome = {
         subtitleLine1: 'Kami hadir untuk senantiasa menemani perjalanan',
         subtitleLine2: 'bisnis anda',
         button: 'Jadwalkan Demo',
+        eyebrow: 'Sistem Kasir Modern',
     },
     features: {
         title: 'Fitur Utama Posave',
@@ -42,6 +43,7 @@ const welcome = {
         titleLine1: 'Menurut Mereka,',
         titleLine2: 'Bagaimana?',
     },
+    
     why: {
         titleLine1: 'Kenapa Pilih',
         bodyBrand: 'Posave',
