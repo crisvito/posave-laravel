@@ -165,6 +165,7 @@ export function InventoryPurchaseOrderCreateModal({
                             aria-label={t('dashboardAdvance.inventoryPurchaseOrders.createModal.dateLabel')}
                             type="date"
                             value={data.date}
+                            min={new Date().toISOString().slice(0, 10)}
                             onChange={(e) => setData('date', e.target.value)}
                         />
                         {errors.date && <span className="text-sm text-[var(--danger)]">{errors.date}</span>}

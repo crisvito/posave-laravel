@@ -58,6 +58,7 @@ class TransferController extends Controller
             'branchStocks' => $branchStocks,
             'branches' => $branches,
             'my_branch_id' => $user->branch_id,
+            'is_branch_manager' => $user->isBranchManager(),
             'incoming_pending_count' => $incomingPendingCount,
             'filters' => $request->only('date', 'status', 'search', 'per_page', 'view'),
         ]);
@@ -76,7 +77,7 @@ class TransferController extends Controller
         $validated = $request->validate([
             'sender_branch_id' => 'required|exists:branches,id|different:receiver_branch_id',
             'receiver_branch_id' => 'required|exists:branches,id',
-            'date' => 'required|date',
+            'date' => 'required|date|after_or_equal:today',
             'items' => 'required|array|min:1',
             'items.*.inventory_item_id' => 'required|exists:inventory_items,id',
             'items.*.quantity' => 'required|integer|min:1',
@@ -87,8 +88,7 @@ class TransferController extends Controller
         abort_if(!$validCompanyBranchIds->contains($validated['receiver_branch_id']), 403);
 
         if ($user->isBranchManager()) {
-            $involved = in_array($user->branch_id, [$validated['sender_branch_id'], $validated['receiver_branch_id']]);
-            abort_if(!$involved, 403);
+            abort_if($validated['sender_branch_id'] != $user->branch_id, 403, 'Cabang pengirim harus cabang kamu sendiri.');
         }
 
         $transfer = DB::transaction(function () use ($validated, $user) {
@@ -131,7 +131,10 @@ class TransferController extends Controller
         $user = Auth::user();
         $transfer = Transfer::with('items')->where('company_id', $user->company_id)->findOrFail($id);
 
-        abort_if($transfer->approver_branch_id !== $user->branch_id, 403, 'Cuma cabang yang berwenang yang bisa menerima kiriman ini.');
+        if (!$user->isOwner()) {
+            // abort_if($transfer->approver_branch_id !== $user->branch_id, 403, 'Cuma cabang yang berwenang yang bisa menerima kiriman ini.');
+            abort_if($transfer->receiver_branch_id !== $user->branch_id, 403, 'Cuma cabang penerima yang bisa menerima kiriman ini.');
+        }
         abort_if($transfer->status !== 'waiting', 422, 'Kiriman ini sudah diputuskan sebelumnya.');
 
         try {
@@ -172,7 +175,10 @@ class TransferController extends Controller
         $user = Auth::user();
         $transfer = Transfer::where('company_id', $user->company_id)->findOrFail($id);
 
-        abort_if($transfer->approver_branch_id !== $user->branch_id, 403, 'Cuma cabang yang berwenang yang bisa menolak kiriman ini.');
+        if (!$user->isOwner()) {
+            // abort_if($transfer->approver_branch_id !== $user->branch_id, 403, 'Cuma cabang yang berwenang yang bisa menolak kiriman ini.');
+            abort_if($transfer->receiver_branch_id !== $user->branch_id, 403, 'Cuma cabang penerima yang bisa menolak kiriman ini.');
+        }
         abort_if($transfer->status !== 'waiting', 422, 'Kiriman ini sudah diputuskan sebelumnya.');
 
         $validated = $request->validate(['note' => 'required|string|max:500']);
@@ -192,11 +198,10 @@ class TransferController extends Controller
         abort_if($transfer->status !== 'waiting', 422, 'Kiriman yang sudah diputuskan tidak bisa dihapus.');
 
         if ($user->isBranchManager()) {
-            $isInvolved = in_array($user->branch_id, [$transfer->sender_branch_id, $transfer->receiver_branch_id]);
-            abort_if(!$isInvolved, 403);
+            abort_if($transfer->sender_branch_id !== $user->branch_id, 403, 'Cuma cabang pengirim yang bisa membatalkan.');
         }
 
-        $transfer->delete();
+        $transfer->update(['status' => 'cancelled']);
 
         return redirect()->route('dashboard.inventory.transfers.index')->with('success', 'Permintaan kiriman dibatalkan.');
     }

@@ -283,13 +283,13 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                         <MoreVertical className="h-4 w-4" />
                                                     </Button>
                                                 ) : (
-                                                    <button
+                                                    <Button
                                                         aria-label={`${t('dashboardAdvance.inventoryItems.list.viewDetailAriaLabelPrefix')} ${item.name}`}
                                                         onClick={() => handleShowDetail(item)}
                                                         className="text-xs font-medium whitespace-nowrap text-[var(--secondary-600)] hover:underline"
                                                     >
                                                         {t('dashboardAdvance.inventoryItems.list.viewLabel')}
-                                                    </button>
+                                                    </Button>
                                                 )}
                                             </TableCell>
                                         </TableRow>

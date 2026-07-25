@@ -35,12 +35,11 @@ interface Transfer {
     id: number;
     transfer_number: string;
     date: string;
-    status: 'waiting' | 'success' | 'rejected';
+    status: 'waiting' | 'success' | 'rejected' | 'cancelled';
     rejection_note: string | null;
     items_count: number;
     sender_branch: BranchOption;
     receiver_branch: BranchOption;
-    approver_branch_id: number;
     requested_by_branch_id: number | null;
 }
 
@@ -74,7 +73,7 @@ export default function InventoryTransferList({
     const { locale, t } = useLanguage();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [rejectTarget, setRejectTarget] = useState<Transfer | null>(null);
-
+    const isOwnerUser = !is_branch_manager;
     const { search, setSearch, applyFilters, handleSearch } = useFilters('dashboard.inventory.transfers.index', filters);
     const { confirmAndDelete, confirmAndRun, confirmDialog } = useConfirmAction();
     const [transferRows, setTransferRows] = useState<Transfer[]>(transfers.data);
@@ -100,12 +99,17 @@ export default function InventoryTransferList({
             text: t('dashboardAdvance.inventoryTransfers.list.statusRejected'),
             className: 'bg-[var(--danger-background)] text-[var(--danger)]',
         },
+        cancelled: {
+            text: t('dashboardAdvance.inventoryTransfers.list.statusCancelled'),
+            className: 'bg-[var(--second-accent)] text-[var(--grey-text)]',
+        },
     };
 
     const STATUS_OPTIONS = [
         { value: 'waiting', label: t('dashboardAdvance.inventoryTransfers.list.statusWaiting') },
         { value: 'success', label: t('dashboardAdvance.inventoryTransfers.list.statusSuccess') },
         { value: 'rejected', label: t('dashboardAdvance.inventoryTransfers.list.statusRejected') },
+        { value: 'cancelled', label: t('dashboardAdvance.inventoryTransfers.list.statusCancelled') },
     ];
 
     const handleAccept = (transfer: Transfer) => {
@@ -120,9 +124,6 @@ export default function InventoryTransferList({
         confirmAndDelete(
             `${t('dashboardAdvance.inventoryTransfers.list.cancelConfirmPrefix')} ${transfer.transfer_number}?`,
             route('dashboard.inventory.transfers.destroy', transfer.id),
-            {
-                onSuccess: () => setTransferRows((prev) => prev.filter((t) => t.id !== transfer.id)),
-            },
         );
     };
 
@@ -236,13 +237,15 @@ export default function InventoryTransferList({
                                 />
                             ) : (
                                 transferRows.map((transfer) => {
-                                    const iAmApproverWaiting = transfer.approver_branch_id === my_branch_id && transfer.status === 'waiting';
-                                    const iAmInvolvedWaiting =
-                                        (transfer.sender_branch.id === my_branch_id || transfer.receiver_branch.id === my_branch_id) &&
-                                        transfer.status === 'waiting';
+                                    const isWaiting = transfer.status === 'waiting';
+                                    const isReceiver = transfer.receiver_branch.id === my_branch_id;
+                                    const isSender = transfer.sender_branch.id === my_branch_id;
+                                    const showAccept = isWaiting && (isOwnerUser || isReceiver);
+                                    const showReject = isWaiting && !isOwnerUser && isReceiver;
+                                    const showCancel = isWaiting && (isOwnerUser || isSender);
 
                                     return (
-                                        <TableRow key={transfer.id} className={iAmApproverWaiting ? 'bg-[var(--warning-background)]/50' : ''}>
+                                        <TableRow key={transfer.id} className={showAccept ? 'bg-[var(--warning-background)]/50' : ''}>
                                             <TableCell>
                                                 <div className="text-xs whitespace-nowrap text-[var(--grey-text)]">
                                                     {new Date(transfer.date).toLocaleDateString(dateLocale, {
@@ -275,29 +278,29 @@ export default function InventoryTransferList({
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex flex-wrap gap-1.5">
-                                                    {iAmApproverWaiting && (
-                                                        <>
-                                                            <Button
-                                                                variant="outline"
-                                                                aria-label={`${t('dashboardAdvance.inventoryTransfers.list.acceptAriaLabelPrefix')} ${transfer.transfer_number}`}
-                                                                onClick={() => handleAccept(transfer)}
-                                                                className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--success)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:underline hover:opacity-90"
-                                                            >
-                                                                <Check className="h-3.5 w-3.5" />{' '}
-                                                                {t('dashboardAdvance.inventoryTransfers.list.acceptLabel')}
-                                                            </Button>
-                                                            <Button
-                                                                variant="outline"
-                                                                aria-label={`${t('dashboardAdvance.inventoryTransfers.list.rejectAriaLabelPrefix')} ${transfer.transfer_number}`}
-                                                                onClick={() => setRejectTarget(transfer)}
-                                                                className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--danger-background)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-[var(--danger)] hover:underline hover:opacity-90"
-                                                            >
-                                                                <XIcon className="h-3.5 w-3.5" />{' '}
-                                                                {t('dashboardAdvance.inventoryTransfers.list.rejectLabel')}
-                                                            </Button>
-                                                        </>
+                                                    {showAccept && (
+                                                        <Button
+                                                            variant="outline"
+                                                            aria-label={`${t('dashboardAdvance.inventoryTransfers.list.acceptAriaLabelPrefix')} ${transfer.transfer_number}`}
+                                                            onClick={() => handleAccept(transfer)}
+                                                            className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--success)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:underline hover:opacity-90"
+                                                        >
+                                                            <Check className="h-3.5 w-3.5" />{' '}
+                                                            {t('dashboardAdvance.inventoryTransfers.list.acceptLabel')}
+                                                        </Button>
                                                     )}
-                                                    {iAmInvolvedWaiting && (
+                                                    {showReject && (
+                                                        <Button
+                                                            variant="outline"
+                                                            aria-label={`${t('dashboardAdvance.inventoryTransfers.list.rejectAriaLabelPrefix')} ${transfer.transfer_number}`}
+                                                            onClick={() => setRejectTarget(transfer)}
+                                                            className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--danger-background)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-[var(--danger)] hover:underline hover:opacity-90"
+                                                        >
+                                                            <XIcon className="h-3.5 w-3.5" />{' '}
+                                                            {t('dashboardAdvance.inventoryTransfers.list.rejectLabel')}
+                                                        </Button>
+                                                    )}
+                                                    {showCancel && (
                                                         <Button
                                                             variant="outline"
                                                             aria-label={`${t('dashboardAdvance.inventoryTransfers.list.cancelAriaLabelPrefix')} ${transfer.transfer_number}`}
@@ -307,7 +310,7 @@ export default function InventoryTransferList({
                                                             {t('dashboardAdvance.inventoryTransfers.list.cancelLabel')}
                                                         </Button>
                                                     )}
-                                                    {!iAmInvolvedWaiting && !iAmApproverWaiting && <span>-</span>}
+                                                    {!showAccept && !showReject && !showCancel && <span>-</span>}
                                                 </div>
                                             </TableCell>
                                         </TableRow>

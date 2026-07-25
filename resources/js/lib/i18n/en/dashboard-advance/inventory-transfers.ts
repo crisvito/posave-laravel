@@ -34,6 +34,7 @@ const inventoryTransfers = {
         acceptConfirmSuffix: '? Stock will be moved immediately.',
         cancelConfirmPrefix: 'Cancel transfer request',
         itemLabel: 'Transfers',
+        statusCancelled: 'Cancelled',
     },
     createModal: {
         title: 'Create New Transfer',

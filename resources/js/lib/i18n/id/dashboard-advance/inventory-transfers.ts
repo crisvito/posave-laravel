@@ -34,6 +34,7 @@ const inventoryTransfers = {
         acceptConfirmSuffix: '? Stok akan langsung dipindahkan.',
         cancelConfirmPrefix: 'Batalkan permintaan kiriman',
         itemLabel: 'Kiriman',
+        statusCancelled: 'Dibatalkan',
     },
     createModal: {
         title: 'Buat Kiriman Baru',

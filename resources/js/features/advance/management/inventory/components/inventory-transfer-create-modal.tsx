@@ -32,35 +32,20 @@ export function InventoryTransferCreateModal({
     onClose,
 }: InventoryTransferCreateModalProps) {
     const { t } = useLanguage();
-    const [direction, setDirection] = React.useState<'send' | 'receive'>('send');
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        branch_id: isBranchManager && myBranchId ? String(myBranchId) : '',
-        sender_branch_id: isBranchManager && direction === 'send' ? String(myBranchId) : '',
-        receiver_branch_id: isBranchManager && direction === 'receive' ? String(myBranchId) : '',
+        sender_branch_id: isBranchManager && myBranchId ? String(myBranchId) : '',
+        receiver_branch_id: '',
         date: new Date().toISOString().slice(0, 10),
         items: [{ inventory_item_id: '', quantity: 1 }] as { inventory_item_id: string; quantity: number }[],
     });
 
-    // Stok barang di cabang PENGIRIM yang lagi aktif — ini yang membatasi berapa banyak
-    // barang boleh dikirim. Berubah otomatis kalau cabang pengirim diganti.
     const senderStocks = branchStocks[Number(data.sender_branch_id)] ?? {};
 
     const getStockFor = (itemId: string) => (itemId ? (senderStocks[Number(itemId)] ?? 0) : Infinity);
 
-    const handleDirectionChange = (dir: 'send' | 'receive') => {
-        setDirection(dir);
-        if (dir === 'send') {
-            setData((prev) => ({ ...prev, sender_branch_id: String(myBranchId), receiver_branch_id: '' }));
-        } else {
-            setData((prev) => ({ ...prev, sender_branch_id: '', receiver_branch_id: String(myBranchId) }));
-        }
-    };
-
     const handleSenderBranchChange = (branchId: string) => {
         const newStocks = branchStocks[Number(branchId)] ?? {};
-        // Cabang pengirim ganti -> sisa stok tiap barang bisa beda. Clamp quantity yang udah
-        // diisi biar gak lebih dari stok yang tersedia di cabang baru.
         const clampedItems = data.items.map((item) => {
             const max = item.inventory_item_id ? (newStocks[Number(item.inventory_item_id)] ?? 0) : Infinity;
             return { ...item, quantity: Math.min(item.quantity, Math.max(max, 1)) };
@@ -79,7 +64,6 @@ export function InventoryTransferCreateModal({
         items[index] = { ...items[index], [field]: value };
 
         if (field === 'inventory_item_id') {
-            // Barang baru dipilih -> clamp quantity ke stok yang tersedia buat barang itu.
             const max = getStockFor(String(value));
             items[index].quantity = Math.min(items[index].quantity, Math.max(max, 1));
         } else if (field === 'quantity') {
@@ -124,45 +108,19 @@ export function InventoryTransferCreateModal({
 
                 <form onSubmit={handleSubmit} className="-mx-1 flex max-h-[70vh] flex-col gap-4 overflow-y-auto px-1">
                     {isBranchManager ? (
-                        <>
-                            <div className="grid grid-cols-2 gap-2">
-                                <button
-                                    type="button"
-                                    onClick={() => handleDirectionChange('send')}
-                                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition ${
-                                        direction === 'send'
-                                            ? 'border-[var(--surface-header)] bg-[var(--second-accent)] text-[var(--subheading)]'
-                                            : 'border-[var(--border-strong)] text-[var(--grey-text)]'
-                                    }`}
-                                >
-                                    {t('dashboardAdvance.inventoryTransfers.createModal.sendDirectionLabel')}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => handleDirectionChange('receive')}
-                                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition ${
-                                        direction === 'receive'
-                                            ? 'border-[var(--surface-header)] bg-[var(--second-accent)] text-[var(--subheading)]'
-                                            : 'border-[var(--border-strong)] text-[var(--grey-text)]'
-                                    }`}
-                                >
-                                    {t('dashboardAdvance.inventoryTransfers.createModal.receiveDirectionLabel')}
-                                </button>
-                            </div>
-
+                        <div>
+                            <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
+                                {t('dashboardAdvance.inventoryTransfers.createModal.receiverBranchLabel')}
+                            </label>
                             <div className="flex items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2.5 text-sm text-[var(--subheading)]">
-                                <span className="font-semibold text-[var(--subheading)]">
+                                <span className="shrink-0 font-semibold text-[var(--subheading)]">
                                     {lockedBranchName || t('dashboardAdvance.inventoryTransfers.createModal.myBranchFallback')}
                                 </span>
-                                <ArrowRight className="h-4 w-4 text-[var(--grey-text)]" />
+                                <ArrowRight className="h-4 w-4 shrink-0 text-[var(--grey-text)]" />
                                 <div className="relative flex-1">
                                     <select
-                                        value={direction === 'send' ? data.receiver_branch_id : data.sender_branch_id}
-                                        onChange={(e) =>
-                                            direction === 'send'
-                                                ? setData('receiver_branch_id', e.target.value)
-                                                : handleSenderBranchChange(e.target.value)
-                                        }
+                                        value={data.receiver_branch_id}
+                                        onChange={(e) => setData('receiver_branch_id', e.target.value)}
                                         className={`${inputClass} bg-[var(--card)]`}
                                     >
                                         <option value="" disabled>
@@ -171,7 +129,7 @@ export function InventoryTransferCreateModal({
                                         {branches
                                             .filter((b) => b.id !== myBranchId)
                                             .map((b) => (
-                                                <option key={b.id} value={b.id}>
+                                                <option key={b.id} value={b.id} className="dark:text-black">
                                                     {b.name}
                                                 </option>
                                             ))}
@@ -179,7 +137,7 @@ export function InventoryTransferCreateModal({
                                     <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                                 </div>
                             </div>
-                        </>
+                        </div>
                     ) : (
                         <div className="grid grid-cols-2 gap-3">
                             <div>
@@ -233,9 +191,15 @@ export function InventoryTransferCreateModal({
 
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
-                            {t('dashboardAdvance.inventoryTransfers.createModal.dateLabel')}
+                            {t('dashboardAdvance.inventoryTransfers.createModal.zLabel')}
                         </label>
-                        <input type="date" value={data.date} onChange={(e) => setData('date', e.target.value)} className={inputClass} />
+                        <input
+                            type="date"
+                            min={new Date().toISOString().slice(0, 10)}
+                            value={data.date}
+                            onChange={(e) => setData('date', e.target.value)}
+                            className={inputClass}
+                        />
                     </div>
 
                     <div>

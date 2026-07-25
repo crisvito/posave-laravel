@@ -82,7 +82,7 @@ class PurchaseOrderController extends Controller
         $validated = $request->validate([
             'branch_id' => 'required|exists:branches,id',
             'supplier_id' => 'required|exists:suppliers,id',
-            'date' => 'required|date',
+            'date' => 'required|date|after_or_equal:today',
             'items' => 'required|array|min:1',
             'items.*.inventory_item_id' => 'required|exists:inventory_items,id',
             'items.*.quantity' => 'required|integer|min:1',
