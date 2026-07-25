@@ -29,6 +29,7 @@ export interface Conversation {
         sender: ConversationMember;
         created_at: string;
     } | null;
+    unread_count: number
 }
 
 export interface Broadcast {

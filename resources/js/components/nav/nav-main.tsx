@@ -4,6 +4,7 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
+    NotificationBadge,
     SidebarGroup,
     SidebarGroupContent,
     SidebarMenu,
@@ -17,14 +18,14 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { useLanguage } from '@/hooks';
 import { type NavItem } from '@/types';
 
+import { useMessagingNotifications } from '@/features/messaging/notifications-context';
 import { Link } from '@inertiajs/react';
-
 import { ChevronDown } from 'lucide-react';
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     const { state, isMobile } = useSidebar();
     const { t } = useLanguage();
-
+    const { unreadCount } = useMessagingNotifications();
     const isCollapsed = state === 'collapsed' && !isMobile;
 
     const isItemActive = (item: NavItem) => {
@@ -40,6 +41,8 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
 
         return item.url ?? '#';
     };
+
+    const getBadgeCount = (item: NavItem) => (item.routeName === 'messaging.index' ? unreadCount : 0);
 
     return (
         <SidebarGroup>
@@ -96,7 +99,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             return (
                                 <Collapsible key={item.title} defaultOpen={hasActiveChild}>
                                     <SidebarMenuItem>
-                                        <CollapsibleTrigger asChild>
+                                        <CollapsibleTrigger asChild className="cursor-pointer">
                                             <SidebarMenuButton
                                                 tooltip={t(item.title)}
                                                 isActive={hasActiveChild}
@@ -136,6 +139,8 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             );
                         }
 
+                        const badgeCount = getBadgeCount(item);
+
                         return (
                             <SidebarMenuItem key={item.title}>
                                 <SidebarMenuButton
@@ -144,10 +149,17 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                     tooltip={t(item.title)}
                                     className="!text-[var(--white)] hover:!bg-[var(--primary-700)] data-[active=true]:!bg-[var(--neutral-white)] data-[active=true]:!text-[var(--primary-900)] [&_svg]:!text-[var(--white)] data-[active=true]:[&_svg]:!text-[var(--primary-900)]"
                                 >
-                                    <Link href={getHref(item)} className="flex w-full items-center gap-2 !text-[var(--white)]">
+                                    <Link href={getHref(item)} className="relative flex w-full items-center gap-2 !text-[var(--white)]">
                                         {item.icon && <item.icon />}
 
                                         <span>{t(item.title)}</span>
+
+                                        {badgeCount > 0 && (
+                                            <NotificationBadge
+                                                count={badgeCount}
+                                                className={isCollapsed ? 'absolute -top-1.5 -right-1.5 h-4 min-w-4 px-1 text-[9px]' : 'ml-auto'}
+                                            />
+                                        )}
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>

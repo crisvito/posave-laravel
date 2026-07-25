@@ -110,6 +110,7 @@ class CreateTransferTool implements ToolInterface
       'same_branch_error' => $sender && $receiver && $sender->id === $receiver->id,
       'items' => $items->values(),
       'date' => $args['date'] ?? now()->toDateString(),
+      'items_warning' => $items->isEmpty() ? 'BELUM ADA BARANG DIPILIH — jangan konfirmasi, minta AI tanya barang & jumlahnya dulu.' : null,
     ];
   }
 

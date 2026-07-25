@@ -1,7 +1,9 @@
 import {
     Button,
     FilterDropdown,
+    ListToolbar,
     PaginationBar,
+    ResponsiveTableCard,
     SearchInput,
     Table,
     TableBody,
@@ -66,26 +68,27 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
         >
             <Head title={t('dashboardAdvance.inventoryCategories.list.headTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
-                <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex flex-wrap items-center gap-3">
+                <ListToolbar
+                    search={
                         <SearchInput
                             value={search}
                             onChange={setSearch}
                             onSubmit={handleSearch}
                             placeholder={t('dashboardAdvance.inventoryCategories.list.searchPlaceholder')}
                         />
-                        {can_manage_catalog && (
+                    }
+                    filters={
+                        can_manage_catalog && (
                             <FilterDropdown
                                 value={filters.status}
                                 options={statusOptions}
                                 allLabel={t('dashboardAdvance.inventoryCategories.list.filterAllStatus')}
                                 onChange={(v) => applyFilters({ status: v })}
                             />
-                        )}
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-3">
-                        {can_manage_catalog && (
+                        )
+                    }
+                    action={
+                        can_manage_catalog && (
                             <Button
                                 onClick={() => setShowCreateModal(true)}
                                 className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]"
@@ -93,111 +96,109 @@ export default function InventoryCategoryList({ categories, filters, can_manage_
                                 <Plus className="mr-2 h-4 w-4" />
                                 {t('dashboardAdvance.inventoryCategories.list.createButton')}
                             </Button>
-                        )}
-                    </div>
-                </div>
+                        )
+                    }
+                />
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
-                    <div className="overflow-x-auto">
-                        <Table className="min-w-[560px]">
-                            <TableHeader className="bg-[var(--surface-header)]">
-                                <TableRow className="border-none hover:bg-[var(--surface-header)]">
+                <ResponsiveTableCard>
+                    <Table className="min-w-[560px]">
+                        <TableHeader className="bg-[var(--surface-header)]">
+                            <TableRow className="border-none hover:bg-[var(--surface-header)]">
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryCategories.list.columnName')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryCategories.list.columnItemsCount')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryCategories.list.columnStatus')}
+                                </TableHead>
+                                {can_manage_catalog && (
                                     <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryCategories.list.columnName')}
+                                        {t('dashboardAdvance.inventoryCategories.list.columnAction')}
                                     </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryCategories.list.columnItemsCount')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryCategories.list.columnStatus')}
-                                    </TableHead>
-                                    {can_manage_catalog && (
-                                        <TableHead className="text-[var(--text-light)]">
-                                            {t('dashboardAdvance.inventoryCategories.list.columnAction')}
-                                        </TableHead>
-                                    )}
-                                </TableRow>
-                            </TableHeader>
+                                )}
+                            </TableRow>
+                        </TableHeader>
 
-                            <TableBody>
-                                {categoryRows.length === 0 ? (
-                                    <TableEmptyState
-                                        colSpan={can_manage_catalog ? 4 : 3}
-                                        message={
-                                            filters.search
-                                                ? `${t('dashboardAdvance.inventoryCategories.list.notFoundPrefix')} "${filters.search}" ${t('dashboardAdvance.inventoryCategories.list.notFoundSuffix')}`
-                                                : t('dashboardAdvance.inventoryCategories.list.emptyState')
-                                        }
-                                    />
-                                ) : (
-                                    categoryRows.map((category) => (
-                                        <TableRow key={category.id} className={!category.is_active ? 'opacity-60' : ''}>
+                        <TableBody>
+                            {categoryRows.length === 0 ? (
+                                <TableEmptyState
+                                    colSpan={can_manage_catalog ? 4 : 3}
+                                    message={
+                                        filters.search
+                                            ? `${t('dashboardAdvance.inventoryCategories.list.notFoundPrefix')} "${filters.search}" ${t('dashboardAdvance.inventoryCategories.list.notFoundSuffix')}`
+                                            : t('dashboardAdvance.inventoryCategories.list.emptyState')
+                                    }
+                                />
+                            ) : (
+                                categoryRows.map((category) => (
+                                    <TableRow key={category.id} className={!category.is_active ? 'opacity-60' : ''}>
+                                        <TableCell>
+                                            <span
+                                                className="rounded-full px-3 py-1 text-xs font-medium"
+                                                style={{
+                                                    backgroundColor: `${category.color ?? '#94a3b8'}1a`,
+                                                    color: category.color ?? '#94a3b8',
+                                                }}
+                                            >
+                                                {category.name}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="text-[var(--grey-text)]">
+                                            {category.items_count} {t('dashboardAdvance.inventoryCategories.list.itemsCountSuffix')}
+                                        </TableCell>
+                                        <TableCell>
+                                            <span
+                                                className={`rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${
+                                                    category.is_active
+                                                        ? 'bg-[var(--success-background)] text-[var(--success)]'
+                                                        : 'bg-[var(--danger-background)] text-[var(--danger)]'
+                                                }`}
+                                            >
+                                                {category.is_active
+                                                    ? t('dashboardAdvance.inventoryCategories.list.statusActive')
+                                                    : t('dashboardAdvance.inventoryCategories.list.statusInactive')}
+                                            </span>
+                                        </TableCell>
+                                        {can_manage_catalog && (
                                             <TableCell>
-                                                <span
-                                                    className="rounded-full px-3 py-1 text-xs font-medium"
-                                                    style={{
-                                                        backgroundColor: `${category.color ?? '#94a3b8'}1a`,
-                                                        color: category.color ?? '#94a3b8',
-                                                    }}
-                                                >
-                                                    {category.name}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className="text-[var(--grey-text)]">
-                                                {category.items_count} {t('dashboardAdvance.inventoryCategories.list.itemsCountSuffix')}
-                                            </TableCell>
-                                            <TableCell>
-                                                <span
-                                                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${
-                                                        category.is_active
-                                                            ? 'bg-[var(--success-background)] text-[var(--success)]'
-                                                            : 'bg-[var(--danger-background)] text-[var(--danger)]'
-                                                    }`}
-                                                >
-                                                    {category.is_active
-                                                        ? t('dashboardAdvance.inventoryCategories.list.statusActive')
-                                                        : t('dashboardAdvance.inventoryCategories.list.statusInactive')}
-                                                </span>
-                                            </TableCell>
-                                            {can_manage_catalog && (
-                                                <TableCell>
-                                                    <div className="flex flex-wrap gap-2 whitespace-nowrap">
+                                                <div className="flex flex-wrap gap-2 whitespace-nowrap">
+                                                    <Button
+                                                        variant="outline"
+                                                        aria-label={`${t('dashboardAdvance.inventoryCategories.list.editAriaLabelPrefix')} ${category.name}`}
+                                                        onClick={() => setEditCategory(category)}
+                                                        className="text-xs font-medium text-[var(--secondary-600)] hover:underline"
+                                                    >
+                                                        {t('dashboardAdvance.inventoryCategories.list.editLabel')}
+                                                    </Button>
+                                                    {category.is_active ? (
                                                         <Button
                                                             variant="outline"
-                                                            aria-label={`${t('dashboardAdvance.inventoryCategories.list.editAriaLabelPrefix')} ${category.name}`}
-                                                            onClick={() => setEditCategory(category)}
-                                                            className="text-xs font-medium text-[var(--secondary-600)] hover:underline"
+                                                            aria-label={`${t('dashboardAdvance.inventoryCategories.list.toggleAriaLabelPrefix')} ${category.name}`}
+                                                            onClick={() => handleDeactivate(category)}
+                                                            className="border-1 !border-[var(--danger)] text-xs font-medium !text-[var(--danger)] hover:underline"
                                                         >
-                                                            {t('dashboardAdvance.inventoryCategories.list.editLabel')}
+                                                            {t('dashboardAdvance.inventoryCategories.list.toggleDeactivateLabel')}
                                                         </Button>
-                                                        {category.is_active ? (
-                                                            <Button
-                                                                variant="outline"
-                                                                aria-label={`${t('dashboardAdvance.inventoryCategories.list.toggleAriaLabelPrefix')} ${category.name}`}
-                                                                onClick={() => handleDeactivate(category)}
-                                                                className="border-1 !border-[var(--danger)] text-xs font-medium !text-[var(--danger)] hover:underline"
-                                                            >
-                                                                {t('dashboardAdvance.inventoryCategories.list.toggleDeactivateLabel')}
-                                                            </Button>
-                                                        ) : (
-                                                            <Button
-                                                                aria-label={`${t('dashboardAdvance.inventoryCategories.list.toggleAriaLabelPrefix')} ${category.name}`}
-                                                                onClick={() => handleActivate(category)}
-                                                                className="text-xs font-medium text-[var(--success)] hover:underline"
-                                                            >
-                                                                {t('dashboardAdvance.inventoryCategories.list.toggleActivateLabel')}
-                                                            </Button>
-                                                        )}
-                                                    </div>
-                                                </TableCell>
-                                            )}
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </div>
+                                                    ) : (
+                                                        <Button
+                                                            aria-label={`${t('dashboardAdvance.inventoryCategories.list.toggleAriaLabelPrefix')} ${category.name}`}
+                                                            onClick={() => handleActivate(category)}
+                                                            className="text-xs font-medium text-[var(--success)] hover:underline"
+                                                        >
+                                                            {t('dashboardAdvance.inventoryCategories.list.toggleActivateLabel')}
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            </TableCell>
+                                        )}
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </ResponsiveTableCard>
 
                 <PaginationBar
                     from={categories.from ?? 0}

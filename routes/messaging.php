@@ -15,4 +15,6 @@ Route::middleware(['auth', 'onboarded', 'advance'])->group(function () {
   Route::post('/messaging/notes', [MessagingController::class, 'storeNote'])->name('messaging.note.store');
   Route::put('/messaging/notes/{note}', [MessagingController::class, 'updateNote'])->name('messaging.note.update');
   Route::delete('/messaging/notes/{note}', [MessagingController::class, 'destroyNote'])->name('messaging.note.destroy');
+
+  Route::post('/messaging/{conversation}/read', [MessagingController::class, 'markRead'])->name('messaging.mark-read');
 });

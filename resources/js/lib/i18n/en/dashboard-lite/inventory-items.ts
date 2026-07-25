@@ -33,6 +33,7 @@ export const inventoryItems = {
         decreaseAriaPrefix: 'Decrease stock for',
         increaseAriaPrefix: 'Increase stock for',
     },
+    itemLabel: 'items',
     editAriaPrefix: 'Edit',
     editButton: 'Edit',
     loadMoreAria: 'Show more items',

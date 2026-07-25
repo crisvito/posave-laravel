@@ -20,6 +20,7 @@ export const inventoryAdjustments = {
     deleteButton: 'Hapus',
     deleteConfirmPrefix: 'Hapus catatan perubahan stok untuk',
     deleteConfirmSuffix: 'ini?',
+    itemLabel: 'perubahan',
     modal: {
         title: 'Catat Perubahan',
         closeAria: 'Tutup',
@@ -42,4 +43,12 @@ export const inventoryAdjustments = {
         reasonsOut: ['Barang rusak', 'Hilang', 'Kadaluarsa'],
         reasonsIn: ['Ketemu lebih saat hitung ulang', 'Retur dari pelanggan'],
     },
+    statusFilterAriaPrefix: 'Filter status',
+    categoryFilterAllAria: 'Semua kategori',
+    categoryFilterAriaPrefix: 'Filter kategori',
+    allStatus: 'Semua Status',
+    statusIn: 'Bertambah',
+    statusOut: 'Berkurang',
+    allCategories: 'Semua Kategori',
+
 };

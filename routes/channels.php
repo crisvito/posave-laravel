@@ -28,3 +28,7 @@ Broadcast::channel('company.{companyId}.broadcasts', function ($user, $companyId
 Broadcast::channel('branch.{branchId}.broadcasts', function ($user, $branchId) {
     return (int) $user->branch_id === (int) $branchId;
 });
+
+Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
+});

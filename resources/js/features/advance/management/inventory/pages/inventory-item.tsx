@@ -2,7 +2,9 @@ import {
     Button,
     CreateButton,
     FilterDropdown,
+    ListToolbar,
     PaginationBar,
+    ResponsiveTableCard,
     SearchInput,
     Table,
     TableBody,
@@ -104,23 +106,33 @@ export default function InventoryItemList({ items, categories, branches, filters
         >
             <Head title={t('dashboardAdvance.inventoryItems.list.headTitle')} />
             <div className="min-h-screen bg-[var(--page-bg)] p-4 sm:p-6">
-                <div className="mb-5 flex flex-col items-start justify-between gap-5">
-                    <div className="flex w-full justify-between">
-                        <div className="flex flex-wrap gap-3">
-                            {!is_branch_manager ? (
-                                <FilterDropdown
-                                    value={filters.branch_id}
-                                    options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
-                                    allLabel={t('dashboardAdvance.inventoryItems.list.allBranches')}
-                                    onChange={(v) => applyFilters({ branch_id: v })}
-                                    icon={<Store className="h-4 w-4" />}
-                                />
-                            ) : (
-                                <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)]">
-                                    <Store className="h-4 w-4" />
-                                    {branches[0]?.name ?? t('dashboardAdvance.inventoryItems.list.yourBranchFallback')}
-                                </div>
-                            )}
+                <ListToolbar
+                    branch={
+                        !is_branch_manager ? (
+                            <FilterDropdown
+                                value={filters.branch_id}
+                                options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
+                                allLabel={t('dashboardAdvance.inventoryItems.list.allBranches')}
+                                onChange={(v) => applyFilters({ branch_id: v })}
+                                icon={<Store className="h-4 w-4" />}
+                            />
+                        ) : (
+                            <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)]">
+                                <Store className="h-4 w-4" />
+                                {branches[0]?.name ?? t('dashboardAdvance.inventoryItems.list.yourBranchFallback')}
+                            </div>
+                        )
+                    }
+                    search={
+                        <SearchInput
+                            value={search}
+                            onChange={setSearch}
+                            onSubmit={handleSearch}
+                            placeholder={t('dashboardAdvance.inventoryItems.list.searchPlaceholder')}
+                        />
+                    }
+                    filters={
+                        <>
                             {can_manage_catalog && (
                                 <FilterDropdown
                                     value={filters.status}
@@ -141,171 +153,152 @@ export default function InventoryItemList({ items, categories, branches, filters
                                 allLabel={t('dashboardAdvance.inventoryItems.list.allCategories')}
                                 onChange={(v) => applyFilters({ category_id: v })}
                             />
-                        </div>
-                        <div className="flex items-center gap-3">
-                            {can_manage_catalog && (
-                                <CreateButton
-                                    label={t('dashboardAdvance.inventoryItems.list.createButton')}
-                                    onClick={() => setShowCreateModal(true)}
+                        </>
+                    }
+                    action={
+                        can_manage_catalog && (
+                            <CreateButton label={t('dashboardAdvance.inventoryItems.list.createButton')} onClick={() => setShowCreateModal(true)} />
+                        )
+                    }
+                />
+
+                <ResponsiveTableCard>
+                    <Table className="min-w-[900px]">
+                        <TableHeader className="bg-[var(--surface-header)]">
+                            <TableRow className="border-none hover:bg-[var(--surface-header)]">
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.inventoryItems.list.columnName')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.inventoryItems.list.columnCategory')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryItems.list.columnStock')}{' '}
+                                    {activeBranchName
+                                        ? `(${activeBranchName})`
+                                        : is_branch_manager
+                                          ? ''
+                                          : t('dashboardAdvance.inventoryItems.list.allBranchesSuffix')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.inventoryItems.list.columnPrice')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.inventoryItems.list.columnStatus')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryItems.list.columnActiveStatus')}
+                                </TableHead>
+                                <TableHead className="w-[60px] text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryItems.list.columnAction')}
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
+
+                        <TableBody>
+                            {itemRows.length === 0 ? (
+                                <TableEmptyState
+                                    colSpan={7}
+                                    icon={Package}
+                                    message={t('dashboardAdvance.inventoryItems.list.emptyTitle')}
+                                    description={t('dashboardAdvance.inventoryItems.list.emptyDescription')}
+                                    action={{
+                                        label: t('dashboardAdvance.inventoryItems.list.emptyActionLabel'),
+                                        onClick: () => setShowCreateModal(true),
+                                    }}
                                 />
-                            )}
-                        </div>
-                    </div>
-                    <div className="flex w-full items-center justify-between">
-                        <SearchInput
-                            value={search}
-                            onChange={setSearch}
-                            onSubmit={handleSearch}
-                            placeholder={t('dashboardAdvance.inventoryItems.list.searchPlaceholder')}
-                        />
-                    </div>
-                </div>
+                            ) : (
+                                itemRows.map((item) => {
+                                    const status = getStockStatus(item);
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
-                    <div className="overflow-x-auto">
-                        <Table className="min-w-[900px]">
-                            <TableHeader className="bg-[var(--surface-header)]">
-                                <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.inventoryItems.list.columnName')}</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryItems.list.columnCategory')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryItems.list.columnStock')}{' '}
-                                        {activeBranchName
-                                            ? `(${activeBranchName})`
-                                            : is_branch_manager
-                                              ? ''
-                                              : t('dashboardAdvance.inventoryItems.list.allBranchesSuffix')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryItems.list.columnPrice')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryItems.list.columnStatus')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryItems.list.columnActiveStatus')}
-                                    </TableHead>
-                                    <TableHead className="w-[60px] text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryItems.list.columnAction')}
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-
-                            <TableBody>
-                                {itemRows.length === 0 ? (
-                                    <TableEmptyState
-                                        colSpan={7}
-                                        icon={Package}
-                                        message={t('dashboardAdvance.inventoryItems.list.emptyTitle')}
-                                        description={t('dashboardAdvance.inventoryItems.list.emptyDescription')}
-                                        action={{
-                                            label: t('dashboardAdvance.inventoryItems.list.emptyActionLabel'),
-                                            onClick: () => setShowCreateModal(true),
-                                        }}
-                                    />
-                                ) : (
-                                    itemRows.map((item) => {
-                                        const status = getStockStatus(item);
-
-                                        return (
-                                            <TableRow key={item.id} className={!item.is_active ? 'opacity-60' : ''}>
-                                                <TableCell>
-                                                    <div className="flex items-center gap-3">
-                                                        {item.image ? (
-                                                            <img
-                                                                src={`/storage/${item.image}`}
-                                                                alt={item.name}
-                                                                className="h-10 w-10 shrink-0 rounded-lg object-cover"
-                                                            />
-                                                        ) : (
-                                                            <div className="h-10 w-10 shrink-0 rounded-lg bg-[var(--second-accent)]" />
-                                                        )}
-                                                        <div className="min-w-0">
-                                                            <div className="truncate font-medium text-[var(--subheading)]">{item.name}</div>
-                                                            <div className="text-xs text-[var(--grey-text)]">SKU: {item.sku}</div>
-                                                        </div>
+                                    return (
+                                        <TableRow key={item.id} className={!item.is_active ? 'opacity-60' : ''}>
+                                            <TableCell>
+                                                <div className="flex items-center gap-3">
+                                                    {item.image ? (
+                                                        <img
+                                                            src={`/storage/${item.image}`}
+                                                            alt={item.name}
+                                                            className="h-10 w-10 shrink-0 rounded-lg object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="h-10 w-10 shrink-0 rounded-lg bg-[var(--second-accent)]" />
+                                                    )}
+                                                    <div className="min-w-0">
+                                                        <div className="truncate font-medium text-[var(--subheading)]">{item.name}</div>
+                                                        <div className="text-xs text-[var(--grey-text)]">SKU: {item.sku}</div>
                                                     </div>
-                                                </TableCell>
-                                                <TableCell>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span
+                                                    className="rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap"
+                                                    style={{
+                                                        backgroundColor: `${item.category.color ?? '#94a3b8'}1a`,
+                                                        color: item.category.color ?? '#94a3b8',
+                                                    }}
+                                                >
+                                                    {item.category.name}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell className="text-[var(--grey-text)]">
+                                                {hasSelectedBranch ? (
+                                                    <span className="font-semibold text-[var(--subheading)]">{item.current_stock}</span>
+                                                ) : (
+                                                    <span title={t('dashboardAdvance.inventoryItems.list.selectBranchTitle')}>
+                                                        {item.current_stock}
+                                                    </span>
+                                                )}
+                                            </TableCell>
+                                            <TableCell className="whitespace-nowrap text-[var(--grey-text)]">
+                                                Rp {Number(item.price).toLocaleString('id-ID')}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div>
+                                                    <div className="text-xs text-[var(--grey-text)]">
+                                                        {t('dashboardAdvance.inventoryItems.list.minStockPrefix')} {item.min_stock}
+                                                    </div>
                                                     <span
-                                                        className="rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap"
-                                                        style={{
-                                                            backgroundColor: `${item.category.color ?? '#94a3b8'}1a`,
-                                                            color: item.category.color ?? '#94a3b8',
+                                                        className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ${status.color}`}
+                                                    >
+                                                        {status.label}
+                                                    </span>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span
+                                                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${
+                                                        item.is_active
+                                                            ? 'bg-[var(--success-background)] text-[var(--success)]'
+                                                            : 'bg-[var(--danger-background)] text-[var(--danger)]'
+                                                    }`}
+                                                >
+                                                    {item.is_active
+                                                        ? t('dashboardAdvance.inventoryItems.list.activeStatusActive')
+                                                        : t('dashboardAdvance.inventoryItems.list.activeStatusInactive')}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell className="relative">
+                                                {can_manage_catalog ? (
+                                                    <Button
+                                                        ref={(el) => {
+                                                            buttonRefs.current[item.id] = el;
                                                         }}
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => toggleMenu(item.id)}
                                                     >
-                                                        {item.category.name}
-                                                    </span>
-                                                </TableCell>
-                                                <TableCell className="text-[var(--grey-text)]">
-                                                    {hasSelectedBranch ? (
-                                                        <span className="font-semibold text-[var(--subheading)]">{item.current_stock}</span>
-                                                    ) : (
-                                                        <span title={t('dashboardAdvance.inventoryItems.list.selectBranchTitle')}>
-                                                            {item.current_stock}
-                                                        </span>
-                                                    )}
-                                                </TableCell>
-                                                <TableCell className="whitespace-nowrap text-[var(--grey-text)]">
-                                                    Rp {Number(item.price).toLocaleString('id-ID')}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div>
-                                                        <div className="text-xs text-[var(--grey-text)]">
-                                                            {t('dashboardAdvance.inventoryItems.list.minStockPrefix')} {item.min_stock}
-                                                        </div>
-                                                        <span
-                                                            className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap ${status.color}`}
-                                                        >
-                                                            {status.label}
-                                                        </span>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <span
-                                                        className={`rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${
-                                                            item.is_active
-                                                                ? 'bg-[var(--success-background)] text-[var(--success)]'
-                                                                : 'bg-[var(--danger-background)] text-[var(--danger)]'
-                                                        }`}
+                                                        <MoreVertical className="h-4 w-4" />
+                                                    </Button>
+                                                ) : (
+                                                    <button
+                                                        aria-label={`${t('dashboardAdvance.inventoryItems.list.viewDetailAriaLabelPrefix')} ${item.name}`}
+                                                        onClick={() => handleShowDetail(item)}
+                                                        className="text-xs font-medium whitespace-nowrap text-[var(--secondary-600)] hover:underline"
                                                     >
-                                                        {item.is_active
-                                                            ? t('dashboardAdvance.inventoryItems.list.activeStatusActive')
-                                                            : t('dashboardAdvance.inventoryItems.list.activeStatusInactive')}
-                                                    </span>
-                                                </TableCell>
-                                                <TableCell className="relative">
-                                                    {can_manage_catalog ? (
-                                                        <Button
-                                                            ref={(el) => {
-                                                                buttonRefs.current[item.id] = el;
-                                                            }}
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            onClick={() => toggleMenu(item.id)}
-                                                        >
-                                                            <MoreVertical className="h-4 w-4" />
-                                                        </Button>
-                                                    ) : (
-                                                        <button
-                                                            aria-label={`${t('dashboardAdvance.inventoryItems.list.viewDetailAriaLabelPrefix')} ${item.name}`}
-                                                            onClick={() => handleShowDetail(item)}
-                                                            className="text-xs font-medium whitespace-nowrap text-[var(--secondary-600)] hover:underline"
-                                                        >
-                                                            {t('dashboardAdvance.inventoryItems.list.viewLabel')}
-                                                        </button>
-                                                    )}
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </div>
+                                                        {t('dashboardAdvance.inventoryItems.list.viewLabel')}
+                                                    </button>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
+                            )}
+                        </TableBody>
+                    </Table>
+                </ResponsiveTableCard>
 
                 <PaginationBar
                     from={items.from ?? 0}

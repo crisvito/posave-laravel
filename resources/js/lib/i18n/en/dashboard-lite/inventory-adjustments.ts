@@ -20,6 +20,7 @@ export const inventoryAdjustments = {
     deleteButton: 'Delete',
     deleteConfirmPrefix: 'Delete the stock adjustment record for',
     deleteConfirmSuffix: '?',
+    itemLabel: 'changes',
     modal: {
         title: 'Record Adjustment',
         closeAria: 'Close',
@@ -42,4 +43,12 @@ export const inventoryAdjustments = {
         editTitle: 'Edit Adjustment',
         reasonsIn: ['Found extra during recount', 'Customer return'],
     },
+    statusFilterAriaPrefix: 'Filter status',
+    categoryFilterAllAria: 'All categories',
+    categoryFilterAriaPrefix: 'Filter category',
+    allStatus: 'All Status',
+    statusIn: 'Increased',
+    statusOut: 'Decreased',
+    allCategories: 'All Categories',
+
 };

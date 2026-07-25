@@ -114,6 +114,7 @@ class CreatePurchaseOrderTool implements ToolInterface
       'branch_valid' => (bool) $branch,
       'items' => $items->values(),
       'total_price' => $items->sum('subtotal'),
+      'items_warning' => $items->isEmpty() ? 'BELUM ADA BARANG DIPILIH — jangan konfirmasi, minta AI tanya barang & jumlahnya dulu.' : null,
       'date' => $args['date'] ?? now()->toDateString(),
     ];
   }

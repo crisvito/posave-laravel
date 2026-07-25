@@ -1,17 +1,20 @@
 import { useLanguage } from '@/hooks';
+import { Info, MessageCircle, Users } from 'lucide-react';
+import type { ReactNode } from 'react';
 import type { Contact, Conversation } from '../types';
 
 interface ConversationListProps {
     conversations: Conversation[];
     contacts: Contact[];
-    activeTab: 'pesan' | 'kontak';
+    activeTab: 'pesan' | 'kontak' | 'info';
     activeConversationId: number | null;
     authUserId: number;
-    onTabChange: (tab: 'pesan' | 'kontak') => void;
+    onTabChange: (tab: 'pesan' | 'kontak' | 'info') => void;
     onSelectConversation: (id: number) => void;
     onStartPrivateChat: (userId: number) => void;
     search: string;
     onSearchChange: (value: string) => void;
+    infoPanel: ReactNode;
 }
 
 function formatTime(isoString: string, locale: 'id' | 'en'): string {
@@ -37,6 +40,7 @@ export function ConversationList({
     onStartPrivateChat,
     search,
     onSearchChange,
+    infoPanel,
 }: ConversationListProps) {
     const { locale, t } = useLanguage();
 
@@ -58,40 +62,58 @@ export function ConversationList({
                 <button
                     aria-label={t('dashboardAdvance.messaging.conversationList.tabMessagesAriaLabel')}
                     onClick={() => onTabChange('pesan')}
-                    className={`flex-1 rounded-lg py-2 text-sm font-medium transition-all ${
+                    className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-medium transition-all ${
                         activeTab === 'pesan'
                             ? 'bg-[var(--surface-header)] text-white'
                             : 'text-[var(--grey-text)] hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)]'
                     }`}
                 >
+                    <MessageCircle className="h-4 w-4" />
                     {t('dashboardAdvance.messaging.conversationList.tabMessages')}
                 </button>
                 <button
                     aria-label={t('dashboardAdvance.messaging.conversationList.tabContactsAriaLabel')}
                     onClick={() => onTabChange('kontak')}
-                    className={`flex-1 rounded-lg py-2 text-sm font-medium transition-all ${
+                    className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-medium transition-all ${
                         activeTab === 'kontak'
                             ? 'bg-[var(--surface-header)] text-white'
                             : 'text-[var(--grey-text)] hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)]'
                     }`}
                 >
+                    <Users className="h-4 w-4" />
                     {t('dashboardAdvance.messaging.conversationList.tabContacts')}
+                </button>
+                <button
+                    aria-label={t('dashboardAdvance.messaging.conversationList.tabInfoAriaLabel')}
+                    onClick={() => onTabChange('info')}
+                    className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-sm font-medium transition-all lg:hidden ${
+                        activeTab === 'info'
+                            ? 'bg-[var(--surface-header)] text-white'
+                            : 'text-[var(--grey-text)] hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)]'
+                    }`}
+                >
+                    <Info className="h-4 w-4" />
+                    {t('dashboardAdvance.messaging.conversationList.tabInfo')}
                 </button>
             </div>
 
-            <div className="p-3">
-                <input
-                    type="text"
-                    aria-label={t('dashboardAdvance.messaging.conversationList.searchAriaLabel')}
-                    value={search}
-                    onChange={(e) => onSearchChange(e.target.value)}
-                    placeholder={t('dashboardAdvance.messaging.conversationList.searchPlaceholder')}
-                    className="h-9 w-full rounded-lg border border-[var(--border-strong)] bg-[var(--page-bg)] px-3 text-sm outline-none focus:ring-1 focus:ring-[var(--border-strong)]"
-                />
-            </div>
+            {activeTab !== 'info' && (
+                <div className="p-3">
+                    <input
+                        type="text"
+                        aria-label={t('dashboardAdvance.messaging.conversationList.searchAriaLabel')}
+                        value={search}
+                        onChange={(e) => onSearchChange(e.target.value)}
+                        placeholder={t('dashboardAdvance.messaging.conversationList.searchPlaceholder')}
+                        className="h-9 w-full rounded-lg border border-[var(--border-strong)] bg-[var(--page-bg)] px-3 text-sm outline-none focus:ring-1 focus:ring-[var(--border-strong)]"
+                    />
+                </div>
+            )}
 
             <div className="flex-1 overflow-y-auto">
-                {activeTab === 'pesan' ? (
+                {activeTab === 'info' ? (
+                    infoPanel
+                ) : activeTab === 'pesan' ? (
                     filteredConversations.length === 0 ? (
                         <p className="py-10 text-center text-sm text-[var(--grey-text-muted)]">
                             {t('dashboardAdvance.messaging.conversationList.emptyConversations')}
@@ -112,8 +134,10 @@ export function ConversationList({
                                     key={conv.id}
                                     aria-label={`${t('dashboardAdvance.messaging.conversationList.openConversationAriaLabel')} ${name}`}
                                     onClick={() => onSelectConversation(conv.id)}
-                                    className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-all hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)] ${
-                                        isActive ? 'bg-[var(--second-accent)] dark:bg-[var(--border-strong)]' : ''
+                                    className={`flex w-full items-center gap-3 border-l-4 px-3.5 py-3 text-left transition-all ${
+                                        isActive
+                                            ? 'border-[var(--secondary-600)] bg-[var(--secondary-600)]/10'
+                                            : 'border-transparent hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)]'
                                     }`}
                                 >
                                     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--surface-header)] text-xs font-medium text-white">

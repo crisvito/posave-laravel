@@ -28,7 +28,7 @@ export function FilterDropdown({ value, options, allLabel, onChange, icon, class
                 type="button"
                 aria-label={`${t('shared.filterDropdown.filterAriaPrefix')} ${activeLabel}`}
                 onClick={() => setOpen((v) => !v)}
-                className={`flex items-center gap-2 rounded-lg border border-transparent bg-[var(--second-accent)] px-4 py-2 text-sm font-medium text-[var(--subheading)] shadow-sm hover:bg-[var(--surface-badge)] dark:border-[var(--border-strong)] ${buttonClassName}`}
+                className={`flex cursor-pointer items-center gap-2 rounded-lg border border-transparent bg-[var(--second-accent)] px-4 py-2 text-sm font-medium text-[var(--subheading)] shadow-sm hover:bg-[var(--surface-badge)] dark:border-[var(--border-strong)] ${buttonClassName}`}
             >
                 {icon}
                 {activeLabel}

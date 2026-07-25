@@ -179,14 +179,9 @@ export const liteNavItems: NavItem[] = [
         icon: ClipboardList,
     },
     {
-        title: 'dashboardLite.sidebar.settings',
-        url: '#',
+        title: 'dashboardLite.sidebar.settingsProfile',
         icon: Building,
-        routeName: '',
-        children: [
-            { title: 'dashboardLite.sidebar.settingsProfile', routeName: 'lite.settings.profile.index' },
-            { title: 'dashboardLite.sidebar.settingsReceipt', routeName: 'lite.settings.receipt.index' },
-        ],
+        routeName: 'lite.settings.profile.index',
     },
 ];
 

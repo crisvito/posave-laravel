@@ -5,6 +5,7 @@ namespace App\Events\Messaging;
 use App\Models\Advance\Messaging\Message;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -17,13 +18,23 @@ class MessageSent implements ShouldBroadcast
         public Message $message,
     ) {
         $this->message->load(['sender', 'attachments']);
+        $this->message->loadMissing('conversation.members');
     }
 
     public function broadcastOn(): array
     {
-        return [
+        $channels = [
             new PresenceChannel('conversation.' . $this->message->conversation_id),
         ];
+
+        foreach ($this->message->conversation->members as $member) {
+            if ($member->id === $this->message->user_id) {
+                continue;
+            }
+            $channels[] = new PrivateChannel('App.Models.User.' . $member->id);
+        }
+
+        return $channels;
     }
 
     public function broadcastWith(): array

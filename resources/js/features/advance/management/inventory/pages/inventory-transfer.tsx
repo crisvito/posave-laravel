@@ -4,6 +4,7 @@ import {
     DateNavigator,
     FilterDropdown,
     PaginationBar,
+    ResponsiveTableCard,
     SearchInput,
     Table,
     TableBody,
@@ -195,131 +196,127 @@ export default function InventoryTransferList({
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
-                    <div className="overflow-x-auto">
-                        <Table className="min-w-[860px]">
-                            <TableHeader className="bg-[var(--surface-header)]">
-                                <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryTransfers.list.columnDate')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryTransfers.list.columnSender')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryTransfers.list.columnReceiver')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryTransfers.list.columnTransferNumber')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryTransfers.list.columnItems')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryTransfers.list.columnStatus')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryTransfers.list.columnAction')}
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
+                <ResponsiveTableCard>
+                    <Table className="min-w-[860px]">
+                        <TableHeader className="bg-[var(--surface-header)]">
+                            <TableRow className="border-none hover:bg-[var(--surface-header)]">
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.inventoryTransfers.list.columnDate')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryTransfers.list.columnSender')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryTransfers.list.columnReceiver')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryTransfers.list.columnTransferNumber')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryTransfers.list.columnItems')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryTransfers.list.columnStatus')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryTransfers.list.columnAction')}
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
 
-                            <TableBody>
-                                {transferRows.length === 0 ? (
-                                    <TableEmptyState
-                                        colSpan={7}
-                                        icon={Package}
-                                        message={t('dashboardAdvance.inventoryTransfers.list.emptyTitle')}
-                                        description={t('dashboardAdvance.inventoryTransfers.list.emptyDescription')}
-                                        action={{
-                                            label: t('dashboardAdvance.inventoryTransfers.list.emptyActionLabel'),
-                                            onClick: () => setShowCreateModal(true),
-                                        }}
-                                    />
-                                ) : (
-                                    transferRows.map((transfer) => {
-                                        const iAmApproverWaiting = transfer.approver_branch_id === my_branch_id && transfer.status === 'waiting';
-                                        const iAmInvolvedWaiting =
-                                            (transfer.sender_branch.id === my_branch_id || transfer.receiver_branch.id === my_branch_id) &&
-                                            transfer.status === 'waiting';
+                        <TableBody>
+                            {transferRows.length === 0 ? (
+                                <TableEmptyState
+                                    colSpan={7}
+                                    icon={Package}
+                                    message={t('dashboardAdvance.inventoryTransfers.list.emptyTitle')}
+                                    description={t('dashboardAdvance.inventoryTransfers.list.emptyDescription')}
+                                    action={{
+                                        label: t('dashboardAdvance.inventoryTransfers.list.emptyActionLabel'),
+                                        onClick: () => setShowCreateModal(true),
+                                    }}
+                                />
+                            ) : (
+                                transferRows.map((transfer) => {
+                                    const iAmApproverWaiting = transfer.approver_branch_id === my_branch_id && transfer.status === 'waiting';
+                                    const iAmInvolvedWaiting =
+                                        (transfer.sender_branch.id === my_branch_id || transfer.receiver_branch.id === my_branch_id) &&
+                                        transfer.status === 'waiting';
 
-                                        return (
-                                            <TableRow key={transfer.id} className={iAmApproverWaiting ? 'bg-[var(--warning-background)]/50' : ''}>
-                                                <TableCell>
-                                                    <div className="text-xs whitespace-nowrap text-[var(--grey-text)]">
-                                                        {new Date(transfer.date).toLocaleDateString(dateLocale, {
-                                                            day: 'numeric',
-                                                            month: 'long',
-                                                            year: 'numeric',
-                                                        })}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell className="whitespace-nowrap">{transfer.sender_branch.name}</TableCell>
-                                                <TableCell className="whitespace-nowrap">{transfer.receiver_branch.name}</TableCell>
-                                                <TableCell className="whitespace-nowrap">#{transfer.transfer_number}</TableCell>
-                                                <TableCell className="whitespace-nowrap">
-                                                    {transfer.items_count} {t('dashboardAdvance.inventoryTransfers.list.itemsCountSuffix')}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <span
-                                                        className={`rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap ${statusLabel[transfer.status].className}`}
+                                    return (
+                                        <TableRow key={transfer.id} className={iAmApproverWaiting ? 'bg-[var(--warning-background)]/50' : ''}>
+                                            <TableCell>
+                                                <div className="text-xs whitespace-nowrap text-[var(--grey-text)]">
+                                                    {new Date(transfer.date).toLocaleDateString(dateLocale, {
+                                                        day: 'numeric',
+                                                        month: 'long',
+                                                        year: 'numeric',
+                                                    })}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell className="whitespace-nowrap">{transfer.sender_branch.name}</TableCell>
+                                            <TableCell className="whitespace-nowrap">{transfer.receiver_branch.name}</TableCell>
+                                            <TableCell className="whitespace-nowrap">#{transfer.transfer_number}</TableCell>
+                                            <TableCell className="whitespace-nowrap">
+                                                {transfer.items_count} {t('dashboardAdvance.inventoryTransfers.list.itemsCountSuffix')}
+                                            </TableCell>
+                                            <TableCell>
+                                                <span
+                                                    className={`rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap ${statusLabel[transfer.status].className}`}
+                                                >
+                                                    {statusLabel[transfer.status].text}
+                                                </span>
+                                                {transfer.status === 'rejected' && transfer.rejection_note && (
+                                                    <p
+                                                        className="mt-1 max-w-[180px] truncate text-xs text-[var(--grey-text)]"
+                                                        title={transfer.rejection_note}
                                                     >
-                                                        {statusLabel[transfer.status].text}
-                                                    </span>
-                                                    {transfer.status === 'rejected' && transfer.rejection_note && (
-                                                        <p
-                                                            className="mt-1 max-w-[180px] truncate text-xs text-[var(--grey-text)]"
-                                                            title={transfer.rejection_note}
-                                                        >
-                                                            "{transfer.rejection_note}"
-                                                        </p>
-                                                    )}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div className="flex flex-wrap gap-1.5">
-                                                        {iAmApproverWaiting && (
-                                                            <>
-                                                                <Button
-                                                                    variant="outline"
-                                                                    aria-label={`${t('dashboardAdvance.inventoryTransfers.list.acceptAriaLabelPrefix')} ${transfer.transfer_number}`}
-                                                                    onClick={() => handleAccept(transfer)}
-                                                                    className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--success)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:underline hover:opacity-90"
-                                                                >
-                                                                    <Check className="h-3.5 w-3.5" />{' '}
-                                                                    {t('dashboardAdvance.inventoryTransfers.list.acceptLabel')}
-                                                                </Button>
-                                                                <Button
-                                                                    variant="outline"
-                                                                    aria-label={`${t('dashboardAdvance.inventoryTransfers.list.rejectAriaLabelPrefix')} ${transfer.transfer_number}`}
-                                                                    onClick={() => setRejectTarget(transfer)}
-                                                                    className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--danger-background)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-[var(--danger)] hover:underline hover:opacity-90"
-                                                                >
-                                                                    <XIcon className="h-3.5 w-3.5" />{' '}
-                                                                    {t('dashboardAdvance.inventoryTransfers.list.rejectLabel')}
-                                                                </Button>
-                                                            </>
-                                                        )}
-                                                        {iAmInvolvedWaiting && (
+                                                        "{transfer.rejection_note}"
+                                                    </p>
+                                                )}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {iAmApproverWaiting && (
+                                                        <>
                                                             <Button
                                                                 variant="outline"
-                                                                aria-label={`${t('dashboardAdvance.inventoryTransfers.list.cancelAriaLabelPrefix')} ${transfer.transfer_number}`}
-                                                                onClick={() => handleCancel(transfer)}
-                                                                className="rounded-lg border border-[var(--border-strong)] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[var(--grey-text)] hover:bg-[var(--second-accent)] hover:underline"
+                                                                aria-label={`${t('dashboardAdvance.inventoryTransfers.list.acceptAriaLabelPrefix')} ${transfer.transfer_number}`}
+                                                                onClick={() => handleAccept(transfer)}
+                                                                className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--success)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:underline hover:opacity-90"
                                                             >
-                                                                {t('dashboardAdvance.inventoryTransfers.list.cancelLabel')}
+                                                                <Check className="h-3.5 w-3.5" />{' '}
+                                                                {t('dashboardAdvance.inventoryTransfers.list.acceptLabel')}
                                                             </Button>
-                                                        )}
-                                                        {!iAmInvolvedWaiting && !iAmApproverWaiting && <span>-</span>}
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        );
-                                    })
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </div>
+                                                            <Button
+                                                                variant="outline"
+                                                                aria-label={`${t('dashboardAdvance.inventoryTransfers.list.rejectAriaLabelPrefix')} ${transfer.transfer_number}`}
+                                                                onClick={() => setRejectTarget(transfer)}
+                                                                className="flex shrink-0 items-center gap-1 rounded-lg bg-[var(--danger-background)] px-2.5 py-1.5 text-xs font-semibold whitespace-nowrap text-[var(--danger)] hover:underline hover:opacity-90"
+                                                            >
+                                                                <XIcon className="h-3.5 w-3.5" />{' '}
+                                                                {t('dashboardAdvance.inventoryTransfers.list.rejectLabel')}
+                                                            </Button>
+                                                        </>
+                                                    )}
+                                                    {iAmInvolvedWaiting && (
+                                                        <Button
+                                                            variant="outline"
+                                                            aria-label={`${t('dashboardAdvance.inventoryTransfers.list.cancelAriaLabelPrefix')} ${transfer.transfer_number}`}
+                                                            onClick={() => handleCancel(transfer)}
+                                                            className="rounded-lg border border-[var(--border-strong)] px-2.5 py-1.5 text-xs font-medium whitespace-nowrap text-[var(--grey-text)] hover:bg-[var(--second-accent)] hover:underline"
+                                                        >
+                                                            {t('dashboardAdvance.inventoryTransfers.list.cancelLabel')}
+                                                        </Button>
+                                                    )}
+                                                    {!iAmInvolvedWaiting && !iAmApproverWaiting && <span>-</span>}
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                })
+                            )}
+                        </TableBody>
+                    </Table>
+                </ResponsiveTableCard>
 
                 <PaginationBar {...paginationProps} />
             </div>

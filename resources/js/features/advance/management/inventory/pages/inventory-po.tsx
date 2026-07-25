@@ -3,7 +3,9 @@ import {
     CreateButton,
     DateNavigator,
     FilterDropdown,
+    ListToolbar,
     PaginationBar,
+    ResponsiveTableCard,
     SearchInput,
     Table,
     TableBody,
@@ -128,139 +130,138 @@ export default function InventoryPurchaseOrderList({
         >
             <Head title={t('dashboardAdvance.inventoryPurchaseOrders.list.headTitle')} />
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--page-bg)] p-4 sm:p-6">
-                <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-                    <div className="flex flex-wrap items-center gap-3">
-                        {!is_branch_manager ? (
-                            <FilterDropdown
-                                value={filters.branch_id}
-                                options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
-                                allLabel={t('dashboardAdvance.inventoryPurchaseOrders.list.allBranches')}
-                                onChange={(v) => applyFilters({ branch_id: v })}
-                                icon={<Store className="h-4 w-4" />}
-                            />
-                        ) : (
-                            <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)]">
-                                <Store className="h-4 w-4" />
-                                {branches[0]?.name ?? t('dashboardAdvance.inventoryPurchaseOrders.list.yourBranchFallback')}
-                            </div>
-                        )}
-
-                        <DateNavigator date={currentDate} onChange={(date) => applyFilters({ date })} variant="default" size="sm" />
-                    </div>
-
-                    <div className="flex items-center gap-3">
+                <ListToolbar
+                    branch={
+                        <>
+                            {!is_branch_manager ? (
+                                <FilterDropdown
+                                    value={filters.branch_id}
+                                    options={branches.map((b) => ({ value: String(b.id), label: b.name }))}
+                                    allLabel={t('dashboardAdvance.inventoryPurchaseOrders.list.allBranches')}
+                                    onChange={(v) => applyFilters({ branch_id: v })}
+                                    icon={<Store className="h-4 w-4" />}
+                                />
+                            ) : (
+                                <div className="flex shrink-0 items-center gap-2 rounded-lg bg-[var(--second-accent)] px-3 py-2 text-sm font-medium text-[var(--subheading)]">
+                                    <Store className="h-4 w-4" />
+                                    {branches[0]?.name ?? t('dashboardAdvance.inventoryPurchaseOrders.list.yourBranchFallback')}
+                                </div>
+                            )}
+                            <DateNavigator date={currentDate} onChange={(date) => applyFilters({ date })} variant="default" size="sm" />
+                        </>
+                    }
+                    search={
+                        <SearchInput
+                            value={search}
+                            onChange={setSearch}
+                            onSubmit={handleSearch}
+                            placeholder={t('dashboardAdvance.inventoryPurchaseOrders.list.searchPlaceholder')}
+                        />
+                    }
+                    filters={
                         <FilterDropdown
                             value={filters.status}
                             options={STATUS_OPTIONS}
                             allLabel={t('dashboardAdvance.inventoryPurchaseOrders.list.allStatus')}
                             onChange={(v) => applyFilters({ status: v })}
                         />
+                    }
+                    action={
                         <CreateButton
                             label={t('dashboardAdvance.inventoryPurchaseOrders.list.createButton')}
                             onClick={() => setShowCreateModal(true)}
                         />
-                    </div>
-                </div>
+                    }
+                />
 
-                <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
-                    <SearchInput
-                        value={search}
-                        onChange={setSearch}
-                        onSubmit={handleSearch}
-                        placeholder={t('dashboardAdvance.inventoryPurchaseOrders.list.searchPlaceholder')}
-                    />
-                </div>
+                <ResponsiveTableCard>
+                    <Table className="min-w-[760px]">
+                        <TableHeader className="bg-[var(--surface-header)]">
+                            <TableRow className="border-none hover:bg-[var(--surface-header)]">
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryPurchaseOrders.list.columnDate')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryPurchaseOrders.list.columnBranch')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryPurchaseOrders.list.columnSupplier')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryPurchaseOrders.list.columnPoNumber')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryPurchaseOrders.list.columnTotalPrice')}
+                                </TableHead>
+                                <TableHead className="text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryPurchaseOrders.list.columnStatus')}
+                                </TableHead>
+                                <TableHead className="w-[60px] text-[var(--text-light)]">
+                                    {t('dashboardAdvance.inventoryPurchaseOrders.list.columnAction')}
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
-                    <div className="overflow-x-auto">
-                        <Table className="min-w-[760px]">
-                            <TableHeader className="bg-[var(--surface-header)]">
-                                <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnDate')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnBranch')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnSupplier')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnPoNumber')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnTotalPrice')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnStatus')}
-                                    </TableHead>
-                                    <TableHead className="w-[60px] text-[var(--text-light)]">
-                                        {t('dashboardAdvance.inventoryPurchaseOrders.list.columnAction')}
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-
-                            <TableBody>
-                                {poRows.length === 0 ? (
-                                    <TableEmptyState
-                                        colSpan={7}
-                                        icon={Package}
-                                        message={t('dashboardAdvance.inventoryPurchaseOrders.list.emptyTitle')}
-                                        description={t('dashboardAdvance.inventoryPurchaseOrders.list.emptyDescription')}
-                                        action={{
-                                            label: t('dashboardAdvance.inventoryPurchaseOrders.list.emptyActionLabel'),
-                                            onClick: () => setShowCreateModal(true),
-                                        }}
-                                    />
-                                ) : (
-                                    poRows.map((po) => (
-                                        <TableRow key={po.id}>
-                                            <TableCell>
-                                                <div className="font-medium whitespace-nowrap">
-                                                    {new Date(po.date).toLocaleTimeString(dateLocale, { hour: '2-digit', minute: '2-digit' })}
-                                                </div>
-                                                <div className="text-xs whitespace-nowrap text-[var(--grey-text)]">
-                                                    {new Date(po.date).toLocaleDateString(dateLocale, {
-                                                        day: 'numeric',
-                                                        month: 'long',
-                                                        year: 'numeric',
-                                                    })}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="whitespace-nowrap">{po.branch.name}</TableCell>
-                                            <TableCell className="whitespace-nowrap">{po.supplier.name}</TableCell>
-                                            <TableCell className="whitespace-nowrap">#{po.po_number}</TableCell>
-                                            <TableCell className="whitespace-nowrap">Rp. {Number(po.total_price).toLocaleString('id-ID')}</TableCell>
-                                            <TableCell>
-                                                <span
-                                                    className={`rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap ${statusLabel[po.status].className}`}
+                        <TableBody>
+                            {poRows.length === 0 ? (
+                                <TableEmptyState
+                                    colSpan={7}
+                                    icon={Package}
+                                    message={t('dashboardAdvance.inventoryPurchaseOrders.list.emptyTitle')}
+                                    description={t('dashboardAdvance.inventoryPurchaseOrders.list.emptyDescription')}
+                                    action={{
+                                        label: t('dashboardAdvance.inventoryPurchaseOrders.list.emptyActionLabel'),
+                                        onClick: () => setShowCreateModal(true),
+                                    }}
+                                />
+                            ) : (
+                                poRows.map((po) => (
+                                    <TableRow key={po.id}>
+                                        <TableCell>
+                                            <div className="font-medium whitespace-nowrap">
+                                                {new Date(po.date).toLocaleTimeString(dateLocale, { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                            <div className="text-xs whitespace-nowrap text-[var(--grey-text)]">
+                                                {new Date(po.date).toLocaleDateString(dateLocale, {
+                                                    day: 'numeric',
+                                                    month: 'long',
+                                                    year: 'numeric',
+                                                })}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="whitespace-nowrap">{po.branch.name}</TableCell>
+                                        <TableCell className="whitespace-nowrap">{po.supplier.name}</TableCell>
+                                        <TableCell className="whitespace-nowrap">#{po.po_number}</TableCell>
+                                        <TableCell className="whitespace-nowrap">Rp. {Number(po.total_price).toLocaleString('id-ID')}</TableCell>
+                                        <TableCell>
+                                            <span
+                                                className={`rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap ${statusLabel[po.status].className}`}
+                                            >
+                                                {statusLabel[po.status].text}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="relative">
+                                            {po.status !== 'success' ? (
+                                                <Button
+                                                    ref={(el) => {
+                                                        buttonRefs.current[po.id] = el;
+                                                    }}
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => toggleMenu(po.id)}
                                                 >
-                                                    {statusLabel[po.status].text}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className="relative">
-                                                {po.status !== 'success' ? (
-                                                    <Button
-                                                        ref={(el) => {
-                                                            buttonRefs.current[po.id] = el;
-                                                        }}
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => toggleMenu(po.id)}
-                                                    >
-                                                        <MoreVertical className="h-4 w-4" />
-                                                    </Button>
-                                                ) : (
-                                                    <span className="text-xs text-[var(--grey-text)]">—</span>
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </div>
+                                                    <MoreVertical className="h-4 w-4" />
+                                                </Button>
+                                            ) : (
+                                                <span className="text-xs text-[var(--grey-text)]">—</span>
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </ResponsiveTableCard>
 
                 <PaginationBar
                     from={purchaseOrders.from ?? 0}

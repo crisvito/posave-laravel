@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Lite\Inventory;
 use App\Http\Controllers\Controller;
 use App\Models\Advance\Management\Inventory\Adjustment;
 use App\Models\Advance\Management\Inventory\BranchStock;
+use App\Models\Advance\Management\Inventory\Category;
 use App\Models\Advance\Management\Inventory\Item;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,32 +20,45 @@ class AdjustmentController extends Controller
         /** @var User $owner */
         $owner = Auth::user();
 
-        $adjustments = Adjustment::with('item')
+        $adjustments = Adjustment::with('item.category')
             ->where('branch_id', $owner->branch_id)
             ->whereHas('item', fn($q) => $q->where('company_id', $owner->company_id))
             ->when($request->search, function ($q) use ($request) {
                 $q->whereHas('item', fn($qq) => $qq->where('name', 'like', '%' . $request->search . '%'));
             })
+            ->when($request->category_id, function ($q) use ($request) {
+                $q->whereHas('item', fn($qq) => $qq->where('category_id', $request->category_id));
+            })
+            ->when($request->status, function ($q) use ($request) {
+                if ($request->status === 'in') {
+                    $q->where('qty_change', '>', 0);
+                } elseif ($request->status === 'out') {
+                    $q->where('qty_change', '<', 0);
+                }
+            })
             ->orderByDesc('date')
             ->orderByDesc('id')
-            ->paginate(8)
+            ->paginate($request->integer('per_page') ?: 8)
             ->withQueryString();
 
         $adjustments->getCollection()->transform(fn($a) => [
             'id' => $a->id,
             'inventory_item_id' => $a->inventory_item_id,
             'item_name' => $a->item->name,
+            'category_name' => $a->item->category?->name,
             'note' => $a->note,
             'qty_change' => $a->qty_change,
             'date' => $a->date,
         ]);
 
         $items = Item::where('company_id', $owner->company_id)->orderBy('name')->get(['id', 'name']);
+        $categories = Category::where('company_id', $owner->company_id)->orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('lite/inventory/adjustment-list', [
             'adjustments' => $adjustments,
             'items' => $items,
-            'filters' => $request->only('search'),
+            'categories' => $categories,
+            'filters' => $request->only('search', 'category_id', 'status', 'per_page'),
         ]);
     }
 

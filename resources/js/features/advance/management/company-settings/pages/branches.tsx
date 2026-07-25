@@ -7,7 +7,7 @@ import {
     Input,
     Label,
     PaginationBar,
-    PrintButton,
+    ResponsiveTableCard,
     SearchInput,
     Table,
     TableBody,
@@ -125,91 +125,85 @@ export default function BranchesPage({ branches, filters = {} }: Props) {
                     <div className="flex items-center gap-3">
                         <CountBadge label={t('dashboardAdvance.branches.countLabel')} count={branches.total} />
                         <CreateButton label={t('dashboardAdvance.branches.createLabel')} onClick={openAdd} />
-                        <PrintButton label={t('dashboardAdvance.branches.printLabel')} />
                     </div>
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
-                    <div className="overflow-x-auto">
-                        <Table className="min-w-[800px]">
-                            <TableHeader className="bg-[var(--surface-header)]">
-                                <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnName')}</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnAddress')}</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnPhone')}</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnStatus')}</TableHead>
-                                    <TableHead className="w-32 text-[var(--text-light)]">{t('dashboardAdvance.branches.columnAction')}</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {branches.data.length === 0 ? (
-                                    <TableEmptyState
-                                        colSpan={5}
-                                        message={
-                                            filters?.search
-                                                ? `${t('dashboardAdvance.branches.searchNotFoundPrefix')} "${filters.search}" ${t('dashboardAdvance.branches.searchNotFoundSuffix')}`
-                                                : t('dashboardAdvance.branches.emptyState')
-                                        }
-                                    />
-                                ) : (
-                                    branches.data.map((branch) => (
-                                        <TableRow key={branch.id}>
-                                            <TableCell>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-medium text-[var(--subheading)]">{branch.name}</span>
-                                                    {branch.is_main && (
-                                                        <span className="rounded-full bg-[var(--surface-header)] px-2 py-0.5 text-xs text-[var(--text-light)]">
-                                                            {t('dashboardAdvance.branches.mainBadge')}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="text-[var(--grey-text)]">
-                                                <div className="flex items-start gap-1.5">
-                                                    <MapPin
-                                                        className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)]"
-                                                        aria-hidden="true"
+                <ResponsiveTableCard>
+                    <Table className="min-w-[800px]">
+                        <TableHeader className="bg-[var(--surface-header)]">
+                            <TableRow className="border-none hover:bg-[var(--surface-header)]">
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnName')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnAddress')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnPhone')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.branches.columnStatus')}</TableHead>
+                                <TableHead className="w-32 text-[var(--text-light)]">{t('dashboardAdvance.branches.columnAction')}</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {branches.data.length === 0 ? (
+                                <TableEmptyState
+                                    colSpan={5}
+                                    message={
+                                        filters?.search
+                                            ? `${t('dashboardAdvance.branches.searchNotFoundPrefix')} "${filters.search}" ${t('dashboardAdvance.branches.searchNotFoundSuffix')}`
+                                            : t('dashboardAdvance.branches.emptyState')
+                                    }
+                                />
+                            ) : (
+                                branches.data.map((branch) => (
+                                    <TableRow key={branch.id}>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-medium text-[var(--subheading)]">{branch.name}</span>
+                                                {branch.is_main && (
+                                                    <span className="rounded-full bg-[var(--surface-header)] px-2 py-0.5 text-xs text-[var(--text-light)]">
+                                                        {t('dashboardAdvance.branches.mainBadge')}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="text-[var(--grey-text)]">
+                                            <div className="flex items-start gap-1.5">
+                                                <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)]" aria-hidden="true" />
+                                                <span>{branch.address || '-'}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="text-[var(--grey-text)]">
+                                            <div className="flex items-center gap-1.5">
+                                                <Phone className="h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)]" aria-hidden="true" />
+                                                <span>{branch.phone || '-'}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span
+                                                className={`rounded-full px-3 py-1 text-xs font-medium ${
+                                                    branch.status === 'closed'
+                                                        ? 'bg-[var(--danger-background)] text-[var(--danger)]'
+                                                        : 'bg-[var(--success-background)] text-[var(--success)]'
+                                                }`}
+                                            >
+                                                {branch.status === 'closed'
+                                                    ? t('dashboardAdvance.branches.statusClosed')
+                                                    : t('dashboardAdvance.branches.statusOpen')}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="relative">
+                                            <div className="flex items-center gap-2">
+                                                <EditButton label={t('dashboardAdvance.branches.editLabel')} onClick={() => openEdit(branch)} />
+                                                {!branch.is_main && (
+                                                    <DeleteButton
+                                                        label={t('dashboardAdvance.branches.deleteLabel')}
+                                                        onClick={() => handleDelete(branch)}
                                                     />
-                                                    <span>{branch.address || '-'}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="text-[var(--grey-text)]">
-                                                <div className="flex items-center gap-1.5">
-                                                    <Phone className="h-4 w-4 flex-shrink-0 text-[var(--grey-text-muted)]" aria-hidden="true" />
-                                                    <span>{branch.phone || '-'}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <span
-                                                    className={`rounded-full px-3 py-1 text-xs font-medium ${
-                                                        branch.status === 'closed'
-                                                            ? 'bg-[var(--danger-background)] text-[var(--danger)]'
-                                                            : 'bg-[var(--success-background)] text-[var(--success)]'
-                                                    }`}
-                                                >
-                                                    {branch.status === 'closed'
-                                                        ? t('dashboardAdvance.branches.statusClosed')
-                                                        : t('dashboardAdvance.branches.statusOpen')}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className="relative">
-                                                <div className="flex items-center gap-2">
-                                                    <EditButton label={t('dashboardAdvance.branches.editLabel')} onClick={() => openEdit(branch)} />
-                                                    {!branch.is_main && (
-                                                        <DeleteButton
-                                                            label={t('dashboardAdvance.branches.deleteLabel')}
-                                                            onClick={() => handleDelete(branch)}
-                                                        />
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </div>
+                                                )}
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </ResponsiveTableCard>
 
                 <PaginationBar
                     from={branches.from ?? 0}

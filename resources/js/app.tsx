@@ -5,6 +5,7 @@ import '@fontsource/poppins/700.css';
 
 import '../css/app.css';
 
+import { MessagingNotificationsProvider } from '@/features/messaging/notifications-context';
 import { createInertiaApp } from '@inertiajs/react';
 import { configureEcho, echo } from '@laravel/echo-react';
 import axios from 'axios';
@@ -41,14 +42,24 @@ const appName = import.meta.env.VITE_APP_NAME || 'Posave';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
-    resolve: (name) => {
+    resolve: async (name) => {
         const parts = name.split('/');
         const pageName = parts.pop();
         const folderPath = parts.join('/');
-
         const path = folderPath ? `./features/${folderPath}/pages/${pageName}.tsx` : `./features/${pageName}/pages/${pageName}.tsx`;
 
-        return resolvePageComponent(path, import.meta.glob('./features/**/pages/**/*.tsx'));
+        const page = (await resolvePageComponent(path, import.meta.glob('./features/**/pages/**/*.tsx'))) as {
+            default: React.ComponentType<Record<string, unknown>>;
+        };
+        const PageComponent = page.default;
+
+        const WrappedComponent = (props: Record<string, unknown>) => (
+            <MessagingNotificationsProvider>
+                <PageComponent {...props} />
+            </MessagingNotificationsProvider>
+        );
+
+        return { ...page, default: WrappedComponent };
     },
     setup({ el, App, props }) {
         const root = createRoot(el);

@@ -1,7 +1,9 @@
 import {
     Button,
+    CountBadge,
     FilterDropdown,
     PaginationBar,
+    ResponsiveTableCard,
     SearchInput,
     Table,
     TableBody,
@@ -158,9 +160,7 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3">
-                        <span className="rounded-lg bg-[var(--surface-badge)] px-4 py-2 text-sm font-medium text-[var(--subheading)]">
-                            {t('dashboardAdvance.employees.list.countPrefix')} : {employees.total}
-                        </span>
+                        <CountBadge label={t('dashboardAdvance.employees.list.countPrefix')} count={employees.total} />
                         {!is_branch_manager && (
                             <Link href={route('dashboard.employees.create')}>
                                 <Button className="bg-[var(--surface-header)] hover:bg-[var(--surface-header-hover)]">
@@ -181,96 +181,88 @@ export default function EmployeeList({ employees, branches, filters, is_branch_m
                     />
                 </div>
 
-                <div className="overflow-hidden rounded-2xl border border-[var(--border-strong)] bg-[var(--card)] shadow-sm">
-                    <div className="overflow-x-auto">
-                        <Table className="min-w-[950px]">
-                            <TableHeader className="bg-[var(--surface-header)]">
-                                <TableRow className="border-none hover:bg-[var(--surface-header)]">
-                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.employees.list.columnName')}</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.employees.list.columnEmail')}</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.employees.list.columnRole')}</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.employees.list.columnBranch')}</TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.employees.list.columnActiveDate')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.employees.list.columnSlotStatus')}
-                                    </TableHead>
-                                    <TableHead className="text-[var(--text-light)]">
-                                        {t('dashboardAdvance.employees.list.columnActiveStatus')}
-                                    </TableHead>
-                                    <TableHead className="w-[60px] text-[var(--text-light)]">
-                                        {t('dashboardAdvance.employees.list.columnAction')}
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
+                <ResponsiveTableCard>
+                    <Table className="min-w-[950px]">
+                        <TableHeader className="bg-[var(--surface-header)]">
+                            <TableRow className="border-none hover:bg-[var(--surface-header)]">
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.employees.list.columnName')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.employees.list.columnEmail')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.employees.list.columnRole')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.employees.list.columnBranch')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.employees.list.columnActiveDate')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.employees.list.columnSlotStatus')}</TableHead>
+                                <TableHead className="text-[var(--text-light)]">{t('dashboardAdvance.employees.list.columnActiveStatus')}</TableHead>
+                                <TableHead className="w-[60px] text-[var(--text-light)]">
+                                    {t('dashboardAdvance.employees.list.columnAction')}
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
 
-                            <TableBody>
-                                {employees.data.length === 0 ? (
-                                    <TableEmptyState colSpan={8} message={t('dashboardAdvance.employees.list.emptyState')} />
-                                ) : (
-                                    employees.data.map((employee) => (
-                                        <TableRow
-                                            key={employee.id}
-                                            className={`${employee.role === 'branch_manager' ? 'bg-[var(--secondary-600)]/5' : ''} ${!employee.is_active ? 'opacity-60' : ''}`}
-                                        >
-                                            <TableCell className="font-medium text-[var(--subheading)]">{employee.name}</TableCell>
-                                            <TableCell className="text-[var(--subheading)]">{employee.user?.email ?? '-'}</TableCell>
-                                            <TableCell>
-                                                <span className="rounded-full bg-[var(--secondary-600)]/10 px-3 py-1 text-xs font-medium whitespace-nowrap text-[var(--secondary-600)]">
-                                                    {roleLabel(employee.role)}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className="text-[var(--subheading)]">{employee.branch?.name ?? '-'}</TableCell>
-                                            <TableCell className="text-[var(--subheading)]">{employee.active_date}</TableCell>
-                                            <TableCell>
-                                                <span
-                                                    className={`rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap ${slotStatusClass(employee.slot_status)}`}
+                        <TableBody>
+                            {employees.data.length === 0 ? (
+                                <TableEmptyState colSpan={8} message={t('dashboardAdvance.employees.list.emptyState')} />
+                            ) : (
+                                employees.data.map((employee) => (
+                                    <TableRow
+                                        key={employee.id}
+                                        className={`${employee.role === 'branch_manager' ? 'bg-[var(--secondary-600)]/5' : ''} ${!employee.is_active ? 'opacity-60' : ''}`}
+                                    >
+                                        <TableCell className="font-medium text-[var(--subheading)]">{employee.name}</TableCell>
+                                        <TableCell className="text-[var(--subheading)]">{employee.user?.email ?? '-'}</TableCell>
+                                        <TableCell>
+                                            <span className="rounded-full bg-[var(--secondary-600)]/10 px-3 py-1 text-xs font-medium whitespace-nowrap text-[var(--secondary-600)]">
+                                                {roleLabel(employee.role)}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="text-[var(--subheading)]">{employee.branch?.name ?? '-'}</TableCell>
+                                        <TableCell className="text-[var(--subheading)]">{employee.active_date}</TableCell>
+                                        <TableCell>
+                                            <span
+                                                className={`rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap ${slotStatusClass(employee.slot_status)}`}
+                                            >
+                                                {slotStatusLabel(employee.slot_status)}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>
+                                            <span
+                                                className={`rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap ${
+                                                    employee.is_active
+                                                        ? 'bg-[var(--success-background)] text-[var(--success)]'
+                                                        : 'bg-[var(--danger-background)] text-[var(--danger)]'
+                                                }`}
+                                            >
+                                                {employee.is_active
+                                                    ? t('dashboardAdvance.employees.list.activeStatusActive')
+                                                    : t('dashboardAdvance.employees.list.activeStatusInactive')}
+                                            </span>
+                                        </TableCell>
+                                        <TableCell className="relative">
+                                            {canManage(employee) ? (
+                                                <Button
+                                                    ref={(el) => {
+                                                        buttonRefs.current[employee.id] = el;
+                                                    }}
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => toggleMenu(employee.id)}
                                                 >
-                                                    {slotStatusLabel(employee.slot_status)}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell>
-                                                <span
-                                                    className={`rounded-full px-3 py-1 text-xs font-medium whitespace-nowrap ${
-                                                        employee.is_active
-                                                            ? 'bg-[var(--success-background)] text-[var(--success)]'
-                                                            : 'bg-[var(--danger-background)] text-[var(--danger)]'
-                                                    }`}
+                                                    <MoreVertical className="h-4 w-4" />
+                                                </Button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleShowDetail(employee)}
+                                                    className="text-xs font-medium text-[var(--secondary-600)] hover:underline"
                                                 >
-                                                    {employee.is_active
-                                                        ? t('dashboardAdvance.employees.list.activeStatusActive')
-                                                        : t('dashboardAdvance.employees.list.activeStatusInactive')}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell className="relative">
-                                                {canManage(employee) ? (
-                                                    <Button
-                                                        ref={(el) => {
-                                                            buttonRefs.current[employee.id] = el;
-                                                        }}
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={() => toggleMenu(employee.id)}
-                                                    >
-                                                        <MoreVertical className="h-4 w-4" />
-                                                    </Button>
-                                                ) : (
-                                                    <button
-                                                        onClick={() => handleShowDetail(employee)}
-                                                        className="text-xs font-medium text-[var(--secondary-600)] hover:underline"
-                                                    >
-                                                        {t('dashboardAdvance.employees.list.viewLabel')}
-                                                    </button>
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </div>
+                                                    {t('dashboardAdvance.employees.list.viewLabel')}
+                                                </button>
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </ResponsiveTableCard>
 
                 <PaginationBar
                     from={employees.from ?? 0}

@@ -93,7 +93,7 @@ class ChatbotService
       $required = $tool->parameters()['required'] ?? [];
       $missing = array_values(array_filter(
         $required,
-        fn($field) => !array_key_exists($field, $args) || $args[$field] === null || $args[$field] === ''
+        fn($field) => !array_key_exists($field, $args) || $args[$field] === null || $args[$field] === '' || (is_array($args[$field]) && empty($args[$field]))
       ));
 
       if (!empty($missing)) {

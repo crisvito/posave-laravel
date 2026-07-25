@@ -1,11 +1,12 @@
 import { Sheet, SheetContent } from '@/components/ui';
 import { ChatArea, ConversationList, InfoPanel } from '@/features/advance/messaging/components';
+import { useMessagingNotifications } from '@/features/messaging/notifications-context';
 import { useConfirmAction, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
 import { Head, router } from '@inertiajs/react';
 import { useEchoPresence, useEchoPublic } from '@laravel/echo-react';
 import axios from 'axios';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { AuthUser, Broadcast, Contact, Conversation, Message, Note } from '../types';
 
 interface Props {
@@ -24,12 +25,13 @@ export default function MessagingIndex({
     auth_user,
 }: Props) {
     const { t } = useLanguage();
-    const [activeTab, setActiveTab] = useState<'pesan' | 'kontak'>('pesan');
+    // const [activeTab, setActiveTab] = useState<'pesan' | 'kontak'>('pesan');
+    const [activeTab, setActiveTab] = useState<'pesan' | 'kontak' | 'info'>('pesan');
     const [search, setSearch] = useState('');
     const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
     const [broadcasts, setBroadcasts] = useState<Broadcast[]>(initialBroadcasts);
     const [notes, setNotes] = useState<Note[]>(initialNotes);
-    const [activeConversationId, setActiveConversationId] = useState<number | null>(null);
+    const { activeConversationId, setActiveConversationId, lastMessageEvent } = useMessagingNotifications();
     const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
@@ -51,36 +53,45 @@ export default function MessagingIndex({
         '.message.sent',
         (data) => {
             if (!activeConversationId) return;
-
             setMessages((prev) => [...prev, { ...data, is_mine: false }]);
-
-            setConversations((prev) =>
-                prev.map((c) =>
-                    c.id === activeConversationId
-                        ? {
-                              ...c,
-                              latest_message: {
-                                  body: data.body,
-                                  sender: data.sender,
-                                  created_at: data.created_at,
-                              },
-                          }
-                        : c,
-                ),
-            );
         },
         [activeConversationId],
     );
 
+    // Update daftar percakapan (preview + badge per-item) tiap kali ada pesan baru lewat
+    // channel notifikasi pribadi — ini yang bikin list ke-update live tanpa refresh/pindah halaman.
+    useEffect(() => {
+        if (!lastMessageEvent) return;
+
+        setConversations((prev) =>
+            prev.map((c) => {
+                if (c.id !== lastMessageEvent.conversation_id) return c;
+
+                const isCurrentlyOpen = c.id === activeConversationId;
+
+                return {
+                    ...c,
+                    latest_message: {
+                        body: lastMessageEvent.body,
+                        sender: lastMessageEvent.sender,
+                        created_at: lastMessageEvent.created_at,
+                    },
+                    unread_count: isCurrentlyOpen ? 0 : (c.unread_count ?? 0) + 1,
+                };
+            }),
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [lastMessageEvent]);
+
     const selectConversation = useCallback(
         async (id: number) => {
-            setActiveConversationId(id);
+            const conv = conversations.find((c) => c.id === id) ?? null;
+            setActiveConversationId(id, conv?.unread_count ?? 0);
             setMobileView('chat');
             setIsLoadingMessages(true);
             setMessages([]);
-
-            const conv = conversations.find((c) => c.id === id) ?? null;
             setActiveConversation(conv);
+            setConversations((prev) => prev.map((c) => (c.id === id ? { ...c, unread_count: 0 } : c)));
 
             try {
                 const res = await axios.get(route('messaging.messages', id));
@@ -92,8 +103,15 @@ export default function MessagingIndex({
                 setIsLoadingMessages(false);
             }
         },
-        [conversations],
+        [conversations, setActiveConversationId],
     );
+
+    const handleBack = useCallback(() => {
+        setMobileView('list');
+        setActiveConversationId(null);
+        setActiveConversation(null);
+        setMessages([]);
+    }, [setActiveConversationId]);
 
     const handleSendMessage = useCallback(
         async (body: string, files: File[]) => {
@@ -191,7 +209,7 @@ export default function MessagingIndex({
         <DashboardSidebarLayout title={t('dashboardAdvance.messaging.layoutTitle')} description={t('dashboardAdvance.messaging.layoutDescription')}>
             <Head title={t('dashboardAdvance.messaging.headTitle')} />
 
-            <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[var(--page-bg)]">
+            <div className="flex h-[calc(100vh-100px)] overflow-hidden bg-[var(--page-bg)]">
                 <div className={`h-full w-full flex-col lg:flex lg:w-72 lg:flex-shrink-0 ${mobileView === 'list' ? 'flex' : 'hidden'}`}>
                     <ConversationList
                         conversations={conversations}
@@ -204,6 +222,17 @@ export default function MessagingIndex({
                         onStartPrivateChat={handleStartPrivateChat}
                         search={search}
                         onSearchChange={setSearch}
+                        infoPanel={
+                            <InfoPanel
+                                broadcasts={broadcasts}
+                                notes={notes}
+                                authUser={auth_user}
+                                onCreateBroadcast={handleCreateBroadcast}
+                                onCreateNote={handleCreateNote}
+                                onDeleteNote={handleDeleteNote}
+                                variant="sheet"
+                            />
+                        }
                     />
                 </div>
 
@@ -213,7 +242,7 @@ export default function MessagingIndex({
                     authUserId={auth_user.id}
                     isLoading={isLoadingMessages}
                     onSendMessage={handleSendMessage}
-                    onBack={() => setMobileView('list')}
+                    onBack={handleBack}
                     onOpenInfo={() => setInfoSheetOpen(true)}
                     className={mobileView === 'chat' ? 'flex flex-1' : 'hidden flex-1 lg:flex'}
                 />

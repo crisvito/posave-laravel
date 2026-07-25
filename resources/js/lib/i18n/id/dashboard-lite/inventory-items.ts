@@ -70,4 +70,5 @@ export const inventoryItems = {
         deleteAria: 'Hapus barang',
         deleteButton: 'Hapus Barang',
     },
+    itemLabel: 'barang',
 };

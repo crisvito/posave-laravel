@@ -54,4 +54,16 @@ class Conversation extends Model
     {
         return $this->type === 'private';
     }
+    public static function unreadCountFor(User $user): int
+    {
+        return $user->conversations()
+            ->get()
+            ->sum(function ($conv) use ($user) {
+                $lastReadAt = $conv->pivot->last_read_at;
+                return $conv->messages()
+                    ->where('user_id', '!=', $user->id)
+                    ->when($lastReadAt, fn($q) => $q->where('created_at', '>', $lastReadAt))
+                    ->count();
+            });
+    }
 }

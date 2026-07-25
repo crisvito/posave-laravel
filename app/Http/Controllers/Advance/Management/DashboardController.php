@@ -71,6 +71,7 @@ class DashboardController extends Controller
             'categorySummary' => $this->categorySummary($itemBase, $owner->company_id),
             'topProducts' => $this->topProducts($itemBase),
             'recentTransactions' => $this->recentTransactions($base),
+            'messaging' => $this->messagingSummary($owner),
         ]);
     }
 
@@ -82,6 +83,43 @@ class DashboardController extends Controller
             ->whereIn('branch_id', $companyBranchIds)
             ->forBranch($branchId)
             ->withinPeriod($start, $end);
+    }
+
+    private function messagingSummary(User $owner): array
+    {
+        $conversations = $owner->conversations()
+            ->with(['members', 'latestMessage.sender'])
+            ->get()
+            ->map(function ($conv) use ($owner) {
+                $lastReadAt = $conv->pivot->last_read_at;
+
+                $conv->unread_count = $conv->messages()
+                    ->where('user_id', '!=', $owner->id)
+                    ->when($lastReadAt, fn($q) => $q->where('created_at', '>', $lastReadAt))
+                    ->count();
+
+                return $conv;
+            })
+            ->sortByDesc(fn($c) => $c->latestMessage?->created_at)
+            ->values();
+
+        $items = $conversations->take(5)->map(fn($conv) => [
+            'id' => $conv->id,
+            'name' => $conv->name,
+            'type' => $conv->type,
+            'members' => $conv->members->map(fn($m) => ['id' => $m->id, 'name' => $m->name])->values(),
+            'latest_message' => $conv->latestMessage ? [
+                'body' => $conv->latestMessage->body,
+                'sender' => ['id' => $conv->latestMessage->sender?->id, 'name' => $conv->latestMessage->sender?->name],
+                'created_at' => $conv->latestMessage->created_at->toISOString(),
+            ] : null,
+            'unread_count' => $conv->unread_count,
+        ])->values();
+
+        return [
+            'items' => $items,
+            'total_unread' => $conversations->sum('unread_count'),
+        ];
     }
 
     /** Query item yang sudah di-join + dibatasi ke branch-branch company ini. */

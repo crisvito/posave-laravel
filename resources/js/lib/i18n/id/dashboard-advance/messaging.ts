@@ -20,6 +20,7 @@ const messaging = {
         typeAriaLabel: 'Ketik pesan',
         typePlaceholder: 'Ketik pesan...',
         sendAriaLabel: 'Kirim pesan',
+        viewInfoAriaLabel: 'Lihat info percakapan',
     },
     conversationList: {
         tabMessagesAriaLabel: 'Tab Pesan',
@@ -36,6 +37,9 @@ const messaging = {
         startChatAriaLabel: 'Mulai chat dengan',
         groupFallback: 'Group',
         unknownFallback: 'Unknown',
+        noMessagesYet: "Belum ada pesan",
+        tabInfo: 'Info',
+        tabInfoAriaLabel: 'Lihat info umum dan catatan',
     },
     infoPanel: {
         toggleBroadcastAriaLabel: 'Toggle panel pengumuman',
@@ -62,6 +66,11 @@ const messaging = {
         emptyNotes: 'Belum ada catatan',
         deleteNoteAriaLabel: 'Hapus catatan',
     },
+    membersModal:{
+        groupTitle: 'Anggota Grup',
+        privateTitle: 'Info Kontak',
+        youSuffix: 'Kamu',
+    }
 };
 
 export default messaging;

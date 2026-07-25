@@ -1,7 +1,8 @@
 import { useLanguage } from '@/hooks';
-import { ArrowLeft, Info, Paperclip, Send, X } from 'lucide-react';
+import { ArrowLeft, Paperclip, Send, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { Conversation, Message } from '../types';
+import { ConversationMembersModal } from './conversations-member-modal';
 import { MessageBubble } from './message-bubble';
 
 interface ChatAreaProps {
@@ -19,6 +20,7 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
     const { t } = useLanguage();
     const [body, setBody] = useState('');
     const [files, setFiles] = useState<File[]>([]);
+    const [showMembersModal, setShowMembersModal] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -84,35 +86,31 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                         type="button"
                         aria-label={t('dashboardAdvance.messaging.chatArea.backAriaLabel')}
                         onClick={onBack}
-                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--grey-text)] hover:bg-[var(--second-accent)] lg:hidden dark:hover:bg-[var(--border-strong)]"
+                        className="flex h-8 w-8 flex-shrink-0 cursor-pointer items-center justify-center rounded-lg text-[var(--grey-text)] hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)]"
                     >
                         <ArrowLeft className="h-4 w-4" />
                     </button>
                 )}
 
-                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--surface-header)] text-xs font-medium text-white">
-                    {conversation.type === 'group' ? '👥' : initials}
-                </div>
+                <button
+                    type="button"
+                    aria-label={t('dashboardAdvance.messaging.chatArea.viewInfoAriaLabel')}
+                    onClick={() => setShowMembersModal(true)}
+                    className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 rounded-lg py-1 text-left transition-colors hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)]"
+                >
+                    <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-[var(--surface-header)] text-xs font-medium text-white">
+                        {conversation.type === 'group' ? '👥' : initials}
+                    </div>
 
-                <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-[var(--subheading)]">{conversationName}</p>
-                    <p className="truncate text-xs text-[var(--grey-text-muted)]">
-                        {conversation.type === 'group'
-                            ? `${conversation.members.length} ${t('dashboardAdvance.messaging.chatArea.membersCount')}`
-                            : t('dashboardAdvance.messaging.chatArea.privateChat')}
-                    </p>
-                </div>
-
-                {onOpenInfo && (
-                    <button
-                        type="button"
-                        aria-label={t('dashboardAdvance.messaging.chatArea.infoAriaLabel')}
-                        onClick={onOpenInfo}
-                        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-[var(--grey-text)] hover:bg-[var(--second-accent)] lg:hidden dark:hover:bg-[var(--border-strong)]"
-                    >
-                        <Info className="h-4 w-4" />
-                    </button>
-                )}
+                    <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-[var(--subheading)]">{conversationName}</p>
+                        <p className="truncate text-xs text-[var(--grey-text-muted)]">
+                            {conversation.type === 'group'
+                                ? `${conversation.members.length} ${t('dashboardAdvance.messaging.chatArea.membersCount')}`
+                                : t('dashboardAdvance.messaging.chatArea.privateChat')}
+                        </p>
+                    </div>
+                </button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4">
@@ -198,6 +196,10 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                     </button>
                 </div>
             </div>
+
+            {showMembersModal && (
+                <ConversationMembersModal conversation={conversation} authUserId={authUserId} onClose={() => setShowMembersModal(false)} />
+            )}
         </div>
     );
 }

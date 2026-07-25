@@ -1,9 +1,8 @@
-import { Button, CreateButton, Input } from '@/components';
+import { Button, CreateButton, Input, PaginationBar } from '@/components';
 import { InventoryItemFormModal } from '@/features/lite/inventory/components';
-import { useConfirmAction, useLanguage } from '@/hooks';
+import { useConfirmAction, useFilters, useLanguage } from '@/hooks';
 import { DashboardSidebarLayout } from '@/layouts';
-import { Head, router } from '@inertiajs/react';
-import axios from 'axios';
+import { Head } from '@inertiajs/react';
 import { Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -28,11 +27,14 @@ interface InventoryItem {
 interface Props {
     items: {
         data: InventoryItem[];
-        next_page_url: string | null;
+        total: number;
+        from: number;
+        to: number;
+        links: { url: string | null; label: string; active: boolean }[];
     };
     categories: CategoryOption[];
     summary: { out_of_stock: number; low_stock: number };
-    filters: { search?: string; category_id?: string; stock_status?: string };
+    filters: { search?: string; category_id?: string; stock_status?: string; per_page?: string };
 }
 
 type StockStatus = 'all' | 'safe' | 'low' | 'out';
@@ -43,21 +45,19 @@ function stockStatusOf(item: InventoryItem): StockStatus {
     return 'safe';
 }
 
-export default function ItemList({ items: initialItems, categories, summary, filters }: Props) {
+export default function ItemList({ items, categories, summary, filters }: Props) {
     const { t } = useLanguage();
-    const [items, setItems] = useState<InventoryItem[]>(initialItems.data);
-    const [nextPageUrl, setNextPageUrl] = useState(initialItems.next_page_url);
-    const [loadingMore, setLoadingMore] = useState(false);
-    const [search, setSearch] = useState(filters.search ?? '');
-    const [activeCategory, setActiveCategory] = useState<number | 'all'>(filters.category_id ? Number(filters.category_id) : 'all');
-    const [activeStatus, setActiveStatus] = useState<StockStatus>((filters.stock_status as StockStatus) ?? 'all');
+    const [itemRows, setItemRows] = useState<InventoryItem[]>(items.data);
     const [formItem, setFormItem] = useState<InventoryItem | 'new' | null>(null);
+    const { search, setSearch, applyFilters, handleSearch } = useFilters('lite.inventory.items.index', filters);
     const { confirmAndDelete, confirmDialog } = useConfirmAction();
 
+    const activeCategory: number | 'all' = filters.category_id ? Number(filters.category_id) : 'all';
+    const activeStatus: StockStatus = (filters.stock_status as StockStatus) ?? 'all';
+
     useEffect(() => {
-        setItems(initialItems.data);
-        setNextPageUrl(initialItems.next_page_url);
-    }, [initialItems.data, initialItems.next_page_url]);
+        setItemRows(items.data);
+    }, [items.data]);
 
     const STATUS_CHIPS: { key: StockStatus; label: string }[] = [
         { key: 'all', label: t('dashboardLite.inventoryItems.statusChips.all') },
@@ -73,43 +73,12 @@ export default function ItemList({ items: initialItems, categories, summary, fil
         out: { label: t('dashboardLite.inventoryItems.statusChips.out'), bg: 'var(--danger-background)', text: 'var(--danger)' },
     };
 
-    const applyFilters = (next: { search?: string; category_id?: number | 'all'; stock_status?: StockStatus }) => {
-        router.get(
-            route('lite.inventory.items.index'),
-            {
-                search: next.search ?? search,
-                category_id: (next.category_id ?? activeCategory) === 'all' ? undefined : (next.category_id ?? activeCategory),
-                stock_status: (next.stock_status ?? activeStatus) === 'all' ? undefined : (next.stock_status ?? activeStatus),
-            },
-            { preserveState: true, preserveScroll: true, replace: true, only: ['items', 'summary'] },
-        );
-    };
-
-    const handleSearchSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        applyFilters({ search });
-    };
-
     const handleCategoryClick = (id: number | 'all') => {
-        setActiveCategory(id);
-        applyFilters({ category_id: id });
+        applyFilters({ category_id: id === 'all' ? undefined : String(id) });
     };
 
     const handleStatusClick = (status: StockStatus) => {
-        setActiveStatus(status);
-        applyFilters({ stock_status: status });
-    };
-
-    const handleLoadMore = async () => {
-        if (!nextPageUrl) return;
-        setLoadingMore(true);
-        try {
-            const res = await axios.get(nextPageUrl);
-            setItems((prev) => [...prev, ...res.data.props.items.data]);
-            setNextPageUrl(res.data.props.items.next_page_url);
-        } finally {
-            setLoadingMore(false);
-        }
+        applyFilters({ stock_status: status === 'all' ? undefined : status });
     };
 
     const handleDelete = (item: InventoryItem) => {
@@ -117,7 +86,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
             `${t('dashboardLite.inventoryItems.deleteConfirmPrefix')} "${item.name}" ${t('dashboardLite.inventoryItems.deleteConfirmSuffix')}`,
             route('lite.inventory.items.destroy', item.id),
             {
-                onSuccess: () => setItems((prev) => prev.filter((i) => i.id !== item.id)),
+                onSuccess: () => setItemRows((prev) => prev.filter((i) => i.id !== item.id)),
             },
         );
     };
@@ -146,7 +115,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                 </div>
 
                 <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <form onSubmit={handleSearchSubmit} className="relative flex-1">
+                    <form onSubmit={handleSearch} className="relative flex-1">
                         <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[var(--grey-text)] dark:text-[var(--neutral-white)]" />
                         <Input
                             aria-label={t('dashboardLite.inventoryItems.search.aria')}
@@ -217,7 +186,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                     ))}
                 </div>
 
-                {items.length === 0 ? (
+                {itemRows.length === 0 ? (
                     <div className="rounded-md border-2 border-dashed border-[var(--border-strong)] bg-[var(--neutral-white)] py-16 text-center dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)]">
                         <p className="text-lg font-semibold text-[var(--subheading)] dark:text-[var(--neutral-white)]">
                             {t('dashboardLite.inventoryItems.empty.title')}
@@ -228,7 +197,7 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                     </div>
                 ) : (
                     <div className="flex flex-col gap-3">
-                        {items.map((item) => {
+                        {itemRows.map((item) => {
                             const status = stockStatusOf(item);
                             const meta = STATUS_META[status];
 
@@ -298,19 +267,15 @@ export default function ItemList({ items: initialItems, categories, summary, fil
                     </div>
                 )}
 
-                {nextPageUrl && (
-                    <div className="mt-6 flex justify-center">
-                        <Button
-                            aria-label={t('dashboardLite.inventoryItems.loadMoreAria')}
-                            variant="outline"
-                            onClick={handleLoadMore}
-                            disabled={loadingMore}
-                            className="h-12 rounded-md border-[var(--border-strong)] bg-[var(--neutral-white)] px-8 text-base font-semibold dark:border-[var(--border-strong)] dark:bg-[var(--primary-900)] dark:text-[var(--neutral-white)] dark:hover:bg-white/10"
-                        >
-                            {loadingMore ? t('dashboardLite.inventoryItems.loadingButton') : t('dashboardLite.inventoryItems.loadMoreButton')}
-                        </Button>
-                    </div>
-                )}
+                <PaginationBar
+                    from={items.from ?? 0}
+                    to={items.to ?? 0}
+                    total={items.total}
+                    itemLabel={t('dashboardLite.inventoryItems.itemLabel')}
+                    links={items.links}
+                    perPage={filters.per_page ?? '10'}
+                    onPerPageChange={(v) => applyFilters({ per_page: v })}
+                />
             </div>
 
             {formItem && (

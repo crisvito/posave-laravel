@@ -33,6 +33,14 @@ class MessagingController extends Controller
         $conversations = $user->conversations()
             ->with(['members', 'latestMessage.sender'])
             ->get()
+            ->map(function ($conv) use ($user) {
+                $lastReadAt = $conv->pivot->last_read_at;
+                $conv->unread_count = $conv->messages()
+                    ->where('user_id', '!=', $user->id)
+                    ->when($lastReadAt, fn($q) => $q->where('created_at', '>', $lastReadAt))
+                    ->count();
+                return $conv;
+            })
             ->sortByDesc(fn($c) => $c->latestMessage?->created_at)
             ->values();
 
@@ -59,6 +67,22 @@ class MessagingController extends Controller
     }
 
     // ─── Ambil pesan ───────────────────────────────────────────────
+    public function unreadCount()
+    {
+        $user = $this->getUser();
+
+        $count = $user->conversations()
+            ->get()
+            ->sum(function ($conv) use ($user) {
+                $lastReadAt = $conv->pivot->last_read_at;
+                return $conv->messages()
+                    ->where('user_id', '!=', $user->id)
+                    ->when($lastReadAt, fn($q) => $q->where('created_at', '>', $lastReadAt))
+                    ->count();
+            });
+
+        return response()->json(['unread_count' => $count]);
+    }
 
     public function getMessages(Conversation $conversation)
     {
@@ -106,6 +130,21 @@ class MessagingController extends Controller
     }
 
     // ─── Kirim pesan ───────────────────────────────────────────────
+    public function markRead(Conversation $conversation)
+    {
+        $user = $this->getUser();
+
+        abort_if(
+            !$conversation->members()->where('user_id', $user->id)->exists(),
+            403
+        );
+
+        $conversation->members()->updateExistingPivot($user->id, [
+            'last_read_at' => now(),
+        ]);
+
+        return response()->json(['success' => true]);
+    }
 
     public function sendMessage(Request $request, Conversation $conversation)
     {
@@ -128,6 +167,10 @@ class MessagingController extends Controller
             'conversation_id' => $conversation->id,
             'user_id'         => $user->id,
             'body'            => $request->body,
+        ]);
+
+        $conversation->members()->updateExistingPivot($user->id, [
+            'last_read_at' => now(),
         ]);
 
         if ($request->hasFile('attachments')) {

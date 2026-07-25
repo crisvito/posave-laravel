@@ -19,6 +19,7 @@ const messaging = {
         uploadAriaLabel: 'Upload file',
         typeAriaLabel: 'Type a message',
         typePlaceholder: 'Type a message...',
+        viewInfoAriaLabel: 'View conversation info',
         sendAriaLabel: 'Send message',
     },
     conversationList: {
@@ -36,6 +37,9 @@ const messaging = {
         startChatAriaLabel: 'Start chat with',
         groupFallback: 'Group',
         unknownFallback: 'Unknown',
+        noMessagesYet: "No messages yet",
+        tabInfo: 'Info',
+    tabInfoAriaLabel: 'View general info and notes',
     },
     infoPanel: {
         toggleBroadcastAriaLabel: 'Toggle broadcast panel',
@@ -62,6 +66,11 @@ const messaging = {
         emptyNotes: 'No notes yet',
         deleteNoteAriaLabel: 'Delete note',
     },
+    membersModal:{
+        groupTitle: 'Group Members',
+        privateTitle: 'Contact Info',
+        youSuffix: 'You',
+    }
 };
 
 export default messaging;

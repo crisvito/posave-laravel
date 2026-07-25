@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Advance\Messaging\Conversation;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -47,6 +48,7 @@ class HandleInertiaRequests extends Middleware
                 'user'         => $user,
                 'company_type' => $user?->company?->type,
             ],
+            'unread_message_count' => ($user && !$user->company?->isLite()) ? Conversation::unreadCountFor($user) : 0,
         ]);
     }
 }
