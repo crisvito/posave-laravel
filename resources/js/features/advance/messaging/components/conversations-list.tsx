@@ -122,6 +122,7 @@ export function ConversationList({
                         filteredConversations.map((conv) => {
                             const name = getConversationName(conv);
                             const isActive = conv.id === activeConversationId;
+                            const hasUnread = (conv.unread_count ?? 0) > 0 && !isActive;
                             const initials = name
                                 .split(' ')
                                 .map((n) => n[0])
@@ -137,29 +138,55 @@ export function ConversationList({
                                     className={`flex w-full items-center gap-3 border-l-4 px-3.5 py-3 text-left transition-all ${
                                         isActive
                                             ? 'border-[var(--secondary-600)] bg-[var(--secondary-600)]/10'
-                                            : 'border-transparent hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)]'
+                                            : hasUnread
+                                              ? 'border-[var(--secondary-600)] bg-[var(--secondary-600)]/5 hover:bg-[var(--secondary-600)]/10'
+                                              : 'border-transparent hover:bg-[var(--second-accent)] dark:hover:bg-[var(--border-strong)]'
                                     }`}
                                 >
-                                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[var(--surface-header)] text-xs font-medium text-white">
-                                        {conv.type === 'group' ? '👥' : initials}
+                                    <div className="relative flex-shrink-0">
+                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--surface-header)] text-xs font-medium text-white">
+                                            {conv.type === 'group' ? '👥' : initials}
+                                        </div>
+                                        {hasUnread && (
+                                            <span className="absolute -top-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[var(--neutral-white)] bg-[var(--secondary-600)] dark:border-[var(--card)]" />
+                                        )}
                                     </div>
 
                                     <div className="min-w-0 flex-1">
                                         <div className="flex items-center justify-between">
-                                            <span className="truncate text-sm font-medium text-[var(--subheading)]">{name}</span>
+                                            <span
+                                                className={`truncate text-sm text-[var(--subheading)] ${hasUnread ? 'font-semibold' : 'font-medium'}`}
+                                            >
+                                                {name}
+                                            </span>
                                             {conv.latest_message && (
-                                                <span className="ml-2 flex-shrink-0 text-xs text-[var(--grey-text-muted)]">
+                                                <span
+                                                    className={`ml-2 flex-shrink-0 text-xs ${
+                                                        hasUnread ? 'font-semibold text-[var(--secondary-600)]' : 'text-[var(--grey-text-muted)]'
+                                                    }`}
+                                                >
                                                     {formatTime(conv.latest_message.created_at, locale)}
                                                 </span>
                                             )}
                                         </div>
                                         {conv.latest_message && (
-                                            <p className="truncate text-xs text-[var(--grey-text-muted)]">
-                                                {conv.latest_message.sender.id === authUserId
-                                                    ? t('dashboardAdvance.messaging.conversationList.youPrefix')
-                                                    : ''}
-                                                {conv.latest_message.body ?? t('dashboardAdvance.messaging.conversationList.fileFallback')}
-                                            </p>
+                                            <div className="flex items-center justify-between gap-2">
+                                                <p
+                                                    className={`truncate text-xs ${
+                                                        hasUnread ? 'font-medium text-[var(--subheading)]' : 'text-[var(--grey-text-muted)]'
+                                                    }`}
+                                                >
+                                                    {conv.latest_message.sender.id === authUserId
+                                                        ? t('dashboardAdvance.messaging.conversationList.youPrefix')
+                                                        : ''}
+                                                    {conv.latest_message.body ?? t('dashboardAdvance.messaging.conversationList.fileFallback')}
+                                                </p>
+                                                {hasUnread && (
+                                                    <span className="flex h-5 min-w-5 flex-shrink-0 items-center justify-center rounded-full bg-[var(--secondary-600)] px-1.5 text-[10px] font-semibold text-white">
+                                                        {(conv.unread_count ?? 0) > 99 ? '99+' : conv.unread_count}
+                                                    </span>
+                                                )}
+                                            </div>
                                         )}
                                     </div>
                                 </button>
