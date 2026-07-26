@@ -108,7 +108,7 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
 
     return (
         <div className={`flex flex-col overflow-hidden bg-[var(--page-bg)] ${className}`}>
-            <div className="sticky top-0 z-10 flex h-15 flex-shrink-0 items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5 dark:bg-[var(--card)]">
+            <div className="sticky top-[100px] z-10 flex h-15 flex-shrink-0 items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5 dark:bg-[var(--card)]">
                 {onBack && (
                     <button
                         type="button"
@@ -193,7 +193,7 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                 </div>
             )}
 
-            <div className="flex-shrink-0 border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-3 py-3 sm:px-4 dark:bg-[var(--card)]">
+            <div className="sticky bottom-0 flex-shrink-0 border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-3 py-3 sm:px-4 dark:bg-[var(--card)]">
                 <div className="flex items-end gap-2">
                     <button
                         aria-label={t('dashboardAdvance.messaging.chatArea.attachAriaLabel')}
