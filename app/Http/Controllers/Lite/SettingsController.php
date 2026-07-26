@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\lite;
+namespace App\Http\Controllers\Lite;
 
 use App\Http\Controllers\Controller;
 use App\Models\Advance\Management\Settings\ReceiptSetting;
