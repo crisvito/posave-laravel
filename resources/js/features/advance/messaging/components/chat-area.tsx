@@ -1,5 +1,5 @@
 import { useLanguage } from '@/hooks';
-import { ArrowLeft, Paperclip, Send, X } from 'lucide-react';
+import { ArrowLeft, ChevronDown, Paperclip, Send, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type { Conversation, Message } from '../types';
 import { ConversationMembersModal } from './conversations-member-modal';
@@ -16,17 +16,45 @@ interface ChatAreaProps {
     className?: string;
 }
 
+const SCROLL_BOTTOM_THRESHOLD = 150;
+
 export function ChatArea({ conversation, messages, authUserId, isLoading, onSendMessage, onBack, onOpenInfo, className = '' }: ChatAreaProps) {
     const { t } = useLanguage();
     const [body, setBody] = useState('');
     const [files, setFiles] = useState<File[]>([]);
     const [showMembersModal, setShowMembersModal] = useState(false);
+    const [showScrollButton, setShowScrollButton] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    // Auto-scroll ke bawah cuma kalau user emang lagi di posisi bawah,
+    // biar gak ganggu pas lagi scroll ke atas baca chat lama.
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (!showScrollButton) {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }
     }, [messages]);
+
+    // Reset posisi scroll & tombol pas pindah conversation.
+    useEffect(() => {
+        setShowScrollButton(false);
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = 0;
+        }
+    }, [conversation?.id]);
+
+    const handleScroll = () => {
+        const el = messagesContainerRef.current;
+        if (!el) return;
+        const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+        setShowScrollButton(distanceFromBottom > SCROLL_BOTTOM_THRESHOLD);
+    };
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        setShowScrollButton(false);
+    };
 
     const handleSend = () => {
         if (!body.trim() && files.length === 0) return;
@@ -80,7 +108,7 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
 
     return (
         <div className={`flex flex-col overflow-hidden bg-[var(--page-bg)] ${className}`}>
-            <div className="flex h-15 items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5 dark:bg-[var(--card)]">
+            <div className="sticky top-0 z-10 flex h-15 flex-shrink-0 items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5 dark:bg-[var(--card)]">
                 {onBack && (
                     <button
                         type="button"
@@ -113,27 +141,40 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                 </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-4">
-                {isLoading ? (
-                    <div className="flex h-full items-center justify-center">
-                        <p className="text-sm text-[var(--grey-text-muted)]">{t('dashboardAdvance.messaging.chatArea.loadingMessages')}</p>
-                    </div>
-                ) : messages.length === 0 ? (
-                    <div className="flex h-full items-center justify-center">
-                        <p className="text-sm text-[var(--grey-text-muted)]">{t('dashboardAdvance.messaging.chatArea.emptyMessages')}</p>
-                    </div>
-                ) : (
-                    <div className="flex flex-col gap-3">
-                        {messages.map((msg) => (
-                            <MessageBubble key={msg.id} message={msg} />
-                        ))}
-                        <div ref={messagesEndRef} />
-                    </div>
+            <div className="relative min-h-0 flex-1">
+                <div ref={messagesContainerRef} onScroll={handleScroll} className="h-full overflow-y-auto p-4">
+                    {isLoading ? (
+                        <div className="flex h-full items-center justify-center">
+                            <p className="text-sm text-[var(--grey-text-muted)]">{t('dashboardAdvance.messaging.chatArea.loadingMessages')}</p>
+                        </div>
+                    ) : messages.length === 0 ? (
+                        <div className="flex h-full items-center justify-center">
+                            <p className="text-sm text-[var(--grey-text-muted)]">{t('dashboardAdvance.messaging.chatArea.emptyMessages')}</p>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-3">
+                            {messages.map((msg) => (
+                                <MessageBubble key={msg.id} message={msg} />
+                            ))}
+                            <div ref={messagesEndRef} />
+                        </div>
+                    )}
+                </div>
+
+                {showScrollButton && (
+                    <button
+                        type="button"
+                        aria-label={t('dashboardAdvance.messaging.chatArea.scrollToBottomAriaLabel')}
+                        onClick={scrollToBottom}
+                        className="absolute right-4 bottom-4 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface-header)] text-white shadow-lg transition-all hover:bg-[var(--surface-header-hover)]"
+                    >
+                        <ChevronDown className="h-4 w-4" />
+                    </button>
                 )}
             </div>
 
             {files.length > 0 && (
-                <div className="flex flex-wrap gap-2 border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-2 dark:bg-[var(--card)]">
+                <div className="flex flex-shrink-0 flex-wrap gap-2 border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-2 dark:bg-[var(--card)]">
                     {files.map((file, i) => (
                         <div
                             key={i}
@@ -152,7 +193,7 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
                 </div>
             )}
 
-            <div className="border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-3 py-3 sm:px-4 dark:bg-[var(--card)]">
+            <div className="flex-shrink-0 border-t border-[var(--border-strong)] bg-[var(--neutral-white)] px-3 py-3 sm:px-4 dark:bg-[var(--card)]">
                 <div className="flex items-end gap-2">
                     <button
                         aria-label={t('dashboardAdvance.messaging.chatArea.attachAriaLabel')}
