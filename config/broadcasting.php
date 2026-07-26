@@ -36,10 +36,16 @@ return [
             'secret' => env('REVERB_APP_SECRET'),
             'app_id' => env('REVERB_APP_ID'),
             'options' => [
-                'host' => env('REVERB_HOST'),
-                'port' => env('REVERB_PORT', 443),
-                'scheme' => env('REVERB_SCHEME', 'https'),
-                'useTLS' => env('REVERB_SCHEME', 'https') === 'https',
+                // Ini koneksi SERVER-SIDE (Laravel -> Reverb), bukan yang dipakai browser.
+                // Sengaja di-hardcode ke localhost, bukan pakai REVERB_HOST/PORT/SCHEME dari .env,
+                // supaya broadcasting gak muter lewat domain publik/internet pas manggil Reverb
+                // yang sebenarnya jalan di server yang sama. Browser tetap connect ke Reverb
+                // lewat REVERB_HOST/PORT/SCHEME di .env (dipakai di config/reverb.php > apps.options
+                // dan di resources/js/app.tsx lewat VITE_REVERB_*), itu gak berubah.
+                'host' => '127.0.0.1',
+                'port' => env('REVERB_SERVER_PORT', 8080),
+                'scheme' => 'http',
+                'useTLS' => false,
             ],
             'client_options' => [
                 // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
@@ -53,7 +59,7 @@ return [
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
-                'host' => env('PUSHER_HOST') ?: 'api-'.env('PUSHER_APP_CLUSTER', 'mt1').'.pusher.com',
+                'host' => env('PUSHER_HOST') ?: 'api-' . env('PUSHER_APP_CLUSTER', 'mt1') . '.pusher.com',
                 'port' => env('PUSHER_PORT', 443),
                 'scheme' => env('PUSHER_SCHEME', 'https'),
                 'encrypted' => true,
