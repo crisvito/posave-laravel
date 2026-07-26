@@ -108,7 +108,7 @@ export function ChatArea({ conversation, messages, authUserId, isLoading, onSend
 
     return (
         <div className={`flex flex-col overflow-hidden bg-[var(--page-bg)] ${className}`}>
-            <div className="sticky top-[100px] z-10 flex h-15 flex-shrink-0 items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5 dark:bg-[var(--card)]">
+            <div className="flex h-15 flex-shrink-0 items-center gap-3 border-b border-[var(--border-strong)] bg-[var(--neutral-white)] px-4 py-3.5 sm:px-5 dark:bg-[var(--card)]">
                 {onBack && (
                     <button
                         type="button"
