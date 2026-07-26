@@ -86,7 +86,10 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                     </Button>
                                 </SheetTrigger>
 
-                                <SheetContent side="left" className="border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground)]">
+                                <SheetContent
+                                    side="left"
+                                    className="w-1/2 max-w-[50vw] border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground)]"
+                                >
                                     <SheetTitle className="sr-only">{t('shared.nav.home')}</SheetTitle>
                                     <SheetDescription className="sr-only">Navigation menu</SheetDescription>
                                     <div className="z-100 mt-6 flex h-full flex-col space-y-6">
