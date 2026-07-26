@@ -40,6 +40,10 @@ export function InventoryTransferCreateModal({
         items: [{ inventory_item_id: '', quantity: 1 }] as { inventory_item_id: string; quantity: number }[],
     });
 
+    // items.{index}.field itu key dinamis yang gak dikenal langsung sama tipe `errors` bawaan useForm
+    // (dia cuma tau key dari `data`), jadi di-cast ke sini biar bisa diakses tanpa error TypeScript.
+    const rawErrors = errors as Record<string, string>;
+
     const senderStocks = branchStocks[Number(data.sender_branch_id)] ?? {};
 
     const getStockFor = (itemId: string) => (itemId ? (senderStocks[Number(itemId)] ?? 0) : Infinity);
@@ -77,6 +81,7 @@ export function InventoryTransferCreateModal({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(route('dashboard.inventory.transfers.store'), {
+            preserveState: true,
             onSuccess: () => {
                 reset();
                 onClose();
@@ -137,6 +142,8 @@ export function InventoryTransferCreateModal({
                                     <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                                 </div>
                             </div>
+                            {errors.sender_branch_id && <span className="text-sm text-[var(--danger)]">{errors.sender_branch_id}</span>}
+                            {errors.receiver_branch_id && <span className="block text-sm text-[var(--danger)]">{errors.receiver_branch_id}</span>}
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 gap-3">
@@ -161,6 +168,7 @@ export function InventoryTransferCreateModal({
                                     </select>
                                     <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                                 </div>
+                                {errors.sender_branch_id && <span className="text-xs text-[var(--danger)]">{errors.sender_branch_id}</span>}
                             </div>
                             <div>
                                 <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
@@ -185,13 +193,14 @@ export function InventoryTransferCreateModal({
                                     </select>
                                     <ChevronDown className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--grey-text-muted)]" />
                                 </div>
+                                {errors.receiver_branch_id && <span className="text-xs text-[var(--danger)]">{errors.receiver_branch_id}</span>}
                             </div>
                         </div>
                     )}
 
                     <div>
                         <label className="mb-1.5 block text-sm font-medium text-[var(--subheading)]">
-                            {t('dashboardAdvance.inventoryTransfers.createModal.zLabel')}
+                            {t('dashboardAdvance.inventoryTransfers.createModal.dateLabel')}
                         </label>
                         <input
                             type="date"
@@ -200,6 +209,7 @@ export function InventoryTransferCreateModal({
                             onChange={(e) => setData('date', e.target.value)}
                             className={inputClass}
                         />
+                        {errors.date && <span className="text-xs text-[var(--danger)]">{errors.date}</span>}
                     </div>
 
                     <div>
@@ -223,6 +233,8 @@ export function InventoryTransferCreateModal({
                         <div className="flex flex-col gap-2">
                             {data.items.map((item, index) => {
                                 const stock = getStockFor(item.inventory_item_id);
+                                const itemIdError = rawErrors[`items.${index}.inventory_item_id`];
+                                const qtyError = rawErrors[`items.${index}.quantity`];
                                 return (
                                     <div key={index} className="flex flex-col gap-1">
                                         <div className="flex items-center gap-2">
@@ -274,11 +286,13 @@ export function InventoryTransferCreateModal({
                                                 </button>
                                             )}
                                         </div>
-                                        {item.inventory_item_id && data.sender_branch_id && (
+                                        {item.inventory_item_id && data.sender_branch_id && !itemIdError && !qtyError && (
                                             <p className="pr-9 text-right text-xs text-[var(--grey-text)]">
                                                 {t('dashboardAdvance.inventoryTransfers.createModal.stockRemainingPrefix')} {stock}
                                             </p>
                                         )}
+                                        {itemIdError && <span className="text-xs text-[var(--danger)]">{itemIdError}</span>}
+                                        {qtyError && <span className="text-xs text-[var(--danger)]">{qtyError}</span>}
                                     </div>
                                 );
                             })}

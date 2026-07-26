@@ -214,7 +214,9 @@ export default function InventoryItemList({ items, categories, branches, filters
                                                             className="h-10 w-10 shrink-0 rounded-lg object-cover"
                                                         />
                                                     ) : (
-                                                        <div className="h-10 w-10 shrink-0 rounded-lg bg-[var(--second-accent)]" />
+                                                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--second-accent)]">
+                                                            📦
+                                                        </div>
                                                     )}
                                                     <div className="min-w-0">
                                                         <div className="truncate font-medium text-[var(--subheading)]">{item.name}</div>

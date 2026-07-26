@@ -40,6 +40,15 @@ declare global {
 
 const appName = import.meta.env.VITE_APP_NAME || 'Posave';
 
+// Cache komponen halaman yang udah dibungkus MessagingNotificationsProvider, di-key per nama halaman.
+// PENTING: Inertia manggil ulang resolve() tiap ada visit/form submit ke halaman manapun.
+// Kalau WrappedComponent dibikin baru tiap panggilan (function reference beda), React nganggep
+// itu tipe komponen yang beda total dan maksa unmount+remount SELURUH halaman — biarpun
+// preserveState di Inertia di-set true. Efeknya: semua useState lokal di halaman (termasuk state
+// buka/tutup modal) ke-reset tiap habis submit form. Caching di sini bikin reference-nya konsisten,
+// jadi React nganggep itu komponen yang sama dan gak force-remount.
+const pageComponentCache = new Map<string, React.ComponentType<Record<string, unknown>>>();
+
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: async (name) => {
@@ -51,15 +60,18 @@ createInertiaApp({
         const page = (await resolvePageComponent(path, import.meta.glob('./features/**/pages/**/*.tsx'))) as {
             default: React.ComponentType<Record<string, unknown>>;
         };
-        const PageComponent = page.default;
 
-        const WrappedComponent = (props: Record<string, unknown>) => (
-            <MessagingNotificationsProvider>
-                <PageComponent {...props} />
-            </MessagingNotificationsProvider>
-        );
+        if (!pageComponentCache.has(name)) {
+            const PageComponent = page.default;
+            const WrappedComponent = (props: Record<string, unknown>) => (
+                <MessagingNotificationsProvider>
+                    <PageComponent {...props} />
+                </MessagingNotificationsProvider>
+            );
+            pageComponentCache.set(name, WrappedComponent);
+        }
 
-        return { ...page, default: WrappedComponent };
+        return { ...page, default: pageComponentCache.get(name)! };
     },
     setup({ el, App, props }) {
         const root = createRoot(el);

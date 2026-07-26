@@ -45,6 +45,7 @@ export function InventoryItemCreateModal({ categories, branches, onClose }: Inve
         e.preventDefault();
         post(route('dashboard.inventory.items.store'), {
             forceFormData: true,
+            preserveState: true,
             onSuccess: () => {
                 reset();
                 setPreview(null);

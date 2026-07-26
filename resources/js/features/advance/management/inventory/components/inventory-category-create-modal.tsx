@@ -18,6 +18,7 @@ export function InventoryCategoryCreateModal({ onClose }: InventoryCategoryCreat
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         post(route('dashboard.inventory.categories.store'), {
+            preserveState: true,
             onSuccess: () => {
                 reset();
                 onClose();

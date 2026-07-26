@@ -7,7 +7,7 @@ import { Head, router } from '@inertiajs/react';
 import { useEchoPresence, useEchoPublic } from '@laravel/echo-react';
 import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
-import type { AuthUser, Broadcast, Contact, Conversation, Message, Note } from '../types';
+import type { AuthUser, Broadcast, Contact, Conversation, Message, MessageAttachment, Note } from '../types';
 
 interface Props {
     conversations: Conversation[];
@@ -25,7 +25,6 @@ export default function MessagingIndex({
     auth_user,
 }: Props) {
     const { t } = useLanguage();
-    // const [activeTab, setActiveTab] = useState<'pesan' | 'kontak'>('pesan');
     const [activeTab, setActiveTab] = useState<'pesan' | 'kontak' | 'info'>('pesan');
     const [search, setSearch] = useState('');
     const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
@@ -121,11 +120,21 @@ export default function MessagingIndex({
             if (body) formData.append('body', body);
             files.forEach((f) => formData.append('attachments[]', f));
 
+            // Preview instan buat attachment: bikin URL sementara langsung dari file di device,
+            // gak perlu nunggu response server. Begitu conversation ini dibuka ulang nanti
+            // (fetch ulang dari server), otomatis kegantiin sama URL permanen dari storage.
+            const optimisticAttachments: MessageAttachment[] = files.map((file, index) => ({
+                id: -(Date.now() + index), // id negatif sementara, gak bakal bentrok sama id asli dari server
+                file_name: file.name,
+                file_type: file.type,
+                url: URL.createObjectURL(file),
+            }));
+
             const optimisticMsg: Message = {
                 id: Date.now(),
                 body,
                 sender: { id: auth_user.id, name: auth_user.name },
-                attachments: [],
+                attachments: optimisticAttachments,
                 created_at: new Date().toISOString(),
                 is_mine: true,
             };
@@ -153,6 +162,7 @@ export default function MessagingIndex({
             } catch (err) {
                 console.error('Gagal mengirim pesan:', err);
                 setMessages((prev) => prev.filter((m) => m.id !== optimisticMsg.id));
+                optimisticAttachments.forEach((a) => URL.revokeObjectURL(a.url));
             }
         },
         [activeConversationId, auth_user],
