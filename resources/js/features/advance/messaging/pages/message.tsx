@@ -49,7 +49,7 @@ export default function MessagingIndex({
     );
 
     useEchoPresence<Message>(
-        activeConversationId ? `conversation.${activeConversationId}` : 'conversation.0',
+        (activeConversationId ? `conversation.${activeConversationId}` : null) as string,
         '.message.sent',
         (data) => {
             if (!activeConversationId) return;
