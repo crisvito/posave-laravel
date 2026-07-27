@@ -1,4 +1,5 @@
 import { useLanguage } from '@/hooks';
+import { Link } from '@inertiajs/react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useRef } from 'react';
@@ -39,16 +40,18 @@ export function WelcomeSection() {
                     </Reveal>
 
                     <Reveal delay={0.3}>
-                        <motion.button
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="group mt-9 inline-flex items-center gap-2.5 rounded-full bg-[var(--secondary-600)] py-3.5 pr-5 pl-6 text-sm font-medium text-white shadow-[0_12px_30px_-10px_var(--secondary-600)] transition-colors hover:bg-[var(--secondary-700)]"
-                        >
-                            {t('companyProfile.welcome.hero.button')}
-                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/15 transition-transform group-hover:translate-x-0.5">
-                                <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />
-                            </span>
-                        </motion.button>
+                        <Link href={route('login')}>
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="group mt-9 inline-flex items-center gap-2.5 rounded-full bg-[var(--secondary-600)] py-3.5 pr-5 pl-6 text-sm font-medium text-white shadow-[0_12px_30px_-10px_var(--secondary-600)] transition-colors hover:bg-[var(--secondary-700)]"
+                            >
+                                {t('companyProfile.welcome.hero.button')}
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/15 transition-transform group-hover:translate-x-0.5">
+                                    <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />
+                                </span>
+                            </motion.button>
+                        </Link>
                     </Reveal>
                 </div>
 

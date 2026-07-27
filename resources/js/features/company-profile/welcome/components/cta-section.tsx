@@ -1,4 +1,5 @@
 import { useLanguage } from '@/hooks';
+import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useRef, useState } from 'react';
@@ -62,12 +63,14 @@ export function CtaSection() {
 
                 <Reveal delay={0.2}>
                     <div className="mt-9 flex justify-center">
-                        <MagneticButton>
-                            {t('companyProfile.welcome.cta.button')}
-                            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--primary-900)]/10 transition-transform group-hover:translate-x-0.5">
-                                <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />
-                            </span>
-                        </MagneticButton>
+                        <Link href={route('login')}>
+                            <MagneticButton>
+                                {t('companyProfile.welcome.cta.button')}
+                                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--primary-900)]/10 transition-transform group-hover:translate-x-0.5">
+                                    <ArrowRight className="h-3.5 w-3.5" strokeWidth={2.5} />
+                                </span>
+                            </MagneticButton>
+                        </Link>
                     </div>
                 </Reveal>
             </div>

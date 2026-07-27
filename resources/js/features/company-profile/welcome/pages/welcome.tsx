@@ -36,7 +36,7 @@ export default function Welcome() {
                     <PartnerSection />
                 </div>
 
-                <div className={`${FULL_BLEED} px-6 pt-6 pb-20 sm:px-10 sm:pb-28 lg:px-16`}>
+                <div className={`${FULL_BLEED} px-6 py-10 sm:px-10 lg:px-16 `}>
                     <CtaSection />
                 </div>
             </div>
