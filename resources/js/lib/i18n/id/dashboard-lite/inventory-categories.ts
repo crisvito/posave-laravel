@@ -22,7 +22,7 @@ export const inventoryCategories = {
         middle: 'masih punya',
         suffix: 'barang. Barangnya tidak akan terhapus, tapi jadi tanpa kategori. Lanjutkan?',
     },
-    deleteWarningEmptyPrefix: 'Hapus kategori',
+    deleteWarningEmptyPrefix: 'Hapus',
     deleteWarningEmpty: 'Hapus kategori "{name}"?',
     modal: {
         editTitle: 'Ubah Kategori',

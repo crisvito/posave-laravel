@@ -66,9 +66,9 @@ export default function LiteDashboard({ filters, kpis, stockSummary, topItems, r
                             key={chip.value}
                             variant="outline"
                             onClick={() => changeRange(chip.value)}
-                            className={`shrink-0 border-2 px-4 py-2 text-sm font-semibold whitespace-nowrap transition hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)]${
+                            className={`shrink-0 border-2 px-4 py-2 text-sm font-semibold whitespace-nowrap transition hover:bg-[var(--surface-header)] hover:text-[var(--neutral-white)] dark:hover:bg-[var(--neutral-white)] dark:hover:text-[var(--primary-900)] ${
                                 filters.range === chip.value
-                                    ? 'bg-[var(--surface-header)] text-[var(--primary-900)] dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
+                                    ? 'bg-[var(--surface-header)] text-white dark:bg-[var(--neutral-white)] dark:text-[var(--primary-900)]'
                                     : ''
                             }`}
                         >

@@ -375,8 +375,8 @@ class DemoSeeder extends Seeder
                     }
 
                     $isRefunded = random_int(1, 100) <= 5;
-                    $refund = $isRefunded ? round(($gross - $discount) * (random_int(20, 100) / 100), -2) : 0.0;
-
+                    // $refund = $isRefunded ? round(($gross - $discount) * (random_int(20, 100) / 100), -2) : 0.0;
+                    $refund = 0.0;
                     $nett = $gross - $discount - $refund;
                     $rounded = round($nett / 500) * 500;
                     $rounding = $rounded - $nett;
@@ -391,7 +391,7 @@ class DemoSeeder extends Seeder
                         'branch_id' => $branch->id,
                         'user_id' => collect($cashierPool)->random()->id,
                         'invoice_no' => 'PENDING-' . uniqid(),
-                        'status' => $isRefunded ? 'refunded' : 'completed',
+                        'status' => 'completed',
                         'payment_method' => $this->randomPaymentMethod(),
                         'gross_amount' => $gross,
                         'discount_amount' => $discount,

@@ -22,7 +22,7 @@ export const inventoryCategories = {
         middle: 'still has',
         suffix: "items. Those items won't be deleted, but will become uncategorized. Continue?",
     },
-    deleteWarningEmptyPrefix: 'Delete category',
+    deleteWarningEmptyPrefix: 'Delete',
     deleteWarningEmpty: 'Delete category "{name}"?',
     modal: {
         editTitle: 'Edit Category',
