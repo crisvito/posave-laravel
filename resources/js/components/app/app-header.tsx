@@ -78,7 +78,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
             <div className="sticky top-0 z-50 mx-auto w-full max-w-7xl px-8 pt-4 md:px-16">
                 <div className="flex h-16 w-full items-center justify-between rounded-full border border-[var(--border-strong)] bg-[var(--card)] px-5 shadow-sm lg:px-15">
                     <div className="flex items-center gap-4">
-                        <div className="lg:hidden">
+                        <div className="flex lg:hidden">
                             <Sheet>
                                 <SheetTrigger asChild>
                                     <Button variant="ghost" size="icon" className="text-[var(--foreground)] hover:bg-[var(--second-accent)]">
@@ -88,10 +88,17 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
                                 <SheetContent
                                     side="left"
-                                    className="w-1/2 max-w-[50vw] border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground)]"
+                                    className="w-[65vw] border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground)]"
                                 >
                                     <SheetTitle className="sr-only">{t('shared.nav.home')}</SheetTitle>
                                     <SheetDescription className="sr-only">Navigation menu</SheetDescription>
+                                    <Link href={route('home')} className="flex items-center">
+                                        <img
+                                            src="/assets/landing-page/logo.png"
+                                            alt="POSAVE"
+                                            className="mt-9 mb-2 ml-9 h-3 w-auto scale-350 dark:brightness-0 dark:invert"
+                                        />
+                                    </Link>
                                     <div className="z-100 mt-6 flex h-full flex-col space-y-6">
                                         <div className="flex flex-col space-y-4 text-sm">
                                             {mainNavItems.map((item) => (
@@ -107,13 +114,26 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                     {t(item.key)}
                                                 </Link>
                                             ))}
-                                            <Button
-                                                variant="outline"
-                                                className="h-[44px] rounded-[10px] border-[var(--secondary-600)] px-6 text-[15px] font-semibold text-[var(--secondary-600)] hover:bg-[var(--secondary-600)]/10"
-                                                asChild
-                                            >
-                                                <Link href={route('dashboard.index')}>{t('shared.nav.dashboard')}</Link>
-                                            </Button>
+                                            {auth?.user ? (
+                                                <>
+                                                    <Button
+                                                        variant="outline"
+                                                        className="h-[44px] rounded-[10px] border-[var(--secondary-600)] px-6 text-[15px] font-semibold text-[var(--secondary-600)] hover:bg-[var(--secondary-600)]/10"
+                                                        asChild
+                                                    >
+                                                        <Link href={route('dashboard.index')}>{t('shared.nav.dashboard')}</Link>
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Button
+                                                        className="h-[44px] rounded-[10px] bg-[var(--secondary-600)] px-6 text-[15px] font-semibold text-white hover:bg-[var(--secondary-700)]"
+                                                        asChild
+                                                    >
+                                                        <Link href={route('login')}>{t('shared.nav.login')}</Link>
+                                                    </Button>
+                                                </>
+                                            )}
                                         </div>
 
                                         <div className="jlg:flex flex flex-col items-start gap-2 border-t border-[var(--border-strong)] pt-4 lg:items-center">

@@ -34,7 +34,7 @@ export function CtaSection() {
     const { t } = useLanguage();
 
     return (
-        <div className="relative mx-auto max-w-6xl overflow-hidden py-28 text-center sm:py-36">
+        <div className="relative mx-auto max-w-6xl overflow-hidden rounded-2xl py-28 text-center sm:py-36">
             <motion.img
                 src="assets/landing-page/gambarbottom.jpeg"
                 alt=""
@@ -51,7 +51,7 @@ export function CtaSection() {
 
             <div className="relative z-10 mx-auto max-w-lg px-6">
                 <Reveal>
-                    <img src="assets/landing-page/logo.png" alt="POSAVE" className="mx-auto h-10 mb-5 w-auto object-contain brightness-0 invert" />
+                    <img src="assets/landing-page/logo.png" alt="POSAVE" className="mx-auto mb-5 h-10 w-auto object-contain brightness-0 invert" />
                 </Reveal>
 
                 <Reveal delay={0.1}>

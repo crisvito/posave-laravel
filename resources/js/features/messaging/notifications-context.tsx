@@ -21,6 +21,11 @@ interface MessagingNotificationsContextValue {
 
 const MessagingNotificationsContext = createContext<MessagingNotificationsContextValue | null>(null);
 
+function EchoListener({ authUserId, onMessage }: { authUserId: number; onMessage: (data: IncomingMessage) => void }) {
+    useEcho<IncomingMessage>(`App.Models.User.${authUserId}`, '.message.sent', onMessage, [authUserId]);
+    return null;
+}
+
 export function MessagingNotificationsProvider({ children }: { children: ReactNode }) {
     const { props } = usePage() as { props: { auth?: { user?: { id: number } | null }; unread_message_count?: number } };
     const authUserId = props.auth?.user?.id ?? null;
@@ -37,26 +42,41 @@ export function MessagingNotificationsProvider({ children }: { children: ReactNo
         setUnreadCount(props.unread_message_count ?? 0);
     }, [props.unread_message_count]);
 
-    useEcho<IncomingMessage>(
-        authUserId ? `App.Models.User.${authUserId}` : 'App.Models.User.0',
-        '.message.sent',
-        (data) => {
-            if (data.sender.id === authUserId) return;
+    // useEcho<IncomingMessage>(
+    //     authUserId ? `App.Models.User.${authUserId}` : 'App.Models.User.0',
+    //     '.message.sent',
+    //     (data) => {
+    //         if (data.sender.id === authUserId) return;
 
-            setLastMessageEvent(data);
+    //         setLastMessageEvent(data);
 
-            const isViewingThisConversation = activeConversationIdRef.current === data.conversation_id;
+    //         const isViewingThisConversation = activeConversationIdRef.current === data.conversation_id;
 
-            if (isViewingThisConversation) {
-                // Lagi dibuka — anggap langsung terbaca, JANGAN nambah badge sama sekali.
-                axios.post(route('messaging.mark-read', data.conversation_id)).catch(() => {});
-                return;
-            }
+    //         if (isViewingThisConversation) {
+    //             // Lagi dibuka — anggap langsung terbaca, JANGAN nambah badge sama sekali.
+    //             axios.post(route('messaging.mark-read', data.conversation_id)).catch(() => {});
+    //             return;
+    //         }
 
-            setUnreadCount((prev) => prev + 1);
-        },
-        [authUserId],
-    );
+    //         setUnreadCount((prev) => prev + 1);
+    //     },
+    //     [authUserId],
+    // );
+
+    const handleIncomingMessage = (data: IncomingMessage) => {
+        if (data.sender.id === authUserId) return;
+
+        setLastMessageEvent(data);
+
+        const isViewingThisConversation = activeConversationIdRef.current === data.conversation_id;
+
+        if (isViewingThisConversation) {
+            axios.post(route('messaging.mark-read', data.conversation_id)).catch(() => {});
+            return;
+        }
+
+        setUnreadCount((prev) => prev + 1);
+    };
 
     const setActiveConversationId = (id: number | null, previousUnreadCount = 0) => {
         setActiveConversationIdState(id);
@@ -71,6 +91,7 @@ export function MessagingNotificationsProvider({ children }: { children: ReactNo
 
     return (
         <MessagingNotificationsContext.Provider value={{ unreadCount, activeConversationId, setActiveConversationId, lastMessageEvent }}>
+            {authUserId && <EchoListener authUserId={authUserId} onMessage={handleIncomingMessage} />}
             {children}
         </MessagingNotificationsContext.Provider>
     );

@@ -23,50 +23,52 @@ export function TestimoniSection() {
                 </h2>
             </div>
 
-            <Swiper
-                className="testimonial-swiper"
-                modules={[Pagination, Autoplay]}
-                slidesPerView={1.08}
-                centeredSlides
-                spaceBetween={24}
-                loop={false}
-                rewind
-                grabCursor
-                autoplay={{ delay: 4500, disableOnInteraction: false }}
-                onSwiper={(swiper) => {
-                    swiperRef.current = swiper;
-                }}
-                pagination={{ clickable: true, el: '.testimonial-dots', bulletClass: 'custom-dot', bulletActiveClass: 'custom-dot-active' }}
-                breakpoints={{ 0: { slidesPerView: 1 }, 1024: { slidesPerView: 1.08 } }}
-            >
-                {testimonials.map((item: any) => (
-                    <SwiperSlide key={item.id}>
-                        <div className="mx-auto flex h-auto max-w-[920px] flex-col overflow-hidden rounded-[28px] border border-[var(--border-strong)] bg-[var(--card)] shadow-[0_20px_50px_-25px_rgba(15,23,42,0.3)] lg:h-[320px] lg:flex-row dark:shadow-[0_20px_50px_-25px_rgba(0,0,0,0.6)]">
-                            <div className="h-[220px] w-full shrink-0 lg:h-full lg:w-[36%]">
-                                <img src={item.photo} alt={item.name} className="h-full w-full object-cover" />
-                            </div>
+            <div className="w-full max-w-full overflow-hidden">
+                <Swiper
+                    className="testimonial-swiper w-full max-w-full"
+                    modules={[Pagination, Autoplay]}
+                    slidesPerView={1.08}
+                    centeredSlides
+                    spaceBetween={24}
+                    loop={false}
+                    rewind
+                    grabCursor
+                    autoplay={{ delay: 4500, disableOnInteraction: false }}
+                    onSwiper={(swiper) => {
+                        swiperRef.current = swiper;
+                    }}
+                    pagination={{ clickable: true, el: '.testimonial-dots', bulletClass: 'custom-dot', bulletActiveClass: 'custom-dot-active' }}
+                    breakpoints={{ 0: { slidesPerView: 1 }, 1024: { slidesPerView: 1.08 } }}
+                >
+                    {testimonials.map((item: any) => (
+                        <SwiperSlide key={item.id}>
+                            <div className="mx-auto flex h-auto max-w-[920px] flex-col overflow-hidden rounded-[28px] border border-[var(--border-strong)] bg-[var(--card)] shadow-[0_20px_50px_-25px_rgba(15,23,42,0.3)] lg:h-[320px] lg:flex-row dark:shadow-[0_20px_50px_-25px_rgba(0,0,0,0.6)]">
+                                <div className="h-[220px] w-full shrink-0 lg:h-full lg:w-[36%]">
+                                    <img src={item.photo} alt={item.name} className="h-full w-full object-cover" />
+                                </div>
 
-                            <div className="flex flex-1 flex-col justify-center px-8 py-8 lg:px-10">
-                                <Quote className="mb-4 h-6 w-6 text-[var(--secondary-600)]/50" strokeWidth={1.5} />
+                                <div className="flex flex-1 flex-col justify-center px-8 py-8 lg:px-10">
+                                    <Quote className="mb-4 h-6 w-6 text-[var(--secondary-600)]/50" strokeWidth={1.5} />
 
-                                <p className="mb-6 max-w-[480px] text-[15px] leading-[1.7] text-[var(--foreground)]">
-                                    {pickLocale(locale, item, 'message')}
-                                </p>
+                                    <p className="mb-6 max-w-[480px] text-[15px] leading-[1.7] text-[var(--foreground)]">
+                                        {pickLocale(locale, item, 'message')}
+                                    </p>
 
-                                <div className="mt-auto flex items-center justify-between gap-4">
-                                    <div>
-                                        <h3 className="text-base font-semibold text-[var(--foreground)]">{item.name}</h3>
-                                        <p className="text-sm text-[var(--grey-text)]">
-                                            {item.position} · {item.company}
-                                        </p>
+                                    <div className="mt-auto flex items-center justify-between gap-4">
+                                        <div>
+                                            <h3 className="text-base font-semibold text-[var(--foreground)]">{item.name}</h3>
+                                            <p className="text-sm text-[var(--grey-text)]">
+                                                {item.position} · {item.company}
+                                            </p>
+                                        </div>
+                                        <img src={item.logo} alt="logo" className="h-6 w-auto shrink-0 object-contain" />
                                     </div>
-                                    <img src={item.logo} alt="logo" className="h-6 w-auto shrink-0 object-contain" />
                                 </div>
                             </div>
-                        </div>
-                    </SwiperSlide>
-                ))}
-            </Swiper>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+            </div>
 
             <div className="mt-8 flex items-center justify-center gap-5">
                 <button
