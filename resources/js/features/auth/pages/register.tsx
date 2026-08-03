@@ -187,7 +187,7 @@ export default function Register() {
                     <InputError message={errors.password_confirmation} />
                 </div>
 
-                <div className="mt-2 flex items-start space-x-2">
+                {/* <div className="mt-2 flex items-start space-x-2">
                     <Checkbox
                         id="terms"
                         name="terms"
@@ -205,7 +205,7 @@ export default function Register() {
                             {t('auth.register.form.privacyPolicy')}
                         </Link>
                     </Label>
-                </div>
+                </div> */}
 
                 <Button
                     type="submit"
