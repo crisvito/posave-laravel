@@ -291,6 +291,20 @@ class MessagingController extends Controller
 
         return response()->json(['success' => true]);
     }
+    public function destroyBroadcast(Broadcast $broadcast)
+    {
+        $user = $this->getUser();
+
+        abort_if($broadcast->company_id !== $user->company_id, 403);
+
+        if (!$user->isOwner()) {
+            abort_if($broadcast->user_id !== $user->id, 403);
+        }
+
+        $broadcast->delete();
+
+        return response()->json(['success' => true]);
+    }
 
     // ─── Helper ────────────────────────────────────────────────────
 

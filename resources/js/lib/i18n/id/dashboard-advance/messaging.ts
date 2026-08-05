@@ -3,6 +3,11 @@ const messaging = {
     layoutDescription: 'Buat pesan terhadap rekan-rekan anda',
     headTitle: 'Pesan',
     deleteNoteConfirm: 'Hapus catatan ini?',
+    // infoPanel
+    deleteBroadcastAriaLabel: 'Hapus pengumuman',
+
+    // messaging (level atas, sejajar deleteNoteConfirm)
+    deleteBroadcastConfirm: 'Yakin mau hapus pengumuman ini?',
     chatArea: {
         emptyTitle: 'Pilih percakapan',
         emptyBody: 'Pilih percakapan di sebelah kiri atau mulai chat baru dari tab Kontak',

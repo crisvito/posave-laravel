@@ -34,7 +34,7 @@ export default function MessagingIndex({
     const [activeConversation, setActiveConversation] = useState<Conversation | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoadingMessages, setIsLoadingMessages] = useState(false);
-    const { confirmAndRun } = useConfirmAction();
+    const { confirmAndRun, confirmDialog } = useConfirmAction();
     const [mobileView, setMobileView] = useState<'list' | 'chat'>('list');
     const [infoSheetOpen, setInfoSheetOpen] = useState(false);
 
@@ -192,6 +192,20 @@ export default function MessagingIndex({
         }
     }, []);
 
+    const handleDeleteBroadcast = useCallback(
+        (id: number) => {
+            confirmAndRun(t('dashboardAdvance.messaging.deleteBroadcastConfirm'), async () => {
+                try {
+                    await axios.delete(route('messaging.broadcast.destroy', id));
+                    setBroadcasts((prev) => prev.filter((b) => b.id !== id));
+                } catch (err) {
+                    console.error('Gagal menghapus broadcast:', err);
+                }
+            });
+        },
+        [confirmAndRun, t],
+    );
+
     const handleCreateNote = useCallback(async (content: string) => {
         try {
             const res = await axios.post(route('messaging.note.store'), { content });
@@ -238,6 +252,7 @@ export default function MessagingIndex({
                                 notes={notes}
                                 authUser={auth_user}
                                 onCreateBroadcast={handleCreateBroadcast}
+                                onDeleteBroadcast={handleDeleteBroadcast}
                                 onCreateNote={handleCreateNote}
                                 onDeleteNote={handleDeleteNote}
                                 variant="sheet"
@@ -262,6 +277,7 @@ export default function MessagingIndex({
                     notes={notes}
                     authUser={auth_user}
                     onCreateBroadcast={handleCreateBroadcast}
+                    onDeleteBroadcast={handleDeleteBroadcast}
                     onCreateNote={handleCreateNote}
                     onDeleteNote={handleDeleteNote}
                     variant="sidebar"
@@ -275,12 +291,15 @@ export default function MessagingIndex({
                         notes={notes}
                         authUser={auth_user}
                         onCreateBroadcast={handleCreateBroadcast}
+                        onDeleteBroadcast={handleDeleteBroadcast}
                         onCreateNote={handleCreateNote}
                         onDeleteNote={handleDeleteNote}
                         variant="sheet"
                     />
                 </SheetContent>
             </Sheet>
+
+            {confirmDialog}
         </DashboardSidebarLayout>
     );
 }

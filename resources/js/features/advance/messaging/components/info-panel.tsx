@@ -10,6 +10,7 @@ interface InfoPanelProps {
     onCreateBroadcast: (content: string) => void;
     onCreateNote: (content: string) => void;
     onDeleteNote: (id: number) => void;
+    onDeleteBroadcast: (id: number) => void;
     variant?: 'sidebar' | 'sheet';
 }
 
@@ -20,7 +21,16 @@ function formatTime(isoString: string, locale: 'id' | 'en'): string {
     });
 }
 
-export function InfoPanel({ broadcasts, notes, authUser, onCreateBroadcast, onCreateNote, onDeleteNote, variant = 'sidebar' }: InfoPanelProps) {
+export function InfoPanel({
+    broadcasts,
+    notes,
+    authUser,
+    onCreateBroadcast,
+    onCreateNote,
+    onDeleteBroadcast,
+    onDeleteNote,
+    variant = 'sidebar',
+}: InfoPanelProps) {
     const { locale, t } = useLanguage();
     const [broadcastOpen, setBroadcastOpen] = useState(true);
     const [noteOpen, setNoteOpen] = useState(true);
@@ -124,9 +134,20 @@ export function InfoPanel({ broadcasts, notes, authUser, onCreateBroadcast, onCr
                             <div className="flex flex-col gap-2">
                                 {broadcasts.map((b) => (
                                     <div key={b.id} className="rounded-xl border border-[var(--border-strong)] bg-[var(--page-bg)] p-3">
-                                        <div className="mb-1 flex items-center justify-between">
+                                        <div className="mb-1 flex items-center justify-between gap-2">
                                             <span className="text-xs font-medium text-[var(--subheading)]">{b.sender.name}</span>
-                                            <span className="text-xs text-[var(--grey-text-muted)]">{formatTime(b.created_at, locale)}</span>
+                                            <div className="flex shrink-0 items-center gap-2">
+                                                <span className="text-xs text-[var(--grey-text-muted)]">{formatTime(b.created_at, locale)}</span>
+                                                {(authUser.role === 'owner' || b.sender.id === authUser.id) && (
+                                                    <button
+                                                        aria-label={t('dashboardAdvance.messaging.infoPanel.deleteBroadcastAriaLabel')}
+                                                        onClick={() => onDeleteBroadcast(b.id)}
+                                                        className="text-[var(--grey-text-muted)] hover:text-red-500"
+                                                    >
+                                                        <Trash2 className="h-3 w-3" />
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                         <p className="text-xs leading-relaxed text-[var(--grey-text)]">{b.content}</p>
                                         {b.branch_id === null && (
@@ -212,7 +233,7 @@ export function InfoPanel({ broadcasts, notes, authUser, onCreateBroadcast, onCr
                                         <button
                                             aria-label={t('dashboardAdvance.messaging.infoPanel.deleteNoteAriaLabel')}
                                             onClick={() => onDeleteNote(note.id)}
-                                            className="absolute top-2 right-2 hidden text-[var(--grey-text-muted)] group-hover:block hover:text-red-500"
+                                            className="absolute top-2 right-2 text-[var(--grey-text-muted)] hover:text-red-500"
                                         >
                                             <Trash2 className="h-3 w-3" />
                                         </button>

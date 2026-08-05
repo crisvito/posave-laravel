@@ -11,6 +11,7 @@ Route::middleware(['auth', 'onboarded', 'advance'])->group(function () {
   Route::post('/messaging/conversations/private', [MessagingController::class, 'startPrivateConversation'])->name('messaging.private');
 
   Route::post('/messaging/broadcasts', [MessagingController::class, 'storeBroadcast'])->name('messaging.broadcast.store');
+  Route::delete('/messaging/broadcasts/{broadcast}', [MessagingController::class, 'destroyBroadcast'])->name('messaging.broadcast.destroy');
 
   Route::post('/messaging/notes', [MessagingController::class, 'storeNote'])->name('messaging.note.store');
   Route::put('/messaging/notes/{note}', [MessagingController::class, 'updateNote'])->name('messaging.note.update');

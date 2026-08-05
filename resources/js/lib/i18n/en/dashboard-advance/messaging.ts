@@ -3,6 +3,8 @@ const messaging = {
     layoutDescription: 'Send messages to your teammates',
     headTitle: 'Messages',
     deleteNoteConfirm: 'Delete this note?',
+    deleteBroadcastAriaLabel: 'Delete broadcast',
+    deleteBroadcastConfirm: 'Delete this broadcast?',
     chatArea: {
         emptyTitle: 'Select a conversation',
         emptyBody: 'Choose a conversation on the left or start a new chat from the Contacts tab',
