@@ -1,4 +1,4 @@
-# POSave
+# Posave
 
 > **Modern Point of Sale for Small Businesses**
 
