@@ -6,8 +6,8 @@ POSave adalah aplikasi **Point of Sale (POS)** berbasis web yang dirancang untuk
 
 POSave hadir dengan dua pengalaman penggunaan:
 
-- **Advance Mode** — untuk bisnis yang membutuhkan pengelolaan operasional lebih lengkap.
-- **Lite Mode** — untuk toko kecil yang membutuhkan POS sederhana dan cepat.
+- **Advance Mode** : untuk bisnis yang membutuhkan pengelolaan operasional lebih lengkap.
+- **Lite Mode** : untuk toko kecil yang membutuhkan POS sederhana dan cepat.
 
 POSave juga dilengkapi dengan **AI-powered assistant** yang dapat membantu pengguna memahami data dan menjalankan beberapa tindakan melalui antarmuka POS.
 
@@ -239,21 +239,21 @@ Email    : owner.advance@posave.test
 Password : password
 ```
 
-**Branch Manager — Cabang Utama**
+**Branch Manager : Cabang Utama**
 
 ```text
 Email    : manager.cabang-utama@posave.test
 Password : password
 ```
 
-**Branch Manager — Cabang Kedua**
+**Branch Manager : Cabang Kedua**
 
 ```text
 Email    : manager.cabang-kedua@posave.test
 Password : password
 ```
 
-**Cashier — Cabang Utama**
+**Cashier : Cabang Utama**
 
 ```text
 Email    : andi.cabang-utama@posave.test
@@ -265,7 +265,7 @@ Email    : bintang.cabang-utama@posave.test
 Password : password
 ```
 
-**Cashier — Cabang Kedua**
+**Cashier : Cabang Kedua**
 
 ```text
 Email    : andi.cabang-kedua@posave.test
