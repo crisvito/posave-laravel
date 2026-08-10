@@ -435,8 +435,7 @@ class DemoSeeder extends Seeder
         return match (true) {
             $roll <= 50 => 'cash',
             $roll <= 80 => 'qris',
-            $roll <= 92 => 'debit',
-            default => 'transfer',
+            default => 'qris',
         };
     }
 }
